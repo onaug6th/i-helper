@@ -1,0 +1,58 @@
+{
+  "name": "i-helper",
+  "version": "0.0.1",
+  "private": true,
+  "author": "onaug6th",
+  "description": "A desktop assistant",
+  "scripts": {
+    "electron:serve": "vue-cli-service electron:serve",
+    "electron:build": "node src/script/clean && vue-cli-service electron:build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@types/nedb": "^1.8.11",
+    "core-js": "^3.7.0",
+    "dayjs": "^1.9.7",
+    "fs-extra": "^9.0.1",
+    "nedb": "^1.8.0",
+    "style-resources-loader": "^1.4.1",
+    "vue": "3.0.4",
+    "vue-class-component": "^8.0.0-0",
+    "vue-cli-plugin-electron-builder": "^2.0.0-rc.5",
+    "vue-router": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.8.2",
+    "@typescript-eslint/parser": "^4.8.2",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-typescript": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^5.0.2",
+    "electron": "^11.2.0",
+    "electron-builder": "^22.9.1",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-vue": "^7.1.0",
+    "less": "^3.0.4",
+    "less-loader": "^5.0.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.2",
+    "typescript": "~3.9.3",
+    "vue-cli-plugin-style-resources-loader": "~0.1.4"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue,ts,tsx}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
+}
