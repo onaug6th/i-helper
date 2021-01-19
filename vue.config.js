@@ -5,7 +5,6 @@ module.exports = {
   productionSourceMap: false,
   configureWebpack: config => {
     if (process.env.NODE_ENV === 'development') {
-      console.info(process.env.NODE_ENV);
       config.devtool = 'eval-source-map';
     } else {
       config.optimization.minimizer[0].options.terserOptions.warnings = false;

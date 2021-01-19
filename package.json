@@ -4,6 +4,7 @@
   "private": true,
   "author": "onaug6th",
   "description": "A desktop assistant",
+  "main": "background.js",
   "scripts": {
     "electron:serve": "vue-cli-service electron:serve",
     "electron:build": "node src/script/clean && vue-cli-service electron:build",
