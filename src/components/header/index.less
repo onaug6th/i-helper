@@ -1,0 +1,22 @@
+.header-fadein-enter,
+.header-fadein-leave-to {
+  display: none;
+  opacity: 0;
+  animation: header-fadein 0.4s reverse;
+}
+.header-fadein-enter-active,
+.header-fadein-leave-active {
+  opacity: 0;
+  animation: header-fadein 0.4s;
+}
+
+@keyframes header-fadein {
+  from {
+    opacity: 0;
+    margin-right: -14px;
+  }
+  to {
+    opacity: 1;
+    margin-right: 0;
+  }
+}
