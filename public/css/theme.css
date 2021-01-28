@@ -1,3 +1,23 @@
 body {
-    background-color: #ccc;
+  background-color: #ccc;
+}
+
+html,
+body,
+#app {
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0);
+  outline: none;
+}
+
+#app {
+  box-shadow: 0 0 4px rgb(185, 185, 185);
+}
+
+body {
+  padding: 4px;
+  user-select: none;
+  outline: none;
 }
