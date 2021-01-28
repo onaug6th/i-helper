@@ -24,5 +24,14 @@
 .header {
   height: 40px;
   background-color: #fff;
-  -webkit-app-region: drag;
+  display: flex;
+  
+  &-center {
+    flex: 1;
+    -webkit-app-region: drag;
+  }
+
+  &-right {
+    width: 40px;
+  }
 }
