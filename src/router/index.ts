@@ -6,7 +6,50 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    component: home
+    redirect: 'notes',
+    component: home,
+    children: [
+      {
+        path: '/notes',
+        name: 'notes',
+        component: () => import('../views/notes/index.vue'),
+        meta: {
+          title: '笔记'
+        }
+      },
+      {
+        path: '/clipboard',
+        name: 'clipboard',
+        component: () => import('../views/clipboard/index.vue'),
+        meta: {
+          title: '剪贴板'
+        }
+      },
+      {
+        path: '/notices',
+        name: 'notices',
+        component: () => import('../views/notices/index.vue'),
+        meta: {
+          title: '提醒'
+        }
+      },
+      {
+        path: '/todo',
+        name: 'todo',
+        component: () => import('../views/todo/index.vue'),
+        meta: {
+          title: '待办事项'
+        }
+      },
+      {
+        path: '/setting',
+        name: 'setting',
+        component: () => import('../views/setting/index.vue'),
+        meta: {
+          title: '设置'
+        }
+      }
+    ]
   }
 ];
 

@@ -23,23 +23,23 @@
               <el-menu-item index="1-3">选项3</el-menu-item>
             </el-menu-item-group>
           </el-submenu> -->
-          <el-menu-item index="1">
+          <el-menu-item index="1" @click="menuTo('notes')">
             <i class="el-icon-edit"></i>
             <template #title>笔记</template>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="2" @click="menuTo('clipboard')">
             <i class="el-icon-copy-document"></i>
             <template #title>剪贴板</template>
           </el-menu-item>
-          <el-menu-item index="3">
+          <el-menu-item index="3" @click="menuTo('notices')">
             <i class="el-icon-bell"></i>
             <template #title>提醒</template>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item index="4" @click="menuTo('todo')">
             <i class="el-icon-date"></i>
             <template #title>待办事项</template>
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="5" @click="menuTo('setting')">
             <i class="el-icon-setting"></i>
             <template #title>设置</template>
           </el-menu-item>
@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Header from '@/components/header/index.vue';
 
 export default defineComponent({
@@ -70,8 +70,10 @@ export default defineComponent({
     Header
   },
   setup() {
+    const route = useRoute();
+    const router = useRouter();
     const isCollapse = ref(true);
-    const routeName = ref(useRoute().name);
+    const routeName = ref(route.name);
 
     return {
       isCollapse,
@@ -81,6 +83,11 @@ export default defineComponent({
       },
       handleClose(key: string, keyPath: string) {
         console.log(key, keyPath);
+      },
+      menuTo(path: string) {
+        router.push({
+          path
+        });
       }
     };
   }
