@@ -1,10 +1,7 @@
-body {
-  background-color: #ccc;
-}
-
 html,
 body,
 #app {
+  height: 100%;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
@@ -14,10 +11,12 @@ body,
 
 #app {
   box-shadow: 0 0 4px rgb(185, 185, 185);
+  border-radius: 3px;
 }
 
 body {
   padding: 4px;
+  margin: 0px;
   user-select: none;
   outline: none;
 }

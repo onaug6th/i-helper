@@ -1,16 +1,22 @@
 .home {
     border-radius: 3px;
+    height: 100%;
 }
 
 .home-content {
+    height: 100%;
+    background-color: #fff;
     display: flex;
-    background-color: #ccc;
 
-    &-sidebar {
+    &__sidebar {
         width: 64px;
+        
+        /deep/ .el-menu {
+            height: 100%;
+        }
     }
 
-    &-main {
+    &__main {
         flex: 1;
     }
 }

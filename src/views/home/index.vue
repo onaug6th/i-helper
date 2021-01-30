@@ -4,13 +4,13 @@
     <div class="home-content">
       <div class="home-content__sidebar">
         <el-menu
-          default-active="1-4-1"
+          default-active="1"
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
           :collapse="true"
         >
-          <el-submenu index="1">
+          <!-- <el-submenu index="1">
             <template #title>
               <i class="el-icon-location"></i>
               <span>导航一</span>
@@ -22,13 +22,17 @@
             <el-menu-item-group title="分组2">
               <el-menu-item index="1-3">选项3</el-menu-item>
             </el-menu-item-group>
-          </el-submenu>
+          </el-submenu> -->
+          <el-menu-item index="1">
+            <i class="el-icon-edit"></i>
+            <template #title>笔记</template>
+          </el-menu-item>
           <el-menu-item index="2">
             <i class="el-icon-copy-document"></i>
             <template #title>剪贴板</template>
           </el-menu-item>
           <el-menu-item index="3">
-            <i class="el-icon-sunny"></i>
+            <i class="el-icon-bell"></i>
             <template #title>提醒</template>
           </el-menu-item>
           <el-menu-item index="4">
