@@ -7,11 +7,20 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import clipboardObserver from '@/utils/clipboardObserver';
 
 export default defineComponent({
   setup() {
     const isCollapse = ref(true);
     const routeName = ref(useRoute().name);
+    clipboardObserver({
+      textChange() {
+        console.info(arguments);
+      },
+      imageChange() {
+        console.info(arguments);
+      }
+    });
 
     return {
       isCollapse,
