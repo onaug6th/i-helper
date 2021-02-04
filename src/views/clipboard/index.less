@@ -8,6 +8,7 @@
     margin-bottom: 10px;
     padding: 10px;
     cursor: pointer;
+    align-items: center;
     transition: background-color .25s ease;
 
 
@@ -17,6 +18,13 @@
 
     &__value {
         padding-left: 15px;
+
+        span {
+            display: inline-block;
+            max-width: 230px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
     &__operate {

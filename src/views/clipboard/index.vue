@@ -25,7 +25,7 @@
 <script lang="ts">
 import { ElMessage } from 'element-plus';
 import { defineComponent, reactive } from 'vue';
-import { clipboard } from 'electron';
+import { clipboard, nativeImage } from 'electron';
 import clipboardObserver from '@/utils/clipboardObserver';
 
 //  剪贴项接口
@@ -48,7 +48,7 @@ export default defineComponent({
     });
 
     //  剪贴板记录列表
-    const clipboardList: Array<any> = reactive([
+    const clipboardList: Array<ClipboardItem> = reactive([
       {
         value: '内容',
         type: 'text',
@@ -56,19 +56,26 @@ export default defineComponent({
       }
     ]);
 
-    //  上一个从列表复制的内容
-    let lastReadOnListValue: any;
+    //  从列表复制出来的内容
+    let copyFromList: any;
 
     /**
      * 剪贴板新增剪贴项
+     * @param value
+     * @param type
      */
-    function clipboardListAdd(value: string, type: string) {
+    function clipboardListAdd(value: any, type: string) {
+      const newestCopy = clipboardList[0];
       //  与最新复制的内容不同
-      const isDiffLastOne = clipboardList[0].value !== value;
+      const isDiffNewest = newestCopy.type !== type || newestCopy.value !== value;
       //  与上一个从列表复制的内容不同
-      const isDiffLastCopy = value !== lastReadOnListValue;
+      const isDiffCopyFromList = value !== copyFromList;
 
-      if (isDiffLastOne && isDiffLastCopy) {
+      if (isDiffNewest && isDiffCopyFromList) {
+        if (type === 'image') {
+          value = value.toDataURL();
+        }
+
         const clipboardItem: ClipboardItem = {
           value,
           type,
@@ -81,16 +88,22 @@ export default defineComponent({
 
     /**
      * 复制
+     * @param row
      */
     function copy(row: ClipboardItem) {
-      const fn = row.type === 'text' ? clipboard.writeText : clipboard.writeImage;
-      lastReadOnListValue = row.value;
-      fn(row.value);
+      const { value, type } = row;
+      if (type === 'text') {
+        clipboard.writeText(value);
+      } else {
+        clipboard.writeImage(nativeImage.createFromDataURL(value));
+      }
+      copyFromList = row.value;
       ElMessage('复制成功');
     }
 
     /**
      * 切换收藏
+     * @param row
      */
     function toggleStar(row: ClipboardItem) {
       row.star = !row.star;
@@ -98,6 +111,7 @@ export default defineComponent({
 
     /**
      * 删除
+     * @param rowIndex
      */
     function del(rowIndex: number) {
       clipboardList.splice(rowIndex, 1);
