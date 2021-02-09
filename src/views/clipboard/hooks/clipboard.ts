@@ -1,7 +1,7 @@
 //  消息提醒
 import { ElMessage } from 'element-plus';
 //  vue响应式模块
-import { reactive, onBeforeMount } from 'vue';
+import { reactive } from 'vue';
 //  剪贴板模块及类型
 import { clipboard, nativeImage } from 'electron';
 //  剪贴板观察者
@@ -11,14 +11,11 @@ import clipboardDB from '@/dataBase/clipboard';
 //  接口
 import { ClipboardItem } from '../interface';
 
-//  剪贴板记录列表
-let clipboardList: Array<ClipboardItem> = reactive([
-  {
-    value: '内容',
-    type: 'text',
-    star: true
-  }
-]);
+const state: {
+  clipboardList: Array<ClipboardItem>;
+} = reactive({
+  clipboardList: []
+});
 
 //  从列表中复制出的内容
 let copyFromList: any;
@@ -29,10 +26,19 @@ let copyFromList: any;
 function getAllClipboardList() {
   clipboardDB._db
     ?.find({})
-    .sort({ updatedAt: -1 })
+    .sort({ createdAt: -1 })
     .exec((e, d) => {
-      clipboardList = d as ClipboardItem[];
+      state.clipboardList = d as ClipboardItem[];
     });
+}
+
+/**
+ * 剪贴板记录列表插入新数据
+ * @param clipboardItem
+ */
+async function insertClipboardList(clipboardItem: ClipboardItem) {
+  const result = await clipboardDB.insert(clipboardItem);
+  return result;
 }
 
 /**
@@ -40,10 +46,10 @@ function getAllClipboardList() {
  * @param value
  * @param type
  */
-function clipboardListAdd(value: any, type: string) {
-  const newestCopy = clipboardList[0];
+async function clipboardListAdd(value: any, type: string) {
+  const newestCopy = state.clipboardList[0];
   //  与最新复制的内容不同
-  const isDiffNewest = newestCopy.type !== type || newestCopy.value !== value;
+  const isDiffNewest = newestCopy ? newestCopy.type !== type || newestCopy.value !== value : true;
   //  与上一个从列表复制的内容不同
   const isDiffCopyFromList = value !== copyFromList;
 
@@ -58,8 +64,28 @@ function clipboardListAdd(value: any, type: string) {
       star: false
     };
 
-    clipboardList.unshift(clipboardItem);
+    const result = await insertClipboardList(clipboardItem);
+    state.clipboardList.unshift(result);
   }
+}
+
+/**
+ * 剪贴板数据库移除某项
+ * @param clipboardItem
+ */
+async function removeClipboardList(query: any) {
+  const result = await clipboardDB.remove(query);
+  return result;
+}
+
+/**
+ * 点击删除按钮
+ * @param row
+ */
+function del(row: any, rowIndex: number) {
+  state.clipboardList.splice(rowIndex, 1);
+  removeClipboardList({ _id: row._id });
+  ElMessage('删除成功');
 }
 
 /**
@@ -78,11 +104,29 @@ function copy(row: ClipboardItem) {
 }
 
 /**
- * 删除
- * @param rowIndex
+ * 切换收藏
+ * @param row
  */
-function del(rowIndex: number) {
-  clipboardList.splice(rowIndex, 1);
+function toggleStar(row: any) {
+  row.star = !row.star;
+  updateClipboardList(
+    {
+      _id: row._id
+    },
+    {
+      star: row.star
+    }
+  );
+  ElMessage(`${row.star ? '收藏' : '取消收藏'}成功`);
+}
+
+/**
+ * 剪贴板数据库更新某项
+ * @param clipboardItem
+ */
+async function updateClipboardList(query: any, options: any) {
+  const result = await clipboardDB.update(query, options);
+  return result;
 }
 
 //  观察剪贴板变化
@@ -95,8 +139,4 @@ clipboardObserver({
   }
 });
 
-onBeforeMount(() => {
-  getAllClipboardList();
-});
-
-export { clipboardList, copy, del };
+export { getAllClipboardList, state, copy, del, toggleStar };
