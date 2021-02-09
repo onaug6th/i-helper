@@ -46,15 +46,17 @@
         </el-menu>
       </div>
       <div class="home-content__main">
-        <router-view v-slot="{ Component }">
-          <transition name="main-fade">
-            <div class="transition" :key="routeName">
-              <keep-alive>
-                <component :is="Component" />
-              </keep-alive>
-            </div>
-          </transition>
-        </router-view>
+        <el-scrollbar>
+          <router-view v-slot="{ Component }">
+            <transition name="main-fade">
+              <div class="transition" :key="routeName">
+                <keep-alive>
+                  <component :is="Component" />
+                </keep-alive>
+              </div>
+            </transition>
+          </router-view>
+        </el-scrollbar>
       </div>
     </div>
   </div>

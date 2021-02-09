@@ -5,7 +5,7 @@
         <span v-if="row.type === 'text'">
           {{ row.value }}
         </span>
-        <i v-else-if="row.type === 'image'" class="el-icon-picture"></i>
+        <img v-else-if="row.type === 'image'" :src="row.value" />
       </div>
       <div class="list-row__operate">
         <el-button
@@ -16,7 +16,14 @@
           :icon="row.star ? 'el-icon-star-on' : 'el-icon-star-off'"
           @click.stop="toggleStar(row)"
         ></el-button>
-        <el-button type="danger" icon="el-icon-delete" circle size="mini" @click.stop="del(row, rowIndex)"></el-button>
+        <el-button
+          type="danger"
+          icon="el-icon-delete"
+          circle
+          size="mini"
+          title="删除"
+          @click.stop="del(row, rowIndex)"
+        ></el-button>
       </div>
     </div>
   </div>

@@ -114,7 +114,9 @@ function toggleStar(row: any) {
       _id: row._id
     },
     {
-      star: row.star
+      $set: {
+        star: row.star
+      }
     }
   );
   ElMessage(`${row.star ? '收藏' : '取消收藏'}成功`);
