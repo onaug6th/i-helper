@@ -2,10 +2,17 @@
   <div class="clipboard">
     <div class="operate">
       <el-switch
-        v-model="isObserverClipboard"
+        v-model="state.isObserver"
         active-text="启用"
-        :title="`点击${isObserverClipboard ? '关闭' : '启用'}剪贴板监听`"
+        :title="`点击${state.isObserver ? '关闭' : '启用'}剪贴板监听`"
+        @change="isObserverChange"
       ></el-switch>
+
+      <el-checkbox-group v-model="state.type" size="mini">
+        <el-checkbox-button v-for="item in options" :label="item.value" :key="item.value">
+          {{ item.label }}
+        </el-checkbox-button>
+      </el-checkbox-group>
     </div>
     <div v-for="(row, rowIndex) in state.clipboardList" class="list-row" :key="rowIndex" @click="copy(row)">
       <!-- 行内容 -->
@@ -41,9 +48,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref } from 'vue';
+import { defineComponent, onBeforeMount } from 'vue';
 //  剪贴板hooks
-import { getAllClipboardList, state, copy, del, toggleStar } from './hooks/clipboard';
+import { getAllClipboardList, state, options, copy, del, toggleStar, isObserverChange } from './hooks/clipboard';
 
 export default defineComponent({
   setup() {
@@ -51,15 +58,13 @@ export default defineComponent({
       getAllClipboardList();
     });
 
-    const isObserverClipboard = ref(true);
-
     return {
-      isObserverClipboard,
-
       state,
+      options,
       toggleStar,
       copy,
-      del
+      del,
+      isObserverChange
     };
   }
 });

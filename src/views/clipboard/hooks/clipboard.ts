@@ -11,11 +11,52 @@ import clipboardDB from '@/dataBase/clipboard';
 //  接口
 import { ClipboardItem } from '../interface';
 
-const state: {
+interface State {
   clipboardList: Array<ClipboardItem>;
-} = reactive({
-  clipboardList: []
+  isObserver: boolean;
+  type: Array<string>;
+}
+
+const state: State = reactive({
+  clipboardList: [],
+  isObserver: true,
+  type: ['text']
 });
+
+const options = [
+  {
+    value: 'text',
+    label: '文本'
+  },
+  {
+    value: 'image',
+    label: '图片'
+  },
+  {
+    value: 'star',
+    label: '收藏'
+  }
+];
+
+const observerConfig = {
+  textChange(value: string) {
+    clipboardListAdd(value, 'text');
+  },
+  imageChange(value: string) {
+    clipboardListAdd(value, 'image');
+  }
+};
+
+//  观察剪贴板变化
+const observerItem = clipboardObserver(observerConfig);
+
+/**
+ * 是否监听发生变化
+ * @param value
+ */
+function isObserverChange(value: boolean) {
+  value ? observerItem.start() : observerItem.stop();
+}
 
 //  从列表中复制出的内容
 let copyFromList: any;
@@ -130,14 +171,4 @@ async function updateClipboardList(query: any, options: any) {
   return result;
 }
 
-//  观察剪贴板变化
-clipboardObserver({
-  textChange(value: string) {
-    clipboardListAdd(value, 'text');
-  },
-  imageChange(value: string) {
-    clipboardListAdd(value, 'image');
-  }
-});
-
-export { getAllClipboardList, state, copy, del, toggleStar };
+export { state, options, getAllClipboardList, copy, del, toggleStar, isObserverChange };
