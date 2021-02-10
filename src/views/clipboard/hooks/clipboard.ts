@@ -47,19 +47,19 @@ async function insertClipboardList(clipboardItem: ClipboardItem) {
  * @param type
  */
 async function clipboardListAdd(value: any, type: string) {
+  //  当前进入函数的剪贴板内容
+  const currentValue = type === 'image' ? value.toDataURL() : value;
+
+  //  与列表点击复制出来的内容不同
+  const isDiffCopyFromList = currentValue !== copyFromList;
+  //  列表最新复制的内容
   const newestCopy = state.clipboardList[0];
-  //  与最新复制的内容不同
-  const isDiffNewest = newestCopy ? newestCopy.type !== type || newestCopy.value !== value : true;
-  //  与上一个从列表复制的内容不同
-  const isDiffCopyFromList = value !== copyFromList;
+  //  与列表最新复制的内容不同
+  const isDiffNewest = newestCopy ? newestCopy.type !== type || newestCopy.value !== currentValue : true;
 
   if (isDiffNewest && isDiffCopyFromList) {
-    if (type === 'image') {
-      value = value.toDataURL();
-    }
-
     const clipboardItem: ClipboardItem = {
-      value,
+      value: currentValue,
       type,
       star: false
     };
@@ -85,7 +85,6 @@ async function removeClipboardList(query: any) {
 function del(row: any, rowIndex: number) {
   state.clipboardList.splice(rowIndex, 1);
   removeClipboardList({ _id: row._id });
-  ElMessage('删除成功');
 }
 
 /**
