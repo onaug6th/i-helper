@@ -1,7 +1,7 @@
 //  消息提醒
 import { ElMessage } from 'element-plus';
 //  vue响应式模块
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 //  剪贴板模块及类型
 import { clipboard, nativeImage } from 'electron';
 //  剪贴板观察者
@@ -20,10 +20,22 @@ interface State {
 const state: State = reactive({
   clipboardList: [],
   isObserver: true,
-  type: ['text']
+  type: ['text', 'image']
 });
 
-const options = [
+//  列表使用的数据
+const clipboardData = computed(() => {
+  const { clipboardList, type } = state;
+  return clipboardList.filter(item => {
+    const typeInclude = type.includes(item.type);
+    const isStar = type.includes('star') ? item.star : true;
+
+    return typeInclude && isStar;
+  });
+});
+
+//  下拉项数据
+const optionDatas = [
   {
     value: 'text',
     label: '文本'
@@ -51,11 +63,21 @@ const observerConfig = {
 const observerItem = clipboardObserver(observerConfig);
 
 /**
- * 是否监听发生变化
+ * 是否监听变化
  * @param value
  */
 function isObserverChange(value: boolean) {
   value ? observerItem.start() : observerItem.stop();
+}
+
+/**
+ * 筛选类型变化
+ * @param value
+ */
+function typeChange(value: Array<string>) {
+  if (!value.length) {
+    state.type = ['text', 'image'];
+  }
 }
 
 //  从列表中复制出的内容
@@ -171,4 +193,4 @@ async function updateClipboardList(query: any, options: any) {
   return result;
 }
 
-export { state, options, getAllClipboardList, copy, del, toggleStar, isObserverChange };
+export { state, optionDatas, clipboardData, getAllClipboardList, copy, del, toggleStar, isObserverChange, typeChange };

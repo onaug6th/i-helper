@@ -8,13 +8,13 @@
         @change="isObserverChange"
       ></el-switch>
 
-      <el-checkbox-group v-model="state.type" size="mini">
-        <el-checkbox-button v-for="item in options" :label="item.value" :key="item.value">
+      <el-checkbox-group v-model="state.type" size="mini" @change="typeChange">
+        <el-checkbox-button v-for="item in optionDatas" :label="item.value" :key="item.value">
           {{ item.label }}
         </el-checkbox-button>
       </el-checkbox-group>
     </div>
-    <div v-for="(row, rowIndex) in state.clipboardList" class="list-row" :key="rowIndex" @click="copy(row)">
+    <div v-for="(row, rowIndex) in clipboardData" class="list-row" :key="rowIndex" @click="copy(row)">
       <!-- 行内容 -->
       <div class="list-row__value">
         <span v-if="row.type === 'text'">
@@ -50,7 +50,17 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount } from 'vue';
 //  剪贴板hooks
-import { getAllClipboardList, state, options, copy, del, toggleStar, isObserverChange } from './hooks/clipboard';
+import {
+  state,
+  clipboardData,
+  optionDatas,
+  getAllClipboardList,
+  copy,
+  del,
+  toggleStar,
+  isObserverChange,
+  typeChange
+} from './hooks/clipboard';
 
 export default defineComponent({
   setup() {
@@ -60,11 +70,13 @@ export default defineComponent({
 
     return {
       state,
-      options,
+      optionDatas,
+      clipboardData,
       toggleStar,
       copy,
       del,
-      isObserverChange
+      isObserverChange,
+      typeChange
     };
   }
 });
