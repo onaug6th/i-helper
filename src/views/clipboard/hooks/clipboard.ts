@@ -88,7 +88,7 @@ function isObserverChange(value: boolean) {
 }
 
 //  从列表中复制出的内容
-let copyFromList: any;
+let copyFromList: string;
 
 /**
  * 获取剪贴板记录列表

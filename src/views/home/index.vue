@@ -1,14 +1,16 @@
 <template>
   <div class="home">
     <Header />
+
     <div class="home-content">
+      <!-- 左侧侧边栏 -->
       <div class="home-content__sidebar">
         <el-menu
           default-active="1"
           class="el-menu-vertical-demo"
+          :collapse="true"
           @open="handleOpen"
           @close="handleClose"
-          :collapse="true"
         >
           <!-- <el-submenu index="1">
             <template #title>
@@ -23,28 +25,20 @@
               <el-menu-item index="1-3">选项3</el-menu-item>
             </el-menu-item-group>
           </el-submenu> -->
-          <el-menu-item index="1" @click="menuTo('notes')">
-            <i class="el-icon-edit"></i>
-            <template #title>笔记</template>
-          </el-menu-item>
-          <el-menu-item index="2" @click="menuTo('clipboard')">
-            <i class="el-icon-copy-document"></i>
-            <template #title>剪贴板</template>
-          </el-menu-item>
-          <el-menu-item index="3" @click="menuTo('notices')">
-            <i class="el-icon-bell"></i>
-            <template #title>提醒</template>
-          </el-menu-item>
-          <el-menu-item index="4" @click="menuTo('todo')">
-            <i class="el-icon-date"></i>
-            <template #title>待办事项</template>
-          </el-menu-item>
-          <el-menu-item index="5" @click="menuTo('setting')">
-            <i class="el-icon-setting"></i>
-            <template #title>设置</template>
+          <el-menu-item
+            v-for="(menuItem, menuIndex) in menuList"
+            :index="String(menuIndex + 1)"
+            :key="menuIndex"
+            @click="menuTo(menuItem.path)"
+          >
+            <i :class="`el-icon-${menuItem.icon}`"></i>
+            <template #title>{{ menuItem.label }}</template>
           </el-menu-item>
         </el-menu>
       </div>
+      <!-- 左侧侧边栏 -->
+
+      <!-- 右侧主体内容 -->
       <div class="home-content__main">
         <el-scrollbar>
           <router-view v-slot="{ Component }">
@@ -58,6 +52,7 @@
           </router-view>
         </el-scrollbar>
       </div>
+      <!-- 右侧主体内容 -->
     </div>
   </div>
 </template>
@@ -74,11 +69,51 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const isCollapse = ref(true);
     const routeName = ref(route.name);
 
+    const menuList: Array<{
+      label: string;
+      path: string;
+      icon: string;
+    }> = [
+      {
+        label: '笔记',
+        path: 'notes',
+        icon: 'edit'
+      },
+      {
+        label: '剪贴板',
+        path: 'clipboard',
+        icon: 'document'
+      },
+      {
+        label: '提醒',
+        path: 'notices',
+        icon: 'bell'
+      },
+      {
+        label: '待办事项',
+        path: 'todo',
+        icon: 'date'
+      },
+      {
+        label: '设置',
+        path: 'setting',
+        icon: 'setting'
+      }
+    ];
+
+    /**
+     * 跳转路由
+     */
+    function menuTo(path: string) {
+      router.push({
+        path
+      });
+    }
+
     return {
-      isCollapse,
+      menuList,
       routeName,
       handleOpen(key: string, keyPath: string) {
         console.log(key, keyPath);
@@ -86,11 +121,7 @@ export default defineComponent({
       handleClose(key: string, keyPath: string) {
         console.log(key, keyPath);
       },
-      menuTo(path: string) {
-        router.push({
-          path
-        });
-      }
+      menuTo
     };
   }
 });
