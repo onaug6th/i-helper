@@ -36,11 +36,14 @@ function clipboardObserver(option = {}) {
   const options: Options = Object.assign({}, DEFAULT_OPTIONS, option);
   const { duration, textChange, imageChange } = options;
   let timer: any;
+  let stop: boolean;
+  let beforeText: string;
+  let beforeImage: NativeImage;
 
-  if (textChange || imageChange) {
-    let beforeText: string;
-    let beforeImage: NativeImage;
-
+  /**
+   * 设置剪贴板默认值
+   */
+  function setClipboardDefaultValue() {
     //  为了尽量少读取剪贴板
     if (textChange) {
       beforeText = clipboard.readText();
@@ -49,8 +52,15 @@ function clipboardObserver(option = {}) {
     if (imageChange) {
       beforeImage = clipboard.readImage();
     }
+  }
+
+  if (textChange || imageChange) {
+    setClipboardDefaultValue();
 
     timer = setInterval(() => {
+      if (stop) {
+        return false;
+      }
       if (textChange) {
         const text = clipboard.readText();
         if (isDiffText(beforeText, text)) {
@@ -70,6 +80,16 @@ function clipboardObserver(option = {}) {
   }
 
   return {
+    //  开始
+    start() {
+      setClipboardDefaultValue();
+      stop = false;
+    },
+    //  暂停
+    stop() {
+      stop = true;
+    },
+    //  摧毁
     destroy() {
       clearInterval(timer);
     }
