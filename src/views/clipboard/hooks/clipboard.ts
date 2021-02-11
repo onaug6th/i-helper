@@ -1,5 +1,5 @@
 //  消息提醒
-import { ElMessage } from 'element-plus';
+import { ElNotification } from 'element-plus';
 //  vue响应式模块
 import { reactive, computed } from 'vue';
 //  剪贴板模块及类型
@@ -27,14 +27,22 @@ const state: State = reactive({
 const clipboardData = computed(() => {
   const { clipboardList, type } = state;
   return clipboardList.filter(item => {
+    //  类型包含
     const typeInclude = type.includes(item.type);
+    //  可以显示收藏
     const isStar = type.includes('star') ? item.star : true;
+    //  只选择收藏
+    const starOnly = type.length === 1 && type.includes('star');
 
-    return typeInclude && isStar;
+    if (starOnly) {
+      return item.star;
+    } else {
+      return typeInclude && isStar;
+    }
   });
 });
 
-//  下拉项数据
+//  选择项数据
 const optionDatas = [
   {
     value: 'text',
@@ -50,6 +58,15 @@ const optionDatas = [
   }
 ];
 
+/**
+ * 禁用选择项
+ * @param option
+ */
+function disabledCheckButton(option: { value: string }) {
+  return state.type.length === 1 && state.type.includes(option.value);
+}
+
+//  监听配置
 const observerConfig = {
   textChange(value: string) {
     clipboardListAdd(value, 'text');
@@ -68,16 +85,6 @@ const observerItem = clipboardObserver(observerConfig);
  */
 function isObserverChange(value: boolean) {
   value ? observerItem.start() : observerItem.stop();
-}
-
-/**
- * 筛选类型变化
- * @param value
- */
-function typeChange(value: Array<string>) {
-  if (!value.length) {
-    state.type = ['text', 'image'];
-  }
 }
 
 //  从列表中复制出的内容
@@ -162,7 +169,10 @@ function copy(row: ClipboardItem) {
     clipboard.writeImage(nativeImage.createFromDataURL(value));
   }
   copyFromList = row.value;
-  ElMessage('复制成功');
+  ElNotification({
+    type: 'success',
+    message: '复制成功'
+  });
 }
 
 /**
@@ -181,7 +191,10 @@ function toggleStar(row: any) {
       }
     }
   );
-  ElMessage(`${row.star ? '收藏' : '取消收藏'}成功`);
+  ElNotification({
+    type: 'success',
+    message: `${row.star ? '收藏' : '取消收藏'}成功`
+  });
 }
 
 /**
@@ -193,4 +206,14 @@ async function updateClipboardList(query: any, options: any) {
   return result;
 }
 
-export { state, optionDatas, clipboardData, getAllClipboardList, copy, del, toggleStar, isObserverChange, typeChange };
+export {
+  state,
+  optionDatas,
+  clipboardData,
+  getAllClipboardList,
+  copy,
+  del,
+  toggleStar,
+  isObserverChange,
+  disabledCheckButton
+};

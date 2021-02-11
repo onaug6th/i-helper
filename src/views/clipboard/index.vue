@@ -8,8 +8,13 @@
         @change="isObserverChange"
       ></el-switch>
 
-      <el-checkbox-group v-model="state.type" size="mini" @change="typeChange">
-        <el-checkbox-button v-for="item in optionDatas" :label="item.value" :key="item.value">
+      <el-checkbox-group v-model="state.type" size="mini" title="内容筛选">
+        <el-checkbox-button
+          v-for="item in optionDatas"
+          :label="item.value"
+          :key="item.value"
+          :disabled="disabledCheckButton(item)"
+        >
           {{ item.label }}
         </el-checkbox-button>
       </el-checkbox-group>
@@ -59,7 +64,7 @@ import {
   del,
   toggleStar,
   isObserverChange,
-  typeChange
+  disabledCheckButton
 } from './hooks/clipboard';
 
 export default defineComponent({
@@ -76,7 +81,7 @@ export default defineComponent({
       copy,
       del,
       isObserverChange,
-      typeChange
+      disabledCheckButton
     };
   }
 });
