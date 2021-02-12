@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 'use strict';
 
-import { app, protocol, BrowserWindow } from 'electron';
-import {
-  createProtocol
-  // installVueDevtools
-} from 'vue-cli-plugin-electron-builder/lib';
+import { app, protocol, BrowserWindow, session } from 'electron';
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 
 import { browserWindowOption, winURL } from './config';
 
@@ -54,13 +51,11 @@ app.on('activate', () => {
 });
 
 app.on('ready', async () => {
-  // if (isDevelopment && !process.env.IS_TEST) {
-  //   try {
-  //     await installVueDevtools();
-  //   } catch (e) {
-  //     console.error('Vue Devtools failed to install:', e.toString());
-  //   }
-  // }
+  if (isDevelopment && !process.env.IS_TEST) {
+    await session.defaultSession.loadExtension(
+      'C:/Users/onaug6th/AppData/Local/Google/Chrome/User Data/Default/Extensions/ljjemllljcmogpfapbkkighbhhppjdbg/6.0.0.6_0'
+    );
+  }
   createWindow();
 });
 
