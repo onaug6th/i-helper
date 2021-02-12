@@ -34,6 +34,10 @@
             <i :class="`el-icon-${menuItem.icon}`"></i>
             <template #title>{{ menuItem.label }}</template>
           </el-menu-item>
+          <el-menu-item>
+            <i class="el-icon-setting"></i>
+            <template #title>设置</template>
+          </el-menu-item>
         </el-menu>
       </div>
       <!-- 左侧侧边栏 -->
@@ -95,11 +99,6 @@ export default defineComponent({
         label: '待办事项',
         path: 'todo',
         icon: 'date'
-      },
-      {
-        label: '设置',
-        path: 'setting',
-        icon: 'setting'
       }
     ];
 
