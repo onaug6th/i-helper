@@ -12,12 +12,14 @@ import clipboardDB from '@/dataBase/clipboard';
 import { ClipboardItem } from '../interface';
 
 interface State {
+  keyWord: string;
   clipboardList: Array<ClipboardItem>;
   isObserver: boolean;
   type: Array<string>;
 }
 
 const state: State = reactive({
+  keyWord: '',
   clipboardList: [],
   isObserver: true,
   type: ['text', 'image']
@@ -25,7 +27,10 @@ const state: State = reactive({
 
 //  列表使用的数据
 const clipboardData = computed(() => {
-  const { clipboardList, type } = state;
+  const { clipboardList, type, keyWord } = state;
+  //  关键字转小写
+  const lowerCaseKeyWord = keyWord.toLowerCase();
+
   return clipboardList.filter(item => {
     //  类型包含
     const typeInclude = type.includes(item.type);
@@ -33,6 +38,16 @@ const clipboardData = computed(() => {
     const isStar = type.includes('star') ? item.star : true;
     //  只选择收藏
     const starOnly = type.length === 1 && type.includes('star');
+    //  关键字匹配
+    const keyWordMatch = lowerCaseKeyWord
+      ? item.type === 'text'
+        ? item.value.toLowerCase().includes(lowerCaseKeyWord)
+        : false
+      : true;
+
+    if (!keyWordMatch) {
+      return false;
+    }
 
     if (starOnly) {
       return item.star;
@@ -64,6 +79,26 @@ const optionDatas = [
  */
 function disabledCheckButton(option: { value: string }) {
   return state.type.length === 1 && state.type.includes(option.value);
+}
+
+/**
+ * 解析行内容返回html
+ * @param row
+ * @returns { string }
+ */
+function rowValue(row: ClipboardItem) {
+  const { type, value } = row;
+  const { keyWord } = state;
+  if (type === 'text') {
+    if (keyWord) {
+      const style = 'style="color: #409EFF; font-size: inherit;"';
+      return value.replace(new RegExp(keyWord, 'g'), `<span ${style}>${keyWord}</span>`);
+    } else {
+      return value;
+    }
+  } else {
+    return value;
+  }
 }
 
 //  监听配置
@@ -213,6 +248,7 @@ export {
   getAllClipboardList,
   copy,
   del,
+  rowValue,
   toggleStar,
   isObserverChange,
   disabledCheckButton

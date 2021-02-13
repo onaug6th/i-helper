@@ -4,8 +4,10 @@
 
 .operate {
     padding: 10px 25px;
-    display: flex;
-    align-items: center;
+
+    > div:not(:last-child) {
+        margin-bottom: 15px
+    }
 
     /deep/ .el-checkbox-group {
         flex: 1;
@@ -22,7 +24,7 @@
 .list-row {
     display: grid;
     grid-template-columns: 77% 23%;
-    padding: 10px;
+    padding: 10px 25px;
     font-size: 13px;
     cursor: pointer;
     align-items: center;
@@ -34,9 +36,8 @@
     }
 
     &__value {
-        padding-left: 15px;
 
-        span {
+        div {
             display: inline-block;
             max-width: 230px;
             overflow: hidden;
@@ -51,5 +52,6 @@
     }
 
     &__operate {
+        text-align: right;
     }
 }

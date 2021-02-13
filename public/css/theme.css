@@ -20,3 +20,8 @@ body {
   user-select: none;
   outline: none;
 }
+
+.flex-item {
+  display: flex;
+  align-items: center;
+}
