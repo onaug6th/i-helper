@@ -59,18 +59,9 @@ const clipboardData = computed(() => {
 
 //  选择项数据
 const optionDatas = [
-  {
-    value: 'text',
-    label: '文本'
-  },
-  {
-    value: 'image',
-    label: '图片'
-  },
-  {
-    value: 'star',
-    label: '收藏'
-  }
+  { value: 'text', label: '文本' },
+  { value: 'image', label: '图片' },
+  { value: 'star', label: '收藏' }
 ];
 
 /**
@@ -89,6 +80,8 @@ function disabledCheckButton(option: { value: string }) {
 function rowValue(row: ClipboardItem) {
   const { type, value } = row;
   const { keyWord } = state;
+
+  //  文本内容时，判断是否存在关键字进行过滤
   if (type === 'text') {
     if (keyWord) {
       const style = 'style="color: #409EFF;"';
@@ -96,7 +89,9 @@ function rowValue(row: ClipboardItem) {
     } else {
       return value;
     }
-  } else {
+  }
+  //  图片内容时，直接返回base64
+  else {
     return value;
   }
 }

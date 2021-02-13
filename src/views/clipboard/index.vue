@@ -9,12 +9,13 @@
           @change="isObserverChange"
         ></el-switch>
 
-        <el-checkbox-group v-model="state.type" size="mini" title="内容筛选">
+        <el-checkbox-group v-model="state.type" size="mini">
           <el-checkbox-button
             v-for="item in optionDatas"
             :label="item.value"
             :key="item.value"
             :disabled="disabledCheckButton(item)"
+            :title="`筛选出${item.label}的内容`"
           >
             {{ item.label }}
           </el-checkbox-button>
