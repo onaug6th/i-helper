@@ -91,8 +91,8 @@ function rowValue(row: ClipboardItem) {
   const { keyWord } = state;
   if (type === 'text') {
     if (keyWord) {
-      const style = 'style="color: #409EFF; font-size: inherit;"';
-      return value.replace(new RegExp(keyWord, 'g'), `<span ${style}>${keyWord}</span>`);
+      const style = 'style="color: #409EFF;"';
+      return value.replace(new RegExp(keyWord, 'gi'), ($1: string) => `<span ${style}>${$1}</span>`);
     } else {
       return value;
     }

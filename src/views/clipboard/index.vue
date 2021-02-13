@@ -25,7 +25,7 @@
           v-model="state.keyWord"
           clearable
           size="mini"
-          placeholder="目前仅支持快速搜索文本"
+          placeholder="支持文本搜索，大小写模糊匹配"
           suffix-icon="el-icon-search"
         />
       </div>
