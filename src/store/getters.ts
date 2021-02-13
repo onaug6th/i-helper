@@ -1,6 +1,4 @@
 const getters = {
-  sidebar: (state: any) => state,
-  size: (state: any) => state,
-  device: (state: any) => state
+  menuList: (state: any) => state.app.menuList
 };
 export default getters;

@@ -1,23 +1,38 @@
 const state = {
-  device: 'desktop',
+  menuList: [
+    {
+      label: '笔记',
+      path: 'notes',
+      icon: 'edit'
+    },
+    {
+      label: '剪贴板',
+      path: 'clipboard',
+      icon: 'document'
+    },
+    {
+      label: '提醒',
+      path: 'notices',
+      icon: 'bell'
+    },
+    {
+      label: '待办事项',
+      path: 'todo',
+      icon: 'date'
+    }
+  ],
   size: 'medium'
 };
 
 const mutations = {
-  toggleDevice: (state: { device: any }, device: any) => {
-    state.device = device;
-  },
-  setSize: (state: { size: any }, size: any) => {
-    state.size = size;
+  setMenuList: (state: { menuList: any }, menuList: any) => {
+    state.menuList = menuList;
   }
 };
 
 const actions = {
-  toggleDevice({ commit }: any, device: any) {
-    commit('toggleDevice', device);
-  },
-  setSize({ commit }: any, size: any) {
-    commit('setSize', size);
+  setMenuList({ commit }: any, menuList: any) {
+    commit('setMenuList', menuList);
   }
 };
 
