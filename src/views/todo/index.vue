@@ -1,14 +1,18 @@
 <template>
   <div>
-    待办事项
+    <Todo-list />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import TodoList from './components/todoList/index.vue';
 
 export default defineComponent({
+  components: {
+    TodoList
+  },
   setup() {
     const isCollapse = ref(true);
     const routeName = ref(useRoute().name);
