@@ -10,18 +10,18 @@ import clipboardObserver from '@/utils/clipboardObserver';
 import clipboardDB from '@/dataBase/clipboard';
 //  接口
 import { ClipboardItem } from '../interface';
-
+//  store配置
+import clipboardConfig from '@/store/clipboard.ts';
 interface State {
   keyWord: string;
   clipboardList: Array<ClipboardItem>;
-  isObserver: boolean;
   type: Array<string>;
 }
 
+//  state
 const state: State = reactive({
   keyWord: '',
   clipboardList: [],
-  isObserver: true,
   type: ['text', 'image']
 });
 
@@ -96,25 +96,38 @@ function rowValue(row: ClipboardItem) {
   }
 }
 
-//  监听配置
-const observerConfig = {
-  textChange(value: string) {
-    clipboardListAdd(value, 'text');
-  },
-  imageChange(value: string) {
-    clipboardListAdd(value, 'image');
-  }
-};
-
 //  观察剪贴板变化
-const observerItem = clipboardObserver(observerConfig);
+let observerItem: any;
+
+/**
+ * 配置监听方法
+ */
+function setClipboardObserver() {
+  observerItem = clipboardObserver({
+    textChange(value: string) {
+      clipboardListAdd(value, 'text');
+    },
+    imageChange(value: string) {
+      clipboardListAdd(value, 'image');
+    }
+  });
+}
+
+if (clipboardConfig.isObserver) {
+  setClipboardObserver();
+}
 
 /**
  * 是否监听变化
  * @param value
  */
 function isObserverChange(value: boolean) {
+  //  未曾实例化
+  if (!observerItem && value) {
+    return setClipboardObserver();
+  }
   value ? observerItem.start() : observerItem.stop();
+  clipboardConfig.isObserver = value;
 }
 
 //  从列表中复制出的内容
@@ -246,5 +259,6 @@ export {
   rowValue,
   toggleStar,
   isObserverChange,
+  clipboardConfig,
   disabledCheckButton
 };

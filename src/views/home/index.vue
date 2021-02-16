@@ -65,6 +65,7 @@
 import { defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Header from '@/components/header/index.vue';
+import appConfig from '@/store/app';
 
 export default defineComponent({
   components: {
@@ -79,28 +80,7 @@ export default defineComponent({
       label: string;
       path: string;
       icon: string;
-    }> = [
-      {
-        label: '笔记',
-        path: 'notes',
-        icon: 'edit'
-      },
-      {
-        label: '剪贴板',
-        path: 'clipboard',
-        icon: 'document'
-      },
-      {
-        label: '提醒',
-        path: 'notices',
-        icon: 'bell'
-      },
-      {
-        label: '待办事项',
-        path: 'todo',
-        icon: 'date'
-      }
-    ];
+    }> = appConfig.menuList;
 
     /**
      * 跳转路由
