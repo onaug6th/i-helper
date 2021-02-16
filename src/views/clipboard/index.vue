@@ -3,9 +3,9 @@
     <div class="operate">
       <div class="flex-item">
         <el-switch
-          v-model="state.isObserver"
+          v-model="clipboardConfig.isObserver"
           active-text="启用"
-          :title="`点击${state.isObserver ? '关闭' : '启用'}剪贴板监听`"
+          :title="`点击${clipboardConfig.isObserver ? '关闭' : '启用'}剪贴板监听`"
           @change="isObserverChange"
         ></el-switch>
 
@@ -67,14 +67,15 @@ import { defineComponent, onBeforeMount } from 'vue';
 //  剪贴板hooks
 import {
   state,
-  clipboardData,
   optionDatas,
+  clipboardData,
   getAllClipboardList,
+  toggleStar,
   copy,
   del,
   rowValue,
-  toggleStar,
   isObserverChange,
+  clipboardConfig,
   disabledCheckButton
 } from './hooks/clipboard';
 
@@ -93,6 +94,7 @@ export default defineComponent({
       del,
       rowValue,
       isObserverChange,
+      clipboardConfig,
       disabledCheckButton
     };
   }

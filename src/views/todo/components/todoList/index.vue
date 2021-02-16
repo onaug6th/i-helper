@@ -93,7 +93,7 @@ export default {
     return {
       visibility: 'all',
       filterList,
-      todos: JSON.parse(window.localStorage.getItem(STORAGE_KEY)) || []
+      todos: JSON.parse(window.localStorage.getItem(STORAGE_KEY)) || [{ text: '学习', done: false }]
     };
   },
   computed: {
