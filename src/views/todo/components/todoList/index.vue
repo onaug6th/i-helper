@@ -1,11 +1,14 @@
 <template>
   <section class="todoapp">
-    <!-- header -->
+    <!-- 头部 -->
     <header class="header">
-      <input class="new-todo" autocomplete="off" placeholder="输入新待办" @keyup.enter="addTodo" />
+      <input class="new-todo" autocomplete="off" placeholder="添加新待办…" @keyup.enter="addTodo" />
     </header>
-    <!-- main section -->
+    <!-- 头部 -->
+
+    <!-- 中间 -->
     <section v-show="todos.length" class="main">
+      <!-- 切换选择全部 -->
       <input
         id="toggle-all"
         :checked="allChecked"
@@ -14,6 +17,9 @@
         @change="toggleAll({ done: !allChecked })"
       />
       <label for="toggle-all" />
+      <!-- 切换选择全部 -->
+
+      <!-- 列表区域 -->
       <ul class="todo-list">
         <todo
           v-for="(todo, index) in filteredTodos"
@@ -24,8 +30,11 @@
           @delete-todo="deleteTodo"
         />
       </ul>
+      <!-- 列表区域 -->
     </section>
-    <!-- footer -->
+    <!-- 中间 -->
+
+    <!-- 底部 -->
     <footer v-show="todos.length" class="footer">
       <span class="todo-count">
         <strong>
@@ -33,17 +42,23 @@
         </strong>
         待办未完成
       </span>
-      <ul class="filters">
-        <li v-for="item in filterList" :key="item.key">
-          <a :class="{ selected: visibility === item.key }" @click.prevent="visibility = item.key">
-            {{ item.label }}
-          </a>
-        </li>
-      </ul>
-      <button class="clear-completed" v-show="todos.length > remaining" @click="clearCompleted">
-        清空已完成的事项
-      </button>
+      <div class="footer-right">
+        <ul class="filters">
+          <li v-for="item in filterList" :key="item.key">
+            <a :class="{ selected: visibility === item.key }" @click.prevent="visibility = item.key">
+              {{ item.label }}
+            </a>
+          </li>
+        </ul>
+
+        <div class="operate">
+          <button class="clear-completed" v-show="todos.length > remaining" @click="clearCompleted">
+            清空已完成
+          </button>
+        </div>
+      </div>
     </footer>
+    <!-- 底部 -->
   </section>
 </template>
 

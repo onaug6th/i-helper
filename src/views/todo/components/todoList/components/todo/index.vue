@@ -1,24 +1,35 @@
 <template>
   <li :class="{ completed: todo.done, editing: editing }" class="todo">
-    <div class="view">
-      <input :checked="todo.done" class="toggle" type="checkbox" @change="toggleTodo(todo)" />
-      <label @dblclick="editing = true" v-text="todo.text" />
-      <button class="destroy" @click="deleteTodo(todo)" />
-    </div>
     <input
-      v-show="editing"
+      v-if="editing"
+      v-focus="editing"
       class="edit"
       :value="todo.text"
       @keyup.enter="doneEdit"
       @keyup.esc="cancelEdit"
       @blur="doneEdit"
     />
+    <div v-else class="view">
+      <input :checked="todo.done" class="toggle" type="checkbox" @change="toggleTodo(todo)" />
+      <label @click="editing = true" v-text="todo.text" />
+      <button class="destroy" @click="deleteTodo(todo)" />
+    </div>
   </li>
 </template>
 
 <script>
 export default {
   name: 'Todo',
+  directives: {
+    focus(el, binding) {
+      const { value, instance } = binding;
+      if (value) {
+        instance.$nextTick(() => {
+          el.focus();
+        });
+      }
+    }
+  },
   props: {
     todo: {
       type: Object,
@@ -64,3 +75,7 @@ export default {
   }
 };
 </script>
+
+<style lang="less" scoped>
+@import './index.less';
+</style>
