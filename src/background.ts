@@ -4,7 +4,7 @@
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 
-import { browserWindowOption, winURL } from './config';
+import { browserWindowOptions, winURL } from './config/browserWindow';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -19,8 +19,11 @@ protocol.registerSchemesAsPrivileged([
   }
 ]);
 
+/**
+ * 打开主界面
+ */
 function createWindow() {
-  win = new BrowserWindow(browserWindowOption());
+  win = new BrowserWindow(browserWindowOptions.bootstrap.option);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
@@ -31,7 +34,6 @@ function createWindow() {
     createProtocol('app');
     win.loadURL(winURL);
   }
-  // win.webContents.openDevTools();
 
   win.on('closed', () => {
     win = null;
@@ -52,9 +54,10 @@ app.on('activate', () => {
 
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
-    await session.defaultSession.loadExtension(
-      'C:/Users/onaug6th/AppData/Local/Google/Chrome/User Data/Default/Extensions/ljjemllljcmogpfapbkkighbhhppjdbg/6.0.0.6_0'
-    );
+    const path =
+      'C:/Users/onaug6th/AppData/Local/Google/Chrome/User Data/Default/Extensions/ljjemllljcmogpfapbkkighbhhppjdbg/6.0.0.6_0';
+    //  加载vue开发者工具
+    await session.defaultSession.loadExtension(path);
   }
   createWindow();
 });

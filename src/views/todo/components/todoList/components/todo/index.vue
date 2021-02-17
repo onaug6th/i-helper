@@ -11,7 +11,7 @@
     />
     <div v-else class="view">
       <input :checked="todo.done" class="toggle" type="checkbox" @change="toggleTodo(todo)" />
-      <label @click="editing = true" v-text="todo.text" />
+      <label v-text="todo.text" @click="editing = true" />
       <button class="destroy" @click="deleteTodo(todo)" />
     </div>
   </li>
