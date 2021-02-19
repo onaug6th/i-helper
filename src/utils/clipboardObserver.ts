@@ -6,7 +6,7 @@ import { clipboard, NativeImage } from 'electron';
  * @param {*} afterText
  */
 function isDiffText(beforeText: string, afterText: string) {
-  return beforeText && afterText && beforeText !== afterText;
+  return beforeText !== afterText;
 }
 
 /**
@@ -53,6 +53,7 @@ function clipboardObserver(option = {}) {
       beforeImage = clipboard.readImage();
     }
   }
+  // const filePath = clipboard.readBuffer('FileNameW').toString('ucs2').replace(`\u0000`, '');
 
   if (textChange || imageChange) {
     setClipboardDefaultValue();
