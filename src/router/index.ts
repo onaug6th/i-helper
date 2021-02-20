@@ -18,14 +18,6 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: '/note',
-        name: 'note',
-        component: () => import('../views/note/index.vue'),
-        meta: {
-          title: '便笺'
-        }
-      },
-      {
         path: '/clipboard',
         name: 'clipboard',
         component: () => import('../views/clipboard/index.vue'),
@@ -58,6 +50,15 @@ const routes: Array<RouteRecordRaw> = [
         }
       }
     ]
+  },
+
+  {
+    path: '/note',
+    name: 'note',
+    component: () => import('../views/note/index.vue'),
+    meta: {
+      title: '便笺'
+    }
   }
 ];
 

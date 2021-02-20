@@ -1,16 +1,17 @@
 // 创建窗口
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, remote } from 'electron';
 import { browserWindowOptions, winURL } from '@/config/browserWindow';
 
-export const createBrowserWindow = (type = 'bootstrap', url = '/'): BrowserWindow => {
+export const createBrowserWindow = (type = 'bootstrap'): BrowserWindow => {
   let window: BrowserWindow | null;
-  window = new BrowserWindow(browserWindowOptions[type].option);
+  const { path, option } = browserWindowOptions[type];
+  window = new remote.BrowserWindow(option);
 
   if (process.env.NODE_ENV === 'development') {
     window.webContents.openDevTools();
   }
 
-  window.loadURL(`${winURL}/#${url}`);
+  window.loadURL(`${winURL}/#${path}`);
 
   window.on('closed', () => {
     window = null;
