@@ -52,5 +52,12 @@ module.exports = {
       // 引入全局样式变量
       patterns: [path.resolve(__dirname, 'src/less/index.less')]
     }
+  },
+  devServer: {
+    port: 9527,
+    overlay: {
+      warnings: true,
+      errors: true
+    }
   }
 };
