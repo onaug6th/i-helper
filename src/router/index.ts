@@ -53,9 +53,9 @@ const routes: Array<RouteRecordRaw> = [
   },
 
   {
-    path: '/note',
-    name: 'note',
-    component: () => import('../views/note/index.vue'),
+    path: '/editor',
+    name: 'editor',
+    component: () => import('../views/editor/index.vue'),
     meta: {
       title: '便笺'
     }
