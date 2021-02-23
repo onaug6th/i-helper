@@ -5,7 +5,6 @@
     class="editor"
     contenteditable
     spellcheck="false"
-    placeholder="记笔记..."
     :class="className"
     @paste.prevent="paste"
     @input="contentChange"
@@ -84,6 +83,8 @@ export default defineComponent({
 
     /**
      * 按钮点击事件处理
+     * @param e
+     * @param name
      */
     function editorIconHandle (e: Event, name: string) {
       e.preventDefault();
@@ -92,6 +93,7 @@ export default defineComponent({
 
     /**
      * 内容改变回调
+     * @param e
      */
     const contentChange = utils.debounce((e: InputEvent) => {
       const editorHtml = (e.target as Element).innerHTML;
@@ -100,6 +102,7 @@ export default defineComponent({
 
     /**
      * 粘贴回调
+     * @param e
      */
     function paste (e: ClipboardEvent) {
       const pasteText = e.clipboardData?.getData('text/plain');
