@@ -4,17 +4,16 @@ export interface IRightMenuHandle {
   close: () => void
 }
 
+export interface IRightMenuListItem {
+  text: string;
+  icon: string;
+  handler(): void;
+}
+
 export type IRightMenuOptions = {
-  customClass?: string
-  center?: boolean
-  dangerouslyUseHTMLString?: boolean // default false
-  duration?: number // default 3000
-  iconClass?: string
-  id?: string
-  message?: string | VNode
-  offset?: number // defaults 20
+  event: MouseEvent;
+  list: Array<IRightMenuListItem>;
   onClose?: (vm: VNode) => void
-  showClose?: boolean // default false
   zIndex?: number
 }
 
