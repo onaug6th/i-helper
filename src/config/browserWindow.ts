@@ -12,25 +12,19 @@ const commonOptions = {
 
 const browserWindowOptions = {
   //  基础窗口配置
-  bootstrap: {
-    path: '',
-    option: {
-      ...commonOptions,
-      minWidth: 430,
-      minHeight: 330,
-      width: 430,
-      height: 330
-    }
+  main: {
+    ...commonOptions,
+    minWidth: 430,
+    minHeight: 330,
+    width: 430,
+    height: 330
   },
   //  便笺窗口配置
   note: {
-    path: 'note',
-    option: {
-      ...commonOptions,
-      width: 290,
-      height: 350,
-      minWidth: 250
-    }
+    ...commonOptions,
+    width: 290,
+    height: 350,
+    minWidth: 250
   }
 };
 
