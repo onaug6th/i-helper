@@ -1,24 +1,24 @@
-import type { VNode } from 'vue'
+import { VNode } from 'vue';
 
 export interface IRightMenuHandle {
-  close: () => void
+  close: () => void;
 }
 
 export interface IRightMenuListItem {
   text: string;
-  icon: string;
   handler(): void;
+  icon?: string;
 }
 
 export type IRightMenuOptions = {
   event: MouseEvent;
   list: Array<IRightMenuListItem>;
-  onClose?: (vm: VNode) => void
-  zIndex?: number
-}
+  onClose?: (vm: VNode) => void;
+  zIndex?: number;
+};
 
-export type IRightMenuParams = IRightMenuOptions
+export type IRightMenuParams = IRightMenuOptions;
 
 export interface IRightMenu {
-  (options?: IRightMenuParams) : IRightMenuHandle
+  (options?: IRightMenuParams): IRightMenuHandle;
 }
