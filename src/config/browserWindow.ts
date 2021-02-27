@@ -12,7 +12,7 @@ const commonOptions = {
 
 const browserWindowOptions = {
   //  基础窗口配置
-  main: {
+  home: {
     ...commonOptions,
     minWidth: 430,
     minHeight: 330,

@@ -3,7 +3,7 @@
 
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
-import { createMainBrowserWindow } from '@/utils/browserWindow';
+import { createHomeBrowserWindow } from '@/utils/browserWindow';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -22,7 +22,7 @@ protocol.registerSchemesAsPrivileged([
  * 打开主界面
  */
 function createWindow() {
-  win = createMainBrowserWindow();
+  win = createHomeBrowserWindow();
 
   if (!process.env.WEBPACK_DEV_SERVER_URL) {
     createProtocol('app');

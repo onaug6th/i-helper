@@ -3,11 +3,21 @@ import { BrowserWindow, remote } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/config/browserWindow';
 
-export const createBrowserWindow = (type = 'main', path: string): BrowserWindow => {
+interface CreateBrowserWindowParams {
+  type: string;
+  path?: string;
+  isRenderRemote?: boolean;
+}
+
+export const createBrowserWindow = ({
+  type = 'home',
+  path = '',
+  isRenderRemote = false
+}: CreateBrowserWindowParams): BrowserWindow => {
   let window: BrowserWindow | null;
   const option = browserWindowOptions[type];
-
-  const BrowserFn = type === 'main' ? BrowserWindow : remote.BrowserWindow;
+  //  @TODO: August - 主线程和渲染进程打开窗口使用的方法不同
+  const BrowserFn = isRenderRemote ? remote.BrowserWindow : BrowserWindow;
   window = new BrowserFn(option);
 
   if (process.env.NODE_ENV === 'development') {
@@ -25,8 +35,8 @@ export const createBrowserWindow = (type = 'main', path: string): BrowserWindow 
 /**
  * 打开主界面窗口
  */
-export const createMainBrowserWindow = (): BrowserWindow => {
-  return createBrowserWindow('main', '');
+export const createHomeBrowserWindow = (): BrowserWindow => {
+  return createBrowserWindow({ type: 'home', isRenderRemote: true });
 };
 
 /**
@@ -34,7 +44,7 @@ export const createMainBrowserWindow = (): BrowserWindow => {
  * @param uid 便笺的uid
  */
 export const createNoteBrowserWindow = (uid?: string): BrowserWindow => {
-  return createBrowserWindow('note', `note/${uid}`);
+  return createBrowserWindow({ type: 'note', path: `note/${uid}`, isRenderRemote: true });
 };
 
 /**
