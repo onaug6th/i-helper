@@ -22,7 +22,7 @@ protocol.registerSchemesAsPrivileged([
  * 打开主界面
  */
 function createWindow() {
-  win = new BrowserWindow(browserWindowOptions.bootstrap.option);
+  win = new BrowserWindow(browserWindowOptions.bootstrap);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);

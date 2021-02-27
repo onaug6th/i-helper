@@ -8,4 +8,6 @@
 
 [typescript](https://www.tslang.cn/docs/handbook/interfaces.html)
 
+[typescript-compiler-options](https://www.tslang.cn/docs/handbook/compiler-options.html)
+
 [nedb](https://www.npmjs.com/package/nedb)
