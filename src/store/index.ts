@@ -1,7 +1,22 @@
-import app from './app';
-import clipboard from './clipboard';
+import { createStore } from 'vuex';
+import getters from './getters';
 
-export default {
-  app,
-  clipboard
-};
+// https://webpack.js.org/guides/dependency-management/#requirecontext
+const modulesFiles = require.context('./modules', true, /\.ts$/);
+
+// you do not need `import app from './modules/app'`
+// it will auto require all vuex module from modules file
+const modules = modulesFiles.keys().reduce((modules: any, modulePath) => {
+  // set './app.js' => 'app'
+  const moduleName = modulePath.replace(/^\.\/(.*)\.\w+$/, '$1');
+  const value = modulesFiles(modulePath);
+  modules[moduleName] = value.default;
+  return modules;
+}, {});
+
+const store = createStore({
+  modules,
+  getters
+});
+
+export default store;
