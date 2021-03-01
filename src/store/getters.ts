@@ -1,4 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const getters = {
-  menuList: (state: any) => state.app.menuList
+  windowId: (state: any) => state.app.windowInfo.windowId
 };
 export default getters;

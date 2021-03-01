@@ -1,38 +1,17 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const state = {
-  menuList: [
-    {
-      label: '笔记',
-      path: 'notes',
-      icon: 'edit'
-    },
-    {
-      label: '剪贴板',
-      path: 'clipboard',
-      icon: 'document'
-    },
-    {
-      label: '提醒',
-      path: 'notices',
-      icon: 'bell'
-    },
-    {
-      label: '待办事项',
-      path: 'todo',
-      icon: 'date'
-    }
-  ],
-  size: 'medium'
+  windowInfo: {}
 };
 
 const mutations = {
-  setMenuList: (state: { menuList: any }, menuList: any) => {
-    state.menuList = menuList;
+  setWindowInfo: (state: { windowInfo: any }, windowInfo: any) => {
+    state.windowInfo = windowInfo;
   }
 };
 
 const actions = {
-  setMenuList({ commit }: any, menuList: any) {
-    commit('setMenuList', menuList);
+  setWindowInfo({ commit }: any, windowInfo: any) {
+    commit('setWindowInfo', windowInfo);
   }
 };
 
