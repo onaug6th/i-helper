@@ -1,30 +1,32 @@
 //  创建窗口
-import { BrowserWindow, remote } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/config/browserWindow';
 
 interface CreateBrowserWindowParams {
   type: string;
   path?: string;
-  isRenderRemote?: boolean;
 }
 
-export const createBrowserWindow = ({
-  type = 'home',
-  path = '',
-  isRenderRemote = false
-}: CreateBrowserWindowParams): BrowserWindow => {
+/**
+ * 创建浏览器窗口
+ * @param param0 窗口配置
+ */
+export const createBrowserWindow = ({ type = 'home', path = '' }: CreateBrowserWindowParams): BrowserWindow => {
   let window: BrowserWindow | null;
   const option = browserWindowOptions[type];
-  //  @TODO: August - 主线程和渲染进程打开窗口使用的方法不同
-  const BrowserFn = isRenderRemote ? remote.BrowserWindow : BrowserWindow;
-  window = new BrowserFn(option);
+
+  window = new BrowserWindow(option);
 
   if (process.env.NODE_ENV === 'development') {
     window.webContents.openDevTools();
   }
 
   window.loadURL(`${winURL}/#/${path}`);
+
+  ipcMain.handleOnce('get-window-info', async () => {
+    return { windowId: window.id };
+  });
 
   window.on('closed', () => {
     window = null;
@@ -36,7 +38,7 @@ export const createBrowserWindow = ({
  * 打开主界面窗口
  */
 export const createHomeBrowserWindow = (): BrowserWindow => {
-  return createBrowserWindow({ type: 'home', isRenderRemote: true });
+  return createBrowserWindow({ type: 'home' });
 };
 
 /**
@@ -44,12 +46,15 @@ export const createHomeBrowserWindow = (): BrowserWindow => {
  * @param uid 便笺的uid
  */
 export const createNoteBrowserWindow = (uid?: string): BrowserWindow => {
-  return createBrowserWindow({ type: 'note', path: `note/${uid}`, isRenderRemote: true });
+  return createBrowserWindow({ type: 'note', path: `note/${uid}` });
 };
 
 /**
  * 关闭窗口
+ * @param windowId 窗体ID
  */
-export const closeWindow = (): void => {
-  remote.getCurrentWindow().close();
+export const closeWindow = (windowId: number): void => {
+  let window = BrowserWindow.fromId(windowId);
+  window.destroy();
+  window = null;
 };
