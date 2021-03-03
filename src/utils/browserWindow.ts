@@ -8,15 +8,26 @@ interface CreateBrowserWindowParams {
   path?: string;
 }
 
+const windows: any = {};
+
 /**
  * 创建浏览器窗口
  * @param param0 窗口配置
  */
 export const createBrowserWindow = ({ type = 'home', path = '' }: CreateBrowserWindowParams): BrowserWindow => {
+  const windowName = `${type}${path}`;
+  //  存在浏览器
+  if (windows[windowName]) {
+    const window = windows[windowName];
+    window.show();
+    return window;
+  }
+
   let window: BrowserWindow | null;
   const option = browserWindowOptions[type];
 
   window = new BrowserWindow(option);
+  windows[windowName] = window;
 
   if (process.env.NODE_ENV === 'development') {
     window.webContents.openDevTools();
@@ -54,7 +65,11 @@ export const createNoteBrowserWindow = (uid?: string): BrowserWindow => {
  * @param windowId 窗体ID
  */
 export const closeWindow = (windowId: number): void => {
-  let window = BrowserWindow.fromId(windowId);
-  window.destroy();
-  window = null;
+  Object.keys(windows).some((i: string) => {
+    const window = windows[i];
+    if (window.id === windowId) {
+      windows[i] = null;
+      window.destroy();
+    }
+  });
 };
