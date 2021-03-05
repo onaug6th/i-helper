@@ -11,7 +11,7 @@ import clipboardDB from '@/dataBase/clipboard';
 //  接口
 import { ClipboardItem } from '../interface';
 //  store配置
-import clipboardConfig from '@/store/clipboard.ts';
+import clipboardConfig from '@/storage/clipboard.ts';
 interface State {
   keyWord: string;
   clipboardList: Array<ClipboardItem>;
@@ -68,7 +68,7 @@ const optionDatas = [
  * 禁用选择项
  * @param option
  */
-function disabledCheckButton(option: { value: string }) {
+function disabledCheckButton(option: { value: string }): boolean {
   return state.type.length === 1 && state.type.includes(option.value);
 }
 
@@ -77,7 +77,7 @@ function disabledCheckButton(option: { value: string }) {
  * @param row
  * @returns { string }
  */
-function rowValue(row: ClipboardItem) {
+function rowValue(row: ClipboardItem): string {
   const { type, value } = row;
   const { keyWord } = state;
 
@@ -121,10 +121,11 @@ if (clipboardConfig.isObserver) {
  * 是否监听变化
  * @param value
  */
-function isObserverChange(value: boolean) {
+function isObserverChange(value: boolean): void {
   //  未曾实例化
   if (!observerItem && value) {
-    return setClipboardObserver();
+    setClipboardObserver();
+    return;
   }
   value ? observerItem.start() : observerItem.stop();
   clipboardConfig.isObserver = value;
@@ -136,7 +137,7 @@ let copyFromList: string;
 /**
  * 获取剪贴板记录列表
  */
-function getAllClipboardList() {
+function getAllClipboardList(): void {
   clipboardDB._db
     ?.find({})
     .sort({ createdAt: -1 })
@@ -195,6 +196,7 @@ async function removeClipboardList(query: any) {
  * 点击删除按钮
  * @param row
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function del(row: any, rowIndex: number) {
   state.clipboardList.splice(rowIndex, 1);
   removeClipboardList({ _id: row._id });
@@ -204,7 +206,7 @@ function del(row: any, rowIndex: number) {
  * 点击行复制
  * @param row
  */
-function copy(row: ClipboardItem) {
+function copy(row: ClipboardItem): void {
   const { value, type } = row;
   if (type === 'text') {
     clipboard.writeText(value);
@@ -222,6 +224,7 @@ function copy(row: ClipboardItem) {
  * 切换收藏
  * @param row
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function toggleStar(row: any) {
   row.star = !row.star;
   updateClipboardList(
