@@ -1,6 +1,6 @@
 <template>
   <div class="right-menu" ref="rightMenu" v-clickoutside="close">
-    <div v-for="(menuItem, menuIndex) in list" class="menu-item" :key="menuIndex" @click="menuClick">
+    <div v-for="(menuItem, menuIndex) in list" class="menu-item" :key="menuIndex" @click="menuClick(menuItem)">
       <span>{{ menuItem.text }}</span>
     </div>
   </div>
@@ -46,9 +46,9 @@ export default defineComponent({
       menu.style.top = '-9999px';
 
       nextTick(() => {
-        //  名片宽度
+        //  菜单宽度
         let menuWidth = menu.offsetWidth;
-        //  名片高度
+        //  菜单高度
         let menuHeight = menu.offsetHeight;
         //  容器宽度，减去内边距20像素
         let clientWidth = document.documentElement.clientWidth - 20;
