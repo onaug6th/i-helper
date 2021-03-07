@@ -17,11 +17,11 @@ import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 
 export default defineComponent({
+  props: {
+    beforeClose: Function
+  },
   emits: ['option-click', 'close'],
   setup(props, { emit }) {
-    props;
-    emit;
-
     const store = useStore();
     const { windowId } = store.getters;
 
@@ -32,9 +32,15 @@ export default defineComponent({
       next();
     });
 
-    const close = () => {
+    async function close() {
+      emit('close');
+      const { beforeClose } = props;
+      if (beforeClose) {
+        await beforeClose();
+      }
+
       ipcRenderer.send('browser-window-close', windowId);
-    };
+    }
 
     return {
       currentRouteName,
