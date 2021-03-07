@@ -11,7 +11,7 @@ import clipboardDB from '@/dataBase/clipboard';
 //  接口
 import { ClipboardItem } from '../interface';
 //  store配置
-import clipboardConfig from '@/storage/clipboard.ts';
+import clipboardConfig from '@/storage/clipboard';
 interface State {
   keyWord: string;
   clipboardList: Array<ClipboardItem>;
