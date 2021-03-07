@@ -18,6 +18,8 @@
 </template>
 
 <script>
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 export default {
   name: 'Todo',
   directives: {

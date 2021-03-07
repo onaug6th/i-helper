@@ -63,6 +63,7 @@
 </template>
 
 <script>
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import Todo from './components/todo/index.vue';
 
 const STORAGE_KEY = 'todos';
