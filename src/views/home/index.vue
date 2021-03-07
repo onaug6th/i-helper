@@ -65,7 +65,7 @@
 import { defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Header from '@/components/header/index.vue';
-import appConfig from '@/store/app';
+import appConfig from '@/storage/app';
 
 export default defineComponent({
   components: {
