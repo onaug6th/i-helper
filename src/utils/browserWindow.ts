@@ -100,3 +100,12 @@ export const closeWindow = (windowId: number): void => {
   delete windows[name];
   win.destroy();
 };
+
+/**
+ * 隐藏窗口
+ * @param windowId 窗体ID
+ */
+export const hideWindow = (windowId: number): void => {
+  const { win } = findWindowById(windowId);
+  win.hide();
+};
