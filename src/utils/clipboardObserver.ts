@@ -6,7 +6,7 @@ import { clipboard, NativeImage } from 'electron';
  * @param {*} afterText
  */
 function isDiffText(beforeText: string, afterText: string) {
-  return beforeText !== afterText;
+  return afterText && beforeText !== afterText;
 }
 
 /**
