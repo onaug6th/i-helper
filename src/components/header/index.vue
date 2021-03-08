@@ -3,7 +3,7 @@
     <div class="header-left"></div>
     <div class="header-center"></div>
     <div class="header-right">
-      <button class="icon flex-center close-window" @click="closeWindow" title="关闭">
+      <button class="icon flex-center close-window" @click="close" title="关闭">
         <i class="iconfont flex-center icon-close"></i>
       </button>
     </div>
@@ -11,14 +11,19 @@
 </template>
 
 <script lang="ts">
+import { ipcRenderer } from 'electron';
 import { defineComponent, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default defineComponent({
+  props: {
+    beforeClose: Function
+  },
   emits: ['option-click', 'close'],
   setup(props, { emit }) {
-    props;
-    emit;
+    const store = useStore();
+    const { windowId } = store.getters;
 
     const currentRouteName = ref(useRoute().name);
 
@@ -27,13 +32,19 @@ export default defineComponent({
       next();
     });
 
-    const closeWindow = () => {
-      console.info(123);
-    };
+    async function close() {
+      emit('close');
+      const { beforeClose } = props;
+      if (beforeClose) {
+        await beforeClose();
+      }
+
+      ipcRenderer.send('browser-window-close', windowId);
+    }
 
     return {
       currentRouteName,
-      closeWindow
+      close
     };
   }
 });

@@ -4,6 +4,7 @@
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { createHomeBrowserWindow } from '@/utils/browserWindow';
+import './main/ipcEvent';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -44,7 +45,7 @@ app.on('activate', () => {
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     const path =
-      'C:/Users/onaug6th/AppData/Local/Google/Chrome/User Data/Default/Extensions/ljjemllljcmogpfapbkkighbhhppjdbg/6.0.0.6_0';
+      'C:/Users/onaug6th/AppData/Local/Google/Chrome/User Data/Default/Extensions/ljjemllljcmogpfapbkkighbhhppjdbg/6.0.0.7_0';
     //  加载vue开发者工具
     await session.defaultSession.loadExtension(path);
   }

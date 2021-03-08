@@ -32,7 +32,13 @@ interface Options {
  * 传递配置，观察需要变化的剪贴板内容
  * @param {*} option
  */
-function clipboardObserver(option = {}) {
+function clipboardObserver(
+  option = {}
+): {
+  start(): void;
+  stop(): void;
+  destroy(): void;
+} {
   const options: Options = Object.assign({}, DEFAULT_OPTIONS, option);
   const { duration, textChange, imageChange } = options;
   let timer: any;
