@@ -1,6 +1,6 @@
 //  创建窗口
 import { ipcMain } from 'electron';
-import { closeWindow, createNoteBrowserWindow } from '@/utils/browserWindow';
+import { closeWindow, createNoteBrowserWindow, hideWindow } from '@/utils/browserWindow';
 import { findWindowById } from '@/utils/browserWindow';
 
 //  打开browserWindow
@@ -15,6 +15,13 @@ ipcMain.on('browser-window-open', (event, result) => {
 ipcMain.on('browser-window-close', (event, windowId) => {
   if (windowId) {
     closeWindow(windowId);
+  }
+});
+
+//  隐藏browserWindow
+ipcMain.on('browser-window-hide', (event, windowId) => {
+  if (windowId) {
+    hideWindow(windowId);
   }
 });
 
