@@ -1,6 +1,7 @@
 import { app, Menu, MenuItem, Tray } from 'electron';
 import path from 'path';
 import { windows } from '@/utils/browserWindow';
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let tray = null;
 
@@ -14,10 +15,12 @@ const menus: Array<MenuItem> = [
 ];
 
 app.on('ready', () => {
-  tray = new Tray(path.join(process.cwd(), 'public', 'favicon.ico'));
+  tray = new Tray(
+    isDevelopment ? path.join(process.cwd(), 'public', 'favicon.ico') : path.join(__dirname, 'favicon.ico')
+  );
   const contextMenu = Menu.buildFromTemplate(menus);
   tray.setContextMenu(contextMenu);
-
+  tray.setToolTip('i-helper');
   tray.on('click', () => {
     const win = windows.home;
     win.show();
