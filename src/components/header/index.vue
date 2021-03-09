@@ -38,8 +38,10 @@ export default defineComponent({
       if (beforeClose) {
         await beforeClose();
       }
-
-      ipcRenderer.send('browser-window-close', windowId);
+      if (windowId) {
+        const eventName = windowId === 1 ? 'browser-window-hide' : 'browser-window-close';
+        ipcRenderer.send(eventName, windowId);
+      }
     }
 
     return {
