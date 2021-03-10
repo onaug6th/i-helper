@@ -22,9 +22,8 @@ export default defineComponent({
     let uid;
     const editContent = ref('');
     const route = useRoute();
-    const mainWindiwId = 1;
     const store = useStore();
-    const { windowId } = store.getters;
+    const { windowId, mainWindowId } = store.getters;
 
     onBeforeMount(() => {
       initEditorContent();
@@ -76,7 +75,7 @@ export default defineComponent({
         .then(() => {
           //  通知主面板更新便笺内容
           ipcRenderer.send('browser-window-communication', {
-            windowId: mainWindiwId,
+            windowId: mainWindowId,
             params: {
               uid,
               content
@@ -98,7 +97,7 @@ export default defineComponent({
 
         //  通知主面板更新便笺内容
         ipcRenderer.send('browser-window-communication', {
-          windowId: mainWindiwId,
+          windowId: mainWindowId,
           params: {
             uid
           },

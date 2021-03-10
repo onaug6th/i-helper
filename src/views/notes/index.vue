@@ -13,7 +13,7 @@
     >
       <div>
         <div class="note-item__content" v-html="note.content || '新便笺'"></div>
-        <div class="note-item__date">{{ moment(note.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}</div>
+        <div class="note-item__date">{{ dayjs(note.updatedAt).format('YYYY-MM-DD hh:mm:ss') }}</div>
       </div>
     </el-card>
   </div>
@@ -24,7 +24,7 @@ import { defineComponent, ref, onBeforeMount, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
 import { uuid } from '@/utils';
-import moment from 'moment';
+import dayjs from 'dayjs';
 //  便笺数据库
 import notesDB from '@/dataBase/note';
 import RightMenu from '@/components/rightMenu/src/rightMenu';
@@ -150,7 +150,7 @@ export default defineComponent({
       routeName,
       addNote,
       openNote,
-      moment,
+      dayjs,
       contextMenu
     };
   }

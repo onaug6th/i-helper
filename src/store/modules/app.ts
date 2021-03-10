@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const state = {
+  //  主面板windowId
+  mainWindowId: 1,
+  //  当前窗口信息
   windowInfo: {}
 };
 

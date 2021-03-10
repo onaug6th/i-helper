@@ -1,0 +1,39 @@
+@iconSize: 40px;
+
+.icon {
+  width: @iconSize;
+  height: @iconSize;
+  min-width: @iconSize;
+  min-height: @iconSize;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+  a {
+    color: initial;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    position: relative;
+    z-index: 1;
+  }
+  .iconfont {
+    width: 22px;
+    position: relative;
+  }
+  &:hover {
+    &::before {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+}

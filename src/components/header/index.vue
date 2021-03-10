@@ -20,7 +20,7 @@ export default defineComponent({
   props: {
     beforeClose: Function
   },
-  emits: ['option-click', 'close'],
+  emits: ['close'],
   setup(props, { emit }) {
     const store = useStore();
     const { windowId } = store.getters;
