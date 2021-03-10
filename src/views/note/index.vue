@@ -19,7 +19,7 @@ export default defineComponent({
     Editor
   },
   setup() {
-    let uid;
+    let uid: string;
     const editContent = ref('');
     const route = useRoute();
     const store = useStore();

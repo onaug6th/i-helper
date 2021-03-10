@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 //  便笺数据库
 import notesDB from '@/dataBase/note';
 import RightMenu from '@/components/rightMenu/src/rightMenu';
+import { NoteItem } from './types';
 
 export default defineComponent({
   setup() {
@@ -89,7 +90,7 @@ export default defineComponent({
      * @param note
      * @param noteIndex
      */
-    function deleteNote(note, noteIndex: number) {
+    function deleteNote(note: NoteItem, noteIndex: number) {
       //  通知主进程关闭便笺的窗口
       ipcRenderer.send(`browser-window-close-${note.uid}`);
       delateNoteFormList(noteIndex);
@@ -104,7 +105,7 @@ export default defineComponent({
      * @param note
      * @param noteIndex
      */
-    function contextMenu(event: MouseEvent, note, noteIndex: number) {
+    function contextMenu(event: MouseEvent, note: NoteItem, noteIndex: number) {
       RightMenu({
         event,
         list: [

@@ -9,7 +9,7 @@ import clipboardObserver from '@/utils/clipboardObserver';
 //  剪贴板数据库
 import clipboardDB from '@/dataBase/clipboard';
 //  接口
-import { ClipboardItem } from '../interface';
+import { ClipboardItem } from './types';
 //  store配置
 import clipboardConfig from '@/storage/clipboard';
 interface State {

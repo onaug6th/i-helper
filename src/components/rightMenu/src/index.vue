@@ -73,7 +73,7 @@ export default defineComponent({
       });
     }
 
-    function menuClick(menuItem) {
+    function menuClick(menuItem: IRightMenuListItem) {
       menuItem.handler();
       close();
     }
