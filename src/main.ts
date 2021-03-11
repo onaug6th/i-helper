@@ -5,7 +5,13 @@ import router from './router';
 import ElementPlus from 'element-plus';
 import 'element-plus/lib/theme-chalk/index.css';
 
-createApp(App)
+const app = createApp(App);
+
+app.config.errorHandler = (...args) => {
+  console.info(...args);
+};
+
+app
   .use(ElementPlus)
   .use(router)
   .use(store)
