@@ -10,7 +10,7 @@ import Editor from './components/editor/index.vue';
 import { useRoute } from 'vue-router';
 import { ipcRenderer, remote } from 'electron';
 //  便笺数据库
-import notesDB from '@/dataBase/note';
+import notesDB from '@/dataBase/notes';
 import { useStore } from 'vuex';
 
 export default defineComponent({
