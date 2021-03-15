@@ -14,10 +14,10 @@ const browserWindowOptions = {
   //  基础窗口配置
   home: {
     ...commonOptions,
-    minWidth: 430,
-    minHeight: 330,
-    width: 430,
-    height: 330
+    minWidth: 750,
+    minHeight: 600,
+    width: 750,
+    height: 600
   },
   //  便笺窗口配置
   note: {
