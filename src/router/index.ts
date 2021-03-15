@@ -47,7 +47,17 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/setting/index.vue'),
         meta: {
           title: '设置'
-        }
+        },
+        children: [
+          {
+            path: 'common',
+            component: () => import('../views/setting/common/index.vue')
+          },
+          {
+            path: 'shortcutKey',
+            component: () => import('../views/setting/shortcutKey/index.vue')
+          }
+        ]
       }
     ]
   },

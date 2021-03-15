@@ -34,10 +34,6 @@
             <i :class="`el-icon-${menuItem.icon}`"></i>
             <template #title>{{ menuItem.label }}</template>
           </el-menu-item>
-          <el-menu-item>
-            <i class="el-icon-setting"></i>
-            <template #title>设置</template>
-          </el-menu-item>
         </el-menu>
       </div>
       <!-- 左侧侧边栏 -->

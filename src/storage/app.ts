@@ -21,6 +21,11 @@ const app = reactiveStorage('app', {
       label: '待办事项',
       path: 'todo',
       icon: 'date'
+    },
+    {
+      label: '设置',
+      path: 'setting',
+      icon: 'setting'
     }
   ]
 });
