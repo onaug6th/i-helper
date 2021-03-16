@@ -12,17 +12,14 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import SideNav from '@/components/sideNav/index.vue';
-import { defineComponent, ref } from 'vue';
-import { useRoute } from 'vue-router';
 
 export default defineComponent({
   components: {
     SideNav
   },
   setup() {
-    const isCollapse = ref(true);
-    const routeName = ref(useRoute().name);
     const navData: Array<{ name?: string; path?: string; href?: string; children?: Array<any>; groups?: any }> = [
       {
         groups: [
@@ -44,15 +41,7 @@ export default defineComponent({
     ];
 
     return {
-      navData,
-      isCollapse,
-      routeName,
-      handleOpen(key: string, keyPath: string) {
-        console.log(key, keyPath);
-      },
-      handleClose(key: string, keyPath: string) {
-        console.log(key, keyPath);
-      }
+      navData
     };
   }
 });
