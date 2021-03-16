@@ -1,6 +1,8 @@
 [vue-cli-plugin-electron-builder](https://nklayman.github.io/vue-cli-plugin-electron-builder/)
 
-[vue3](https://v3.vuejs.org/guide/composition-api-template-refs.html#template-refs)
+[vue3英文文档](https://v3.vuejs.org/guide/composition-api-template-refs.html#template-refs)
+
+[vue3中文文档](https://v3.cn.vuejs.org)
 
 [electron](http://www.electronjs.org/docs)
 
