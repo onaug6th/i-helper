@@ -7,7 +7,7 @@
     </el-form-item>
   </el-form>
 
-  <KeyDialog v-model="showDialog" />
+  <KeyDialog v-model:visible="showDialog" />
 </template>
 
 <script lang="ts">
