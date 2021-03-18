@@ -1,5 +1,5 @@
-//  创建窗口
 import { ipcMain } from 'electron';
+//  创建窗口
 import { closeWindow, createNoteBrowserWindow, hideWindow } from '@/utils/browserWindow';
 import { findWindowById } from '@/utils/browserWindow';
 
