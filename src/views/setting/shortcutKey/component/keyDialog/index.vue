@@ -69,6 +69,7 @@ export default {
       this.visibleModel = false;
     },
     confirm() {
+      this.$emit('confirm', this.keyStr);
       this.close();
     }
   }
