@@ -4,27 +4,27 @@ const app = reactiveStorage('app', {
   menuList: [
     {
       label: '笔记',
-      path: 'notes',
+      path: '/notes',
       icon: 'edit'
     },
     {
       label: '剪贴板',
-      path: 'clipboard',
+      path: '/clipboard',
       icon: 'document'
     },
     {
       label: '提醒',
-      path: 'notices',
+      path: '/notices',
       icon: 'bell'
     },
     {
       label: '待办事项',
-      path: 'todo',
+      path: '/todo',
       icon: 'date'
     },
     {
       label: '设置',
-      path: 'setting',
+      path: '/setting',
       icon: 'setting'
     }
   ]
