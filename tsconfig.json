@@ -19,6 +19,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@render/*": [
+        "src/render/*"
       ]
     },
     "lib": [

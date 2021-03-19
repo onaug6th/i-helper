@@ -9,7 +9,7 @@
 <script lang="ts">
 import { defineComponent, ref, Ref, onMounted, PropType, nextTick } from 'vue';
 import { IRightMenuListItem } from './types';
-import clickoutside from '@/directives/clickoutside';
+import clickoutside from '@render/directives/clickoutside';
 
 export default defineComponent({
   name: 'rightMenu',

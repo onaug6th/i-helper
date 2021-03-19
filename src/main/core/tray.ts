@@ -1,6 +1,6 @@
 import { app, Menu, MenuItem, Tray } from 'electron';
 import path from 'path';
-import { windows } from '@/utils/browserWindow';
+import { windows } from '@/main/utils/browserWindow';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let tray = null;

@@ -23,11 +23,11 @@
 import { defineComponent, ref, onBeforeMount, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { ipcRenderer } from 'electron';
-import { uuid } from '@/utils';
+import { uuid } from '@render/utils';
 import dayjs from 'dayjs';
 //  便笺数据库
 import notesDB from '@/main/dataBase/notes';
-import RightMenu from '@/components/rightMenu/src/rightMenu';
+import RightMenu from '@render/components/rightMenu/src/rightMenu';
 import { NoteItem } from './types';
 
 export default defineComponent({

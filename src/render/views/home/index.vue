@@ -60,8 +60,8 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import Header from '@/components/header/index.vue';
-import appConfig from '@/storage/app';
+import Header from '@render/components/header/index.vue';
+import appConfig from '@render/storage/app';
 
 export default defineComponent({
   components: {

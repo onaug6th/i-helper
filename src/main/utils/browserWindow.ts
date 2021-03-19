@@ -1,7 +1,7 @@
 //  创建窗口
 import { BrowserWindow, ipcMain } from 'electron';
 //  窗口配置，基础地址
-import { browserWindowOptions, winURL } from '@/config/browserWindow';
+import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
 
 export const windows: {
   [propName: string]: BrowserWindow;

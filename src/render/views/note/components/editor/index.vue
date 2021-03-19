@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, Ref, watch } from 'vue';
-import * as utils from '@/utils';
+import * as utils from '@render/utils';
 
 export default defineComponent({
   props: {

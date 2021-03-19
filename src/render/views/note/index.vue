@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, ref } from 'vue';
-import Header from '@/components/header/index.vue';
+import Header from '@render/components/header/index.vue';
 import Editor from './components/editor/index.vue';
 import { useRoute } from 'vue-router';
 import { ipcRenderer, remote } from 'electron';

@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import SideNav from '@/components/sideNav/index.vue';
+import SideNav from '@render/components/sideNav/index.vue';
 
 export default defineComponent({
   components: {

@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
+
 module.exports = {
   productionSourceMap: false,
   configureWebpack: config => {
@@ -9,6 +13,14 @@ module.exports = {
     } else {
       config.optimization.minimizer[0].options.terserOptions.warnings = false;
     }
+
+    return {
+      resolve: {
+        alias: {
+          '@render': resolve('src/render')
+        }
+      }
+    };
   },
   pluginOptions: {
     electronBuilder: {
