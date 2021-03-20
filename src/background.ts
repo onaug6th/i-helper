@@ -4,8 +4,7 @@
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { createHomeBrowserWindow } from '@/main/utils/browserWindow';
-import '@/main/ipcEvent/index';
-import '@/main/core/tray';
+import './main';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
