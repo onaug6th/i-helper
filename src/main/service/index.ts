@@ -1,2 +1,2 @@
-import './shortcut';
-import './window';
+import './shortcut.service';
+import './window.service';

@@ -26,7 +26,7 @@ import { ipcRenderer } from 'electron';
 import { uuid } from '@render/utils';
 import dayjs from 'dayjs';
 //  便笺数据库
-import notesDB from '@/main/dataBase/notes';
+import notesDB from '@/main/dataBase/notes.db';
 import RightMenu from '@render/components/rightMenu/src/rightMenu';
 import { NoteItem } from './types';
 

@@ -7,7 +7,7 @@ import { clipboard, nativeImage } from 'electron';
 //  剪贴板观察者
 import clipboardObserver from '@render/utils/clipboardObserver';
 //  剪贴板数据库
-import clipboardDB from '@/main/dataBase/clipboard';
+import clipboardDB from '@/main/dataBase/clipboard.db';
 //  接口
 import { ClipboardItem } from './types';
 //  store配置
