@@ -14,6 +14,7 @@
     "@types/nedb": "^1.8.11",
     "core-js": "^3.7.0",
     "dayjs": "^1.9.7",
+    "electron-settings": "^4.0.2",
     "element-plus": "^1.0.2-beta.30",
     "fs-extra": "^9.0.1",
     "nedb": "^1.8.0",

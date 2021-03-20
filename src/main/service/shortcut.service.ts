@@ -1,9 +1,9 @@
 import { ipcMain } from 'electron';
+import * as settingService from './setting.service';
 
+//  获取快捷键
 ipcMain.handle('shortcut-get', () => {
-  return {
-    open: 'Ctrl + Z'
-  };
+  return settingService.getSetting('shortcut');
 });
 
 //  更新快捷键
