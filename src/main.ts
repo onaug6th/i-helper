@@ -7,9 +7,9 @@ import 'element-plus/lib/theme-chalk/index.css';
 
 const app = createApp(App);
 
-app.config.errorHandler = (...args) => {
-  console.info(...args);
-};
+// app.config.errorHandler = (...args) => {
+//   console.info(...args);
+// };
 
 app
   .use(ElementPlus)

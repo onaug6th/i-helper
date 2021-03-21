@@ -24,7 +24,7 @@ const app = reactiveStorage('app', {
     },
     {
       label: '设置',
-      path: '/setting',
+      path: '/setting/common',
       icon: 'setting'
     }
   ]

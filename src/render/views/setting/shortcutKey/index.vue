@@ -17,53 +17,15 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
-import { defineComponent, onBeforeMount, reactive, ref } from 'vue';
+import { defineComponent, onBeforeMount } from 'vue';
 import KeyDialog from './component/keyDialog/index.vue';
+import { showDialog, state, openKeyDialog, getShortcutKeys, confirm, close } from './hook';
 
 export default defineComponent({
   components: {
     KeyDialog
   },
   setup() {
-    let showDialog = ref(false);
-    let state = reactive({
-      shortcutKeys: {},
-      keyDialogType: ''
-    });
-
-    /**
-     * 获取快捷键配置
-     */
-    function getShortcutKeys() {
-      ipcRenderer.invoke('shortcutKey-get').then(result => {
-        state.shortcutKeys = result;
-      });
-    }
-
-    /**
-     * 打开按键设置弹窗
-     */
-    function openKeyDialog(type) {
-      showDialog.value = true;
-      state.keyDialogType = type;
-    }
-
-    /**
-     * 确认
-     */
-    function confirm() {
-      getShortcutKeys();
-      close();
-    }
-
-    /**
-     * 关闭
-     */
-    function close() {
-      showDialog.value = false;
-    }
-
     onBeforeMount(() => {
       getShortcutKeys();
     });

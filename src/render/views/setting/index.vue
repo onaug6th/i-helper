@@ -20,7 +20,7 @@ export default defineComponent({
     SideNav
   },
   setup() {
-    const navData: Array<{ name?: string; path?: string; href?: string; children?: Array<any>; groups?: any }> = [
+    const navData: Array<any> = [
       {
         groups: [
           {
@@ -32,7 +32,7 @@ export default defineComponent({
               },
               {
                 path: '/shortcutKey',
-                title: '快捷按键'
+                title: '按键设置'
               }
             ]
           }
