@@ -13,3 +13,5 @@
 [typescript-compiler-options](https://www.tslang.cn/docs/handbook/compiler-options.html)
 
 [nedb](https://www.npmjs.com/package/nedb)
+
+[electron-setting](https://electron-settings.js.org/index.html#setsync)

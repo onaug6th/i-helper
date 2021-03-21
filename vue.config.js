@@ -62,7 +62,7 @@ module.exports = {
     'style-resources-loader': {
       preProcessor: 'less',
       // 引入全局样式变量
-      patterns: [path.resolve(__dirname, 'src/render/style/index.less')]
+      patterns: [resolve('src/render/style/index.less')]
     }
   },
   devServer: {

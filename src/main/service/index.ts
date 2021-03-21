@@ -1,2 +1,3 @@
-import './shortcut.service';
+import './setting.service';
+import './shortcutKey.service';
 import './window.service';
