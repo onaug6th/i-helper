@@ -2,7 +2,7 @@
   <div>
     <el-form :model="form" label-width="100px">
       <el-form-item label="开机启动">
-        <el-switch v-model="form.startAtBoot"></el-switch>
+        <el-switch v-model="form.openAtLogin"></el-switch>
       </el-form-item>
 
       <el-form-item label="开发者命令">
@@ -18,7 +18,7 @@ import { defineComponent, reactive } from 'vue';
 export default defineComponent({
   setup() {
     const form = reactive({
-      startAtBoot: true,
+      openAtLogin: true,
       code: ''
     });
 

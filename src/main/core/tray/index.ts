@@ -1,6 +1,6 @@
 import { app, Menu, MenuItem, Tray } from 'electron';
 import path from 'path';
-import { windows } from '@/main/utils/browserWindow';
+import windowManage from '@/main/core/window/windowManage';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let tray = null;
@@ -22,7 +22,7 @@ app.on('ready', () => {
   tray.setContextMenu(contextMenu);
   tray.setToolTip('i-helper');
   tray.on('click', () => {
-    const win = windows.home;
+    const win = windowManage.mainWindow;
     win.show();
   });
 });

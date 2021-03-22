@@ -10,6 +10,9 @@ let settingData: any = {};
  */
 function setDefaultSetting() {
   const defaultSetting = {
+    common: {
+      openAtLogin: true
+    },
     shortcutKey: {
       open: 'Ctrl+Space'
     }

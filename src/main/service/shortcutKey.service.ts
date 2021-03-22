@@ -1,6 +1,6 @@
 import { app, globalShortcut, ipcMain } from 'electron';
 import * as settingService from './setting.service';
-import * as browserWindowUtils from '@/main/utils/browserWindow';
+import windowManage from '@/main/core/window/windowManage';
 
 const shortcutKey = settingService.settingData.shortcutKey;
 
@@ -27,11 +27,11 @@ ipcMain.on('shortcutKey-update', (event, result) => {
  */
 const shortcutCallBack = {
   open: () => {
-    const homeWin = browserWindowUtils.windows.home;
-    if (homeWin.isVisible()) {
-      homeWin.hide();
+    const mainWindow = windowManage.mainWindow;
+    if (mainWindow.isVisible()) {
+      mainWindow.hide();
     } else {
-      homeWin.show();
+      mainWindow.show();
     }
   }
 };

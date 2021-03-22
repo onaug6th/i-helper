@@ -1,31 +1,30 @@
 import { ipcMain } from 'electron';
-//  创建窗口
-import { closeWindow, createNoteBrowserWindow, hideWindow, findWindowById } from '@/main/utils/browserWindow';
+import windowManage from '@/main/core/window/windowManage';
 
 //  打开browserWindow
 ipcMain.on('browser-window-open', (event, result) => {
   const { type, params } = result;
   if (type === 'note') {
-    createNoteBrowserWindow(...params);
+    windowManage.createNoteBrowserWindow(...params);
   }
 });
 
 //  关闭browserWindow
 ipcMain.on('browser-window-close', (event, windowId) => {
   if (windowId) {
-    closeWindow(windowId);
+    windowManage.closeWindow(windowId);
   }
 });
 
 //  隐藏browserWindow
 ipcMain.on('browser-window-hide', (event, windowId) => {
   if (windowId) {
-    hideWindow(windowId);
+    windowManage.hideWindow(windowId);
   }
 });
 
 //  渲染进程间通信
 ipcMain.on('browser-window-communication', (event, { windowId, params, eventName }) => {
-  const { win } = findWindowById(windowId);
+  const { win } = windowManage.findWindowById(windowId);
   win.webContents.send(eventName, params);
 });
