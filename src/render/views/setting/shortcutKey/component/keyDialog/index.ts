@@ -79,12 +79,20 @@ export default {
       this.visibleModel = false;
     },
     confirm() {
-      ipcRenderer.send('shortcutKey-update', {
-        type: this.type,
-        key: this.key
-      });
-      this.$emit('confirm');
-      this.visibleModel = false;
+      ipcRenderer
+        .invoke('shortcutKey-update', {
+          type: this.type,
+          key: this.key
+        })
+        .then(success => {
+          if (success) {
+            this.$emit('confirm');
+            this.visibleModel = false;
+          } else {
+            this.key = '';
+            this.keyStr = '请重新键入';
+          }
+        });
     }
   }
 };
