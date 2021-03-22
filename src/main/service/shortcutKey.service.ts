@@ -10,16 +10,22 @@ ipcMain.handle('shortcutKey-get', () => {
 });
 
 //  更新快捷键
-ipcMain.on('shortcutKey-update', (event, result) => {
+ipcMain.handle('shortcutKey-update', (event, result) => {
   const { type, key } = result;
   //  注销之前的快捷键
   globalShortcut.unregister(shortcutKey[type]);
   //  注册最新的快捷键
   globalShortcut.register(key, shortcutCallBack[type]);
-  //  更新设置
-  settingService.setSetting(`shortcutKey.${type}`, key);
-  //  获取最新设置
-  settingService.getNewestAllSetting();
+
+  if (globalShortcut.isRegistered(key)) {
+    //  更新设置
+    settingService.setSetting(`shortcutKey.${type}`, key);
+    //  获取最新设置
+    settingService.getNewestAllSetting();
+    return true;
+  } else {
+    return false;
+  }
 });
 
 /**
