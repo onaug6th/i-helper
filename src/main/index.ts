@@ -1,11 +1,20 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+/**
+ * 主进程初始化入口页面
+ */
 'use strict';
 
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+//  窗体管理
 import windowManage from './core/window/windowManage';
+//  设置管理
+import settingManage from './core/setting/settingManage';
+//  快捷键管理
+import shortcutKeyManage from './core/shortcutKey/shortcutKeyManage';
+//  托盘管理
+import trayManage from './core/tray';
+//  ipcMain
 import './service/index';
-import './core/tray';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -31,10 +40,6 @@ function createWindow() {
   }
 }
 
-app.setLoginItemSettings({
-  openAtLogin: true
-});
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -54,7 +59,12 @@ app.on('ready', async () => {
     //  加载vue开发者工具
     await session.defaultSession.loadExtension(path);
   }
+
   createWindow();
+
+  settingManage.appOnReady(app);
+  shortcutKeyManage.appOnReady();
+  trayManage.appOnReady();
 });
 
 if (isDevelopment) {

@@ -17,18 +17,25 @@ class SettingManage {
     }
   };
 
-  constructor() {
-    this.getNewestAllSetting();
+  /**
+   * 应用初始化时执行
+   * @param app
+   */
+  async appOnReady(app) {
+    await this.getNewestAllSetting();
+
+    app.setLoginItemSettings({
+      openAtLogin: this.settingData.common.openAtLogin
+    });
   }
 
   /**
    * 设置默认设置
    * @returns
    */
-  setDefaultSetting() {
-    const defaultSetting = {};
-    settings.setSync(defaultSetting);
-    return defaultSetting;
+  async setDefaultSetting() {
+    settings.setSync(this.settingData);
+    return this.settingData;
   }
 
   /**
@@ -62,7 +69,7 @@ class SettingManage {
     }
     //  不存在，说明首次初始化
     else {
-      this.settingData = this.setDefaultSetting();
+      this.settingData = await this.setDefaultSetting();
     }
   }
 }

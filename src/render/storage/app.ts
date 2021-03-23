@@ -1,5 +1,5 @@
 import { reactiveStorage } from './utils';
-
+localStorage.setItem('store-app', '');
 const app = reactiveStorage('app', {
   menuList: [
     {
