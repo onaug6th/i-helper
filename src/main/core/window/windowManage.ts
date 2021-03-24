@@ -60,8 +60,8 @@ class WindowManage {
 
     window.loadURL(`${winURL}/#/${path}`);
 
-    ipcMain.handleOnce('get-window-info', async () => {
-      return { windowId: window.id };
+    ipcMain.handleOnce('get-window-id', async () => {
+      return window.id;
     });
 
     window.on('closed', () => {

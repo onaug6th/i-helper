@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import windowManage from '@/main/core/window/windowManage';
-
+import settingManage from '@/main/core/setting/settingManage';
 //  打开browserWindow
 ipcMain.on('browser-window-open', (event, result) => {
   const { type, params } = result;
@@ -26,6 +26,7 @@ ipcMain.on('browser-window-hide', (event, windowId) => {
 //  主界面置顶切换
 ipcMain.on('browser-main-window-onTop', (event, onTop) => {
   windowManage.mainWindow.setAlwaysOnTop(onTop);
+  settingManage.setSetting('common.isAlwaysOnTop', onTop);
 });
 
 //  渲染进程间通信

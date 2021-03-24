@@ -27,11 +27,11 @@ export default defineComponent({
   emits: ['close'],
   setup(props, { emit }) {
     const store = useStore();
-    const { windowId } = store.getters;
+    const { windowId, setting } = store.getters;
 
     const currentRouteName = ref(useRoute().name);
     //  是否置顶
-    const isAlwaysOnTop = ref(false);
+    const isAlwaysOnTop = ref(setting.common.isAlwaysOnTop);
 
     onBeforeRouteUpdate((to, from, next) => {
       currentRouteName.value = to.name;
@@ -42,9 +42,12 @@ export default defineComponent({
      * 切换置顶
      */
     function toggleOnTop() {
+      const afterValue = !isAlwaysOnTop.value;
       //  主界面是否置顶
-      ipcRenderer.send('browser-main-window-onTop', !isAlwaysOnTop.value);
-      isAlwaysOnTop.value = !isAlwaysOnTop.value;
+      ipcRenderer.send('browser-main-window-onTop', afterValue);
+      isAlwaysOnTop.value = afterValue;
+      //  更新vuex中的设置
+      store.dispatch('app/setSetting', Object.assign({}, setting, { common: { isAlwaysOnTop: afterValue } }));
     }
 
     /**

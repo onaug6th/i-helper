@@ -10,7 +10,8 @@ class SettingManage {
    */
   settingData: any = {
     common: {
-      openAtLogin: true
+      openAtLogin: true,
+      isAlwaysOnTop: true
     },
     shortcutKey: {
       open: 'Ctrl+Space'

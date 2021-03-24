@@ -14,9 +14,14 @@ import { useStore } from 'vuex';
 export default defineComponent({
   setup() {
     const store = useStore();
+    //  获取窗体ID
+    ipcRenderer.invoke('get-window-id').then(windowId => {
+      store.dispatch('app/setWindowId', windowId);
+    });
 
-    ipcRenderer.invoke('get-window-info').then(result => {
-      store.dispatch('app/setWindowInfo', result);
+    //  获取应用设置
+    ipcRenderer.invoke('get-setting').then(setting => {
+      store.dispatch('app/setSetting', setting);
     });
   }
 });

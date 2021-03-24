@@ -2,19 +2,27 @@
 const state = {
   //  主面板windowId
   mainWindowId: 1,
-  //  当前窗口信息
-  windowInfo: {}
+  //  当前窗口ID
+  windowId: {},
+  //  应用设置
+  setting: {}
 };
 
 const mutations = {
-  setWindowInfo: (state: { windowInfo: any }, windowInfo: any) => {
-    state.windowInfo = windowInfo;
+  setWindowId: (state: { windowId: any }, windowId: any) => {
+    state.windowId = windowId;
+  },
+  setSetting: (state: { setting: any }, setting: any) => {
+    state.setting = setting;
   }
 };
 
 const actions = {
-  setWindowInfo({ commit }: any, windowInfo: any) {
-    commit('setWindowInfo', windowInfo);
+  setWindowId({ commit }: any, windowId: any) {
+    commit('setWindowId', windowId);
+  },
+  setSetting({ commit }: any, setting: any) {
+    commit('setSetting', setting);
   }
 };
 
