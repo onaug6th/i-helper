@@ -23,6 +23,11 @@ ipcMain.on('browser-window-hide', (event, windowId) => {
   }
 });
 
+//  主界面置顶切换
+ipcMain.on('browser-main-window-onTop', (event, onTop) => {
+  windowManage.mainWindow.setAlwaysOnTop(onTop);
+});
+
 //  渲染进程间通信
 ipcMain.on('browser-window-communication', (event, { windowId, params, eventName }) => {
   const { win } = windowManage.findWindowById(windowId);

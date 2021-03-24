@@ -25,7 +25,8 @@ class SettingManage {
     await this.getNewestAllSetting();
 
     app.setLoginItemSettings({
-      openAtLogin: this.settingData.common.openAtLogin
+      openAtLogin: this.settingData.common.openAtLogin,
+      openAsHidden: true
     });
   }
 
