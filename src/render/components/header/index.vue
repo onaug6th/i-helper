@@ -15,8 +15,8 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
-import { defineComponent, ref } from 'vue';
+import { ipcRenderer, remote } from 'electron';
+import { computed, defineComponent, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -30,6 +30,7 @@ export default defineComponent({
     const { windowId, setting } = store.getters;
 
     const currentRouteName = ref(useRoute().name);
+    const currentWindow = remote.getCurrentWindow();
     //  是否置顶
     const isAlwaysOnTop = ref(setting.common.isAlwaysOnTop);
 
@@ -38,16 +39,25 @@ export default defineComponent({
       next();
     });
 
+    const isHome = computed(() => {
+      return windowId === 1;
+    });
+
     /**
      * 切换置顶
      */
     function toggleOnTop() {
       const afterValue = !isAlwaysOnTop.value;
-      //  主界面是否置顶
-      ipcRenderer.send('browser-main-window-onTop', afterValue);
       isAlwaysOnTop.value = afterValue;
-      //  更新vuex中的设置
-      store.dispatch('app/setSetting', Object.assign({}, setting, { common: { isAlwaysOnTop: afterValue } }));
+
+      if (isHome.value) {
+        //  主界面置顶
+        ipcRenderer.send('browser-main-window-onTop', afterValue);
+        //  更新vuex中的设置
+        store.dispatch('app/setSetting', Object.assign({}, setting, { common: { isAlwaysOnTop: afterValue } }));
+      } else {
+        currentWindow.setAlwaysOnTop(afterValue);
+      }
     }
 
     /**
@@ -60,7 +70,7 @@ export default defineComponent({
         await beforeClose();
       }
       if (windowId) {
-        const eventName = windowId === 1 ? 'browser-window-hide' : 'browser-window-close';
+        const eventName = isHome.value ? 'browser-window-hide' : 'browser-window-close';
         ipcRenderer.send(eventName, windowId);
       }
     }
