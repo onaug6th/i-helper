@@ -21,7 +21,7 @@ export default defineComponent({
 
     //  获取应用设置
     ipcRenderer.invoke('get-setting').then(setting => {
-      store.dispatch('app/setSetting', setting);
+      store.dispatch('app/setSetting', { value: setting });
     });
   }
 });

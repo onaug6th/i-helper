@@ -1,23 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 //  消息提醒
 import { ElNotification } from 'element-plus';
-import { ipcRenderer } from 'electron';
 import { reactive, ref } from 'vue';
-
+import { useStore } from 'vuex';
 const showDialog = ref(false);
 const state = reactive({
-  shortcutKeys: {},
   keyDialogType: ''
 });
-
-/**
- * 获取快捷键配置
- */
-function getShortcutKeys() {
-  ipcRenderer.invoke('shortcutKey-get').then(result => {
-    state.shortcutKeys = result;
-  });
-}
 
 /**
  * 打开按键设置弹窗
@@ -30,8 +19,13 @@ function openKeyDialog(type) {
 /**
  * 确认
  */
-function confirm() {
-  getShortcutKeys();
+function confirm({ type, value }) {
+  const store = useStore();
+  store.dispatch('app/setSetting', {
+    path: `shortcutKey.${type}`,
+    value
+  });
+
   ElNotification({
     type: 'success',
     message: '设置成功'
@@ -46,4 +40,4 @@ function close() {
   showDialog.value = false;
 }
 
-export { showDialog, state, openKeyDialog, getShortcutKeys, confirm, close };
+export { showDialog, state, openKeyDialog, confirm, close };

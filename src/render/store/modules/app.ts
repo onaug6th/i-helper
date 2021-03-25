@@ -1,3 +1,5 @@
+import { safeSet } from '@/render/utils';
+
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const state = {
   //  主面板windowId
@@ -12,8 +14,12 @@ const mutations = {
   setWindowId: (state: { windowId: any }, windowId: any) => {
     state.windowId = windowId;
   },
-  setSetting: (state: { setting: any }, setting: any) => {
-    state.setting = setting;
+  setSetting: (state: { setting: any }, { path, value }: any) => {
+    if (path) {
+      safeSet(state.setting, 'path', value);
+    } else {
+      state.setting = value;
+    }
   }
 };
 
@@ -21,8 +27,8 @@ const actions = {
   setWindowId({ commit }: any, windowId: any) {
     commit('setWindowId', windowId);
   },
-  setSetting({ commit }: any, setting: any) {
-    commit('setSetting', setting);
+  setSetting({ commit }: any, payload: any) {
+    commit('setSetting', payload);
   }
 };
 

@@ -7,7 +7,7 @@ export default {
       type: String,
       default: ''
     },
-    shortcutKeys: {
+    shortcutKey: {
       type: Object,
       default: () => ({})
     },
@@ -24,7 +24,7 @@ export default {
   },
   watch: {
     visible() {
-      this.keyStr = this.key = this.shortcutKeys[this.type];
+      this.keyStr = this.key = this.shortcutKey[this.type];
     }
   },
   computed: {
@@ -86,7 +86,7 @@ export default {
         })
         .then(success => {
           if (success) {
-            this.$emit('confirm');
+            this.$emit('confirm', { type: this.type, value: this.key });
             this.visibleModel = false;
           } else {
             this.key = '';

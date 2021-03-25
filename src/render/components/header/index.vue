@@ -54,7 +54,9 @@ export default defineComponent({
         //  主界面置顶
         ipcRenderer.send('browser-main-window-onTop', afterValue);
         //  更新vuex中的设置
-        store.dispatch('app/setSetting', Object.assign({}, setting, { common: { isAlwaysOnTop: afterValue } }));
+        store.dispatch('app/setSetting', {
+          value: Object.assign({}, setting, { common: { isAlwaysOnTop: afterValue } })
+        });
       } else {
         currentWindow.setAlwaysOnTop(afterValue);
       }
