@@ -2,7 +2,7 @@
   <el-form ref="form" label-width="80px">
     <el-form-item label="打开应用">
       <el-button type="primary" size="small" plain title="设置应用的打开快捷键" @click="openKeyDialog('open')">
-        {{ shortcutKey.open }}
+        {{ getters.setting.shortcutKey.open }}
       </el-button>
     </el-form-item>
   </el-form>
@@ -10,7 +10,7 @@
   <KeyDialog
     v-model:visible="showDialog"
     :type="state.keyDialogType"
-    :shortcutKey="shortcutKey"
+    :shortcutKey="getters.setting.shortcutKey"
     @confirm="confirm"
     @close="close"
   />
@@ -19,8 +19,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import KeyDialog from './component/keyDialog/index.vue';
-import { showDialog, state, openKeyDialog, confirm, close } from './hook';
+import { showDialog, state, openKeyDialog, close } from './hook';
 import { useStore } from 'vuex';
+import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   components: {
@@ -28,14 +29,24 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const {
-      setting: { shortcutKey }
-    } = store.getters;
+
+    /**
+     * 确认
+     */
+    function confirm() {
+      store.dispatch('app/setNewestSetting');
+
+      ElNotification({
+        type: 'success',
+        message: '设置成功'
+      });
+      close();
+    }
 
     return {
-      shortcutKey,
       showDialog,
       state,
+      getters: store.getters,
       openKeyDialog,
       confirm,
       close

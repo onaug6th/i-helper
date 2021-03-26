@@ -19,10 +19,8 @@ export default defineComponent({
       store.dispatch('app/setWindowId', windowId);
     });
 
-    //  获取应用设置
-    ipcRenderer.invoke('get-setting').then(setting => {
-      store.dispatch('app/setSetting', { value: setting });
-    });
+    //  获取应用最新设置
+    store.dispatch('app/setNewestSetting');
   }
 });
 </script>

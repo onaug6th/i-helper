@@ -1,5 +1,4 @@
-import { safeSet } from '@/render/utils';
-
+import { ipcRenderer } from 'electron';
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const state = {
   //  主面板windowId
@@ -14,12 +13,8 @@ const mutations = {
   setWindowId: (state: { windowId: any }, windowId: any) => {
     state.windowId = windowId;
   },
-  setSetting: (state: { setting: any }, { path, value }: any) => {
-    if (path) {
-      safeSet(state.setting, 'path', value);
-    } else {
-      state.setting = value;
-    }
+  setSetting: (state: { setting: any }, setting: any) => {
+    state.setting = setting;
   }
 };
 
@@ -27,8 +22,11 @@ const actions = {
   setWindowId({ commit }: any, windowId: any) {
     commit('setWindowId', windowId);
   },
-  setSetting({ commit }: any, payload: any) {
-    commit('setSetting', payload);
+  setNewestSetting({ commit }: any) {
+    //  获取应用设置
+    ipcRenderer.invoke('get-setting').then(setting => {
+      commit('setSetting', setting);
+    });
   }
 };
 
