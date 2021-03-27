@@ -77,6 +77,11 @@ export default defineComponent({
       icon: string;
     }> = [
       {
+        label: '应用',
+        path: '/app',
+        icon: 'el-icon-potato-strips'
+      },
+      {
         label: '笔记',
         path: '/notes',
         icon: 'edit'
