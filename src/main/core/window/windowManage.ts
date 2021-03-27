@@ -6,7 +6,10 @@ import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
 //  创建窗口的参数模型
 interface CreateBrowserWindowParams {
   type: string;
-  path?: string;
+  //  窗体路径
+  url: string;
+  //  窗体名称
+  name?: string;
 }
 
 //  根据windowId获取BrowserWindow返回模型
@@ -38,14 +41,23 @@ class WindowManage {
    * 创建窗口
    * @param param0 窗口配置
    */
-  createBrowserWindow({ type = 'home', path = '' }: CreateBrowserWindowParams): BrowserWindow {
+  createBrowserWindow({ type = 'home', url, name = '' }: CreateBrowserWindowParams): BrowserWindow {
     const windows = this.windows;
-    const windowName = `${type}${path}`;
+    //  窗体名称
+    let windowName = `${type}${name}`;
+
     //  存在窗口实例
     if (windows[windowName]) {
-      const window = windows[windowName];
-      window.show();
-      return window;
+      //  窗口实例已被销毁
+      if (windows[windowName].isDestroyed()) {
+        this.deleteWindow(windowName);
+      }
+      //  直接打开
+      else {
+        const window = windows[windowName];
+        window.show();
+        return window;
+      }
     }
 
     let window: BrowserWindow | null;
@@ -58,16 +70,31 @@ class WindowManage {
       window.webContents.openDevTools();
     }
 
-    window.loadURL(`${winURL}/#/${path}`);
-
-    ipcMain.handleOnce('get-window-id', async () => {
-      return window.id;
-    });
+    //  不为启动应用时，需要主动发布windowId
+    if (type !== 'app') {
+      ipcMain.handleOnce('get-window-id', async () => {
+        return window.id;
+      });
+    }
 
     window.on('closed', () => {
+      this.deleteWindow(windowName);
+      windowName = null;
       window = null;
     });
+
+    window.loadURL(url);
+
     return window;
+  }
+
+  /**
+   * 获取web地址
+   * @param routerPath
+   * @returns
+   */
+  getWebUrl(routerPath = ''): string {
+    return `${winURL}/#/${routerPath}`;
   }
 
   /**
@@ -78,7 +105,9 @@ class WindowManage {
       return this.mainWindow;
     }
 
-    this.mainWindow = this.createBrowserWindow({ type: 'home' });
+    const url = this.getWebUrl();
+
+    this.mainWindow = this.createBrowserWindow({ type: 'home', url });
     return this.mainWindow;
   }
 
@@ -88,7 +117,19 @@ class WindowManage {
    * @returns
    */
   createNoteBrowserWindow(uid?: string): BrowserWindow {
-    return this.createBrowserWindow({ type: 'note', path: `note?uid=${uid}` });
+    const url = this.getWebUrl(`note?uid=${uid}`);
+    const name = uid;
+
+    return this.createBrowserWindow({ type: 'note', url, name });
+  }
+
+  /**
+   * 创建应用窗体
+   * @param param0
+   * @returns
+   */
+  createAppBrowserWindow({ url, name }) {
+    return this.createBrowserWindow({ type: 'app', url, name });
   }
 
   /**
@@ -116,13 +157,23 @@ class WindowManage {
   }
 
   /**
-   * 关闭窗口
+   * 从窗口对象中删除窗口
+   * @param name
+   */
+  deleteWindow(name) {
+    delete this.windows[name];
+  }
+
+  /**
+   * 根据windowId来关闭窗口
    * @param windowId 窗体ID
    */
   closeWindow(windowId: number): void {
     const { win, name } = this.findWindowById(windowId);
-    delete this.windows[name];
-    win.destroy();
+    this.deleteWindow(name);
+    if (!win.isDestroyed()) {
+      win.destroy();
+    }
   }
 
   /**

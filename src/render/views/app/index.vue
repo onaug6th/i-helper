@@ -5,7 +5,7 @@
     </h1>
 
     <div class="app-list">
-      <div v-for="(app, appIndex) in appList" :key="appIndex" class="app-list_item">
+      <div v-for="(app, appIndex) in appList" class="app-list_item" :key="appIndex" @click="openApp(app)">
         <div class="app-list_item-left">
           <img :src="app.avatar" />
         </div>
@@ -23,6 +23,7 @@
 </template>
 
 <script lang="ts">
+import { ipcRenderer } from 'electron';
 import { defineComponent, onBeforeMount } from 'vue';
 // import { useRoute } from 'vue-router';
 // import { ipcRenderer } from 'electron';
@@ -33,6 +34,13 @@ import { defineComponent, onBeforeMount } from 'vue';
 export default defineComponent({
   setup() {
     const appList = [
+      {
+        id: 'a2s14d1s3q5f1e121fs',
+        name: 'test',
+        path: 'http://localhost:8080',
+        avatar: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg',
+        desc: '测试'
+      },
       {
         name: '便笺',
         avatar: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg',
@@ -55,12 +63,20 @@ export default defineComponent({
       }
     ];
 
+    /**
+     * 打开应用
+     */
+    function openApp(app) {
+      ipcRenderer.send('browser-app-open', app.id);
+    }
+
     onBeforeMount(() => {
       console;
     });
 
     return {
-      appList
+      appList,
+      openApp
     };
   }
 });

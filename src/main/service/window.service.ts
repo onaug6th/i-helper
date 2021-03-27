@@ -1,12 +1,18 @@
 import { ipcMain } from 'electron';
 import windowManage from '@/main/core/window/windowManage';
 import settingManage from '@/main/core/setting/settingManage';
+
 //  打开browserWindow
 ipcMain.on('browser-window-open', (event, result) => {
   const { type, params } = result;
   if (type === 'note') {
     windowManage.createNoteBrowserWindow(...params);
   }
+});
+
+//  打开指定应用的窗口
+ipcMain.on('browser-app-open', () => {
+  windowManage.createAppBrowserWindow({ name: 'onaug6th', url: 'http://localhost:8080' });
 });
 
 //  关闭browserWindow
