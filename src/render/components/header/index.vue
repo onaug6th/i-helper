@@ -27,7 +27,7 @@ export default defineComponent({
   emits: ['close'],
   setup(props, { emit }) {
     const store = useStore();
-    const { windowId, setting } = store.getters;
+    const { windowId, mainWindowId, setting } = store.getters;
 
     const currentRouteName = ref(useRoute().name);
     const currentWindow = remote.getCurrentWindow();
@@ -40,7 +40,7 @@ export default defineComponent({
     });
 
     const isHome = computed(() => {
-      return windowId === 1;
+      return windowId === mainWindowId;
     });
 
     /**
