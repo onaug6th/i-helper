@@ -5,6 +5,7 @@ const commonOptions = {
   hasShadow: true,
   transparent: true,
   webPreferences: {
+    webviewTag: true,
     enableRemoteModule: true,
     nodeIntegration: true
   }
@@ -12,7 +13,7 @@ const commonOptions = {
 
 const browserWindowOptions = {
   //  基础窗口配置
-  home: {
+  main: {
     ...commonOptions,
     minWidth: 750,
     minHeight: 600,

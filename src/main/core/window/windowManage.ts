@@ -41,7 +41,7 @@ class WindowManage {
    * 创建窗口
    * @param param0 窗口配置
    */
-  createBrowserWindow({ type = 'home', url, name = '' }: CreateBrowserWindowParams): BrowserWindow {
+  createBrowserWindow({ type = 'main', url, name = '' }: CreateBrowserWindowParams): BrowserWindow {
     const windows = this.windows;
     //  窗体名称
     let windowName = `${type}${name}`;
@@ -107,7 +107,7 @@ class WindowManage {
 
     const url = this.getWebUrl();
 
-    this.mainWindow = this.createBrowserWindow({ type: 'home', url });
+    this.mainWindow = this.createBrowserWindow({ type: 'main', url });
     return this.mainWindow;
   }
 

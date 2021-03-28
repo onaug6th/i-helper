@@ -1,18 +1,18 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import home from '../views/home/index.vue';
+import main from '../views/main/index.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'home',
-    redirect: 'app',
-    component: home,
+    name: 'main',
+    redirect: 'appList',
+    component: main,
     children: [
       {
-        path: '/app',
-        name: 'app',
-        component: () => import('../views/app/index.vue'),
+        path: '/appList',
+        name: 'appList',
+        component: () => import('../views/main/appList/index.vue'),
         meta: {
           title: '应用'
         }
@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/notes',
         name: 'notes',
-        component: () => import('../views/notes/index.vue'),
+        component: () => import('../views/main/notes/index.vue'),
         meta: {
           title: '笔记'
         }
@@ -28,7 +28,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/clipboard',
         name: 'clipboard',
-        component: () => import('../views/clipboard/index.vue'),
+        component: () => import('../views/main/clipboard/index.vue'),
         meta: {
           title: '剪贴板'
         }
@@ -36,7 +36,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/notices',
         name: 'notices',
-        component: () => import('../views/notices/index.vue'),
+        component: () => import('../views/main/notices/index.vue'),
         meta: {
           title: '提醒'
         }
@@ -44,7 +44,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/todo',
         name: 'todo',
-        component: () => import('../views/todo/index.vue'),
+        component: () => import('../views/main/todo/index.vue'),
         meta: {
           title: '待办事项'
         }
@@ -52,18 +52,18 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/setting',
         name: 'setting',
-        component: () => import('../views/setting/index.vue'),
+        component: () => import('../views/main/setting/index.vue'),
         meta: {
           title: '设置'
         },
         children: [
           {
             path: 'common',
-            component: () => import('../views/setting/common/index.vue')
+            component: () => import('../views/main/setting/common/index.vue')
           },
           {
             path: 'shortcutKey',
-            component: () => import('../views/setting/shortcutKey/index.vue')
+            component: () => import('../views/main/setting/shortcutKey/index.vue')
           }
         ]
       }

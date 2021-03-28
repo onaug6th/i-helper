@@ -18,11 +18,15 @@
           </div>
         </div>
       </div>
+
+      <webview src="C:\Users\onaug6th\Desktop\新建文件夹\index.html"></webview>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { ipcRenderer } from 'electron';
 import { defineComponent, onBeforeMount } from 'vue';
 // import { useRoute } from 'vue-router';
@@ -78,6 +82,12 @@ export default defineComponent({
       appList,
       openApp
     };
+  },
+  mounted() {
+    const webview = document.querySelector('webview');
+    webview.addEventListener('dom-ready', () => {
+      webview['openDevTools']();
+    });
   }
 });
 </script>
