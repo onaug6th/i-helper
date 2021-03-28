@@ -6,13 +6,13 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'main',
-    redirect: 'appList',
+    redirect: 'miniAppList',
     component: main,
     children: [
       {
-        path: '/appList',
-        name: 'appList',
-        component: () => import('../views/main/appList/index.vue'),
+        path: '/miniAppList',
+        name: 'miniAppList',
+        component: () => import('../views/main/miniAppList/index.vue'),
         meta: {
           title: '应用'
         }

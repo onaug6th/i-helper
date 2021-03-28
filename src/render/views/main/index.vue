@@ -77,8 +77,8 @@ export default defineComponent({
       icon: string;
     }> = [
       {
-        label: '应用',
-        path: '/appList',
+        label: '插件',
+        path: '/miniAppList',
         icon: 'el-icon-potato-strips'
       },
       {

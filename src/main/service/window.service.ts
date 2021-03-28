@@ -10,11 +10,6 @@ ipcMain.on('browser-window-open', (event, result) => {
   }
 });
 
-//  打开指定应用的窗口
-ipcMain.on('browser-app-open', () => {
-  windowManage.createAppBrowserWindow({ name: 'onaug6th', url: 'http://localhost:8080' });
-});
-
 //  关闭browserWindow
 ipcMain.on('browser-window-close', (event, windowId) => {
   if (windowId) {
