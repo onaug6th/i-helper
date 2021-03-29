@@ -48,6 +48,19 @@ app.on('window-all-closed', () => {
   }
 });
 
+//  运行第二个实例
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.on('second-instance', (event, commandLine, workingDirectory) => {
+  const mainWindow = windowManage.mainWindow;
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+    mainWindow.focus();
+    mainWindow.show();
+  }
+});
+
 app.on('activate', () => {
   if (win === null) {
     createWindow();
