@@ -4,8 +4,11 @@ const commonOptions = {
   frame: false,
   hasShadow: true,
   transparent: true,
+  minWidth: 750,
+  minHeight: 600,
+  width: 750,
+  height: 600,
   webPreferences: {
-    webviewTag: true,
     enableRemoteModule: true,
     nodeIntegration: true
   }
@@ -14,11 +17,7 @@ const commonOptions = {
 const browserWindowOptions = {
   //  基础窗口配置
   main: {
-    ...commonOptions,
-    minWidth: 750,
-    minHeight: 600,
-    width: 750,
-    height: 600
+    ...commonOptions
   },
   //  便笺窗口配置
   note: {
@@ -26,6 +25,13 @@ const browserWindowOptions = {
     width: 290,
     height: 350,
     minWidth: 250
+  },
+  miniApp: {
+    ...commonOptions,
+    webPreferences: {
+      ...commonOptions.webPreferences,
+      webviewTag: true
+    }
   }
 };
 

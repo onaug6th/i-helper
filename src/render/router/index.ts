@@ -71,6 +71,15 @@ const routes: Array<RouteRecordRaw> = [
   },
 
   {
+    path: '/miniApp',
+    name: 'miniApp',
+    component: () => import('../views/miniApp/index.vue'),
+    meta: {
+      title: '小程序'
+    }
+  },
+
+  {
     path: '/note',
     name: 'note',
     component: () => import('../views/note/index.vue'),
