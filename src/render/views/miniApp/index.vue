@@ -2,7 +2,6 @@
   <div class="app">
     <Header />
     {{ minAppDetail.name }}
-    <!-- <webview :src="minAppDetail.path"></webview> -->
     <webview src="C:\Users\onaug6th\Desktop\新建文件夹\index.html"></webview>
   </div>
 </template>
@@ -12,7 +11,7 @@
 import Header from '@render/components/header/index.vue';
 import { ipcRenderer } from 'electron';
 import { useRoute } from 'vue-router';
-import { defineComponent, onBeforeMount, reactive } from 'vue';
+import { defineComponent, onBeforeMount, onMounted, reactive } from 'vue';
 // import { useRoute } from 'vue-router';
 // import { ipcRenderer } from 'electron';
 // import { uuid } from '@render/utils';
@@ -25,8 +24,18 @@ export default defineComponent({
     Header
   },
   setup() {
-    let minAppDetail = reactive({});
     const route = useRoute();
+    let minAppDetail: any = reactive({});
+    let webview: any;
+
+    /**
+     * 设置webView
+     */
+    function setWebView() {
+      webview.openDevTools();
+      webview.src = minAppDetail.path;
+      webview.removeEventListener('dom-ready', setWebView);
+    }
 
     onBeforeMount(() => {
       ipcRenderer.invoke('miniApp-detail-get', route.query.id).then(result => {
@@ -34,15 +43,14 @@ export default defineComponent({
       });
     });
 
+    onMounted(() => {
+      webview = document.querySelector('webview');
+      webview.addEventListener('dom-ready', setWebView);
+    });
+
     return {
       minAppDetail
     };
-  },
-  mounted() {
-    const webview = document.querySelector('webview');
-    webview.addEventListener('dom-ready', () => {
-      webview['openDevTools']();
-    });
   }
 });
 </script>
