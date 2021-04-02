@@ -2,7 +2,7 @@
   <div class="app">
     <Header />
     {{ minAppDetail.name }}
-    <webview src="C:\Users\onaug6th\Desktop\新建文件夹\index.html"></webview>
+    <webview nodeintegration></webview>
   </div>
 </template>
 
@@ -11,7 +11,7 @@
 import Header from '@render/components/header/index.vue';
 import { ipcRenderer } from 'electron';
 import { useRoute } from 'vue-router';
-import { defineComponent, onBeforeMount, onMounted, reactive } from 'vue';
+import { defineComponent, onMounted, reactive } from 'vue';
 // import { useRoute } from 'vue-router';
 // import { ipcRenderer } from 'electron';
 // import { uuid } from '@render/utils';
@@ -31,21 +31,22 @@ export default defineComponent({
     /**
      * 设置webView
      */
-    function setWebView() {
-      webview.openDevTools();
-      webview.src = minAppDetail.path;
-      webview.removeEventListener('dom-ready', setWebView);
+    function initWebView() {
+      openWebViewDevTools();
+      webview.removeEventListener('dom-ready', initWebView);
     }
 
-    onBeforeMount(() => {
-      ipcRenderer.invoke('miniApp-detail-get', route.query.id).then(result => {
-        minAppDetail = reactive(result);
-      });
-    });
+    function openWebViewDevTools() {
+      webview.openDevTools();
+    }
 
     onMounted(() => {
-      webview = document.querySelector('webview');
-      webview.addEventListener('dom-ready', setWebView);
+      ipcRenderer.invoke('miniApp-detail-get', route.query.id).then(result => {
+        minAppDetail = reactive(result);
+        webview = document.querySelector('webview');
+        webview.src = minAppDetail.path;
+        webview.addEventListener('dom-ready', initWebView);
+      });
     });
 
     return {

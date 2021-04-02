@@ -71,11 +71,9 @@ class WindowManage {
     }
 
     //  不为启动小程序时，需要主动发布windowId
-    if (type !== 'miniApp') {
-      ipcMain.handleOnce('get-window-id', async () => {
-        return window.id;
-      });
-    }
+    ipcMain.handleOnce('get-window-id', async () => {
+      return window.id;
+    });
 
     window.on('closed', () => {
       this.deleteWindow(windowName);
