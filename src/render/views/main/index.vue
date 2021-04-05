@@ -12,19 +12,6 @@
           @open="handleOpen"
           @close="handleClose"
         >
-          <!-- <el-submenu index="1">
-            <template #title>
-              <i class="el-icon-location"></i>
-              <span>导航一</span>
-            </template>
-            <el-menu-item-group>
-              <template #title>分组一</template>
-              <el-menu-item index="1-1">选项1</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="1-3">选项3</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu> -->
           <el-menu-item
             v-for="(menuItem, menuIndex) in menuList"
             :index="String(menuIndex + 1)"
@@ -77,9 +64,14 @@ export default defineComponent({
       icon: string;
     }> = [
       {
-        label: '插件',
+        label: '小程序',
         path: '/miniAppList',
-        icon: 'el-icon-potato-strips'
+        icon: 'potato-strips'
+      },
+      {
+        label: '开发者',
+        path: '/dev',
+        icon: 'potato-strips'
       },
       {
         label: '笔记',

@@ -13,8 +13,10 @@ import settingManage from './core/setting/settingManage';
 import shortcutKeyManage from './core/shortcutKey/shortcutKeyManage';
 //  托盘管理
 import trayManage from './core/tray';
-//  托盘管理
+//  小程序管理
 import miniAppManage from './core/miniApp/miniAppManage';
+//  开发者管理
+import devManage from './core/dev/devManage';
 //  ipcMain
 import './service/index';
 
@@ -81,6 +83,7 @@ app.on('ready', async () => {
   shortcutKeyManage.appOnReady();
   trayManage.appOnReady();
   miniAppManage.appOnReady();
+  devManage.appOnReady();
 });
 
 if (isDevelopment) {

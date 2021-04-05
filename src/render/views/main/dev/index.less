@@ -1,0 +1,46 @@
+.app-title {
+    font-weight: 300;
+    padding-left: 25px;
+}
+
+.app-list_item {
+  display: flex;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+
+  &:hover {
+    box-shadow: 
+                        8px 14px 38px rgba(39,44,49,.06),
+                        1px 3px 8px rgba(39,44,49,.03);
+    transition: all 0.4s ease;
+    transform: scale(1.02);
+  }
+
+  &-left {
+    width: 80px;
+    text-align: center;
+
+    img {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+  }
+
+  &-right {
+    &--title {
+      span {
+        font-weight: bold;
+        color: #666;
+      }
+    }
+
+    &--desc {
+      color: #ccc;
+      font-size: 12px;
+      margin-top: 12px;
+    }
+  }
+}

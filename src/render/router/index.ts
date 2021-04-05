@@ -18,6 +18,14 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: '/dev',
+        name: 'dev',
+        component: () => import('../views/main/dev/index.vue'),
+        meta: {
+          title: '应用'
+        }
+      },
+      {
         path: '/notes',
         name: 'notes',
         component: () => import('../views/main/notes/index.vue'),
