@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="app" @drop.prevent="drop" @dragover.prevent="drapOver" @dragleave.prevent="drapLeave">
     <h1 class="app-title">
       开发者模式
     </h1>
@@ -68,13 +68,37 @@ export default defineComponent({
       });
     }
 
+    /**
+     * 文件放下
+     */
+    function drop() {
+      console;
+    }
+
+    /**
+     * 拖拽经过
+     */
+    function drapOver() {
+      console;
+    }
+
+    /**
+     * 拖拽离开
+     */
+    function drapLeave() {
+      console;
+    }
+
     onBeforeMount(() => {
       getAppList();
     });
 
     return {
       state,
-      openApp
+      openApp,
+      drop,
+      drapOver,
+      drapLeave
     };
   }
 });

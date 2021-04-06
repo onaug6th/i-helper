@@ -1,15 +1,5 @@
-const on = function(
-  element: HTMLElement | Document | Window,
-  event: string,
-  handler: EventListenerOrEventListenerObject,
-  useCapture = false
-): void {
-  if (element && event && handler) {
-    element.addEventListener(event, handler, useCapture);
-  }
-};
-
 import { ComponentPublicInstance, DirectiveBinding, ObjectDirective } from 'vue';
+import { on } from '../utils/event';
 
 type DocumentHandler = <T extends MouseEvent>(mouseup: T, mousedown: T) => void;
 
@@ -28,6 +18,7 @@ let startClick: MouseEvent;
 on(document, 'mousedown', (e: MouseEvent) => {
   startClick = e;
 });
+
 on(document, 'mouseup', (e: MouseEvent) => {
   for (const { documentHandler } of nodeList.values()) {
     documentHandler(e, startClick);
