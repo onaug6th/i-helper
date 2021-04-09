@@ -70,7 +70,7 @@ class WindowManage {
       window.webContents.openDevTools();
     }
 
-    //  不为启动小程序时，需要主动发布windowId
+    //  不为启动插件时，需要主动发布windowId
     ipcMain.handleOnce('get-window-id', async () => {
       return window.id;
     });
@@ -122,15 +122,15 @@ class WindowManage {
   }
 
   /**
-   * 创建小程序窗口
+   * 创建插件窗口
    * @param id
    * @returns
    */
-  createMiniAppBrowserWindow(id?: string): BrowserWindow {
-    const url = this.getWebUrl(`miniApp?id=${id}`);
+  createPluginBrowserWindow(id?: string): BrowserWindow {
+    const url = this.getWebUrl(`plugin?id=${id}`);
     const name = id;
 
-    return this.createBrowserWindow({ type: 'miniApp', url, name });
+    return this.createBrowserWindow({ type: 'plugin', url, name });
   }
 
   /**

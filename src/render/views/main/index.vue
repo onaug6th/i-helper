@@ -64,8 +64,8 @@ export default defineComponent({
       icon: string;
     }> = [
       {
-        label: '小程序',
-        path: '/miniAppList',
+        label: '插件',
+        path: '/pluginList',
         icon: 'potato-strips'
       },
       {

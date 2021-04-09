@@ -19,7 +19,7 @@ import { defineComponent, onMounted, reactive } from 'vue';
 // import RightMenu from '@render/components/rightMenu/src/rightMenu';
 
 export default defineComponent({
-  name: 'miniApp',
+  name: 'plugin',
   components: {
     Header
   },
@@ -41,7 +41,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      ipcRenderer.invoke('miniApp-detail-get', route.query.id).then(result => {
+      ipcRenderer.invoke('plugin-detail-get', route.query.id).then(result => {
         minAppDetail = reactive(result);
         webview = document.querySelector('webview');
         webview.src = minAppDetail.path;

@@ -42,14 +42,14 @@ export default defineComponent({
      * 打开应用
      */
     function openApp(app) {
-      ipcRenderer.send('miniApp-open', app.id);
+      ipcRenderer.send('plugin-open', app.id);
     }
 
     /**
      * 获取应用列表
      */
     function getAppList() {
-      ipcRenderer.invoke('miniApp-list-get').then(result => {
+      ipcRenderer.invoke('plugin-list-get').then(result => {
         state.appList = reactive(result);
       });
     }

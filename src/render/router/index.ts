@@ -6,13 +6,13 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'main',
-    redirect: 'miniAppList',
+    redirect: 'pluginList',
     component: main,
     children: [
       {
-        path: '/miniAppList',
-        name: 'miniAppList',
-        component: () => import('../views/main/miniAppList/index.vue'),
+        path: '/pluginList',
+        name: 'pluginList',
+        component: () => import('../views/main/pluginList/index.vue'),
         meta: {
           title: '应用'
         }
@@ -79,11 +79,11 @@ const routes: Array<RouteRecordRaw> = [
   },
 
   {
-    path: '/miniApp',
-    name: 'miniApp',
-    component: () => import('../views/miniApp/index.vue'),
+    path: '/plugin',
+    name: 'plugin',
+    component: () => import('../views/plugin/index.vue'),
     meta: {
-      title: '小程序'
+      title: '插件'
     }
   },
 

@@ -26,7 +26,7 @@ const browserWindowOptions = {
     height: 350,
     minWidth: 250
   },
-  miniApp: {
+  plugin: {
     ...commonOptions,
     webPreferences: {
       ...commonOptions.webPreferences,
