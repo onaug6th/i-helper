@@ -1,9 +1,18 @@
-.app-title {
+.plugin {
+  transition: background-color 0.2s ease-in-out;
+
+  &.isDragOver {
+    background-color: rgba(131, 152, 212, 0.15);
+  }
+}
+
+
+.plugin-title {
     font-weight: 300;
     padding-left: 25px;
 }
 
-.app-list_item {
+.plugin-list_item {
   display: flex;
   padding: 10px;
   cursor: pointer;

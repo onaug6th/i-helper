@@ -1,27 +1,38 @@
 <template>
-  <div class="app" @drop.prevent="drop" @dragover.prevent="drapOver" @dragleave.prevent="drapLeave">
-    <h1 class="app-title">
+  <div
+    class="plugin"
+    :class="pluginClassName"
+    @drop.prevent="drop"
+    @dragover.prevent="drapOver"
+    @dragleave.prevent="drapLeave"
+  >
+    <h1 class="plugin-title">
       开发者模式
     </h1>
 
-    <div class="app-list">
-      <div v-for="(app, appIndex) in state.appList" class="app-list_item" :key="appIndex" @click="openApp(app)">
-        <div class="app-list_item-left">
-          <img :src="app.avatar" />
+    <div class="plugin-list">
+      <div
+        v-for="(plugin, appIndex) in state.pluginList"
+        class="plugin-list_item"
+        :key="appIndex"
+        @click="openApp(plugin)"
+      >
+        <div class="plugin-list_item-left">
+          <img :src="plugin.avatar" />
         </div>
-        <div class="app-list_item-right">
-          <div class="app-list_item-right--title">
-            <span>{{ app.name }}</span>
+        <div class="plugin-list_item-right">
+          <div class="plugin-list_item-right--title">
+            <span>{{ plugin.name }}</span>
           </div>
-          <div class="app-list_item-right--desc">
-            {{ app.desc }}
+          <div class="plugin-list_item-right--desc">
+            {{ plugin.desc }}
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <el-drawer v-model="state.openDrawer" :title="state.currentApp.name" size="40%" direction="rtl">
+  <el-drawer v-model="state.openDrawer" :title="state.currentPlugin.name" size="40%" direction="rtl">
     <div>
       <div>
         打包
@@ -35,7 +46,7 @@
 
 <script lang="ts">
 import { ipcRenderer } from 'electron';
-import { defineComponent, onBeforeMount, reactive } from 'vue';
+import { computed, defineComponent, onBeforeMount, reactive } from 'vue';
 // import { useRoute } from 'vue-router';
 // import { ipcRenderer } from 'electron';
 // import { uuid } from '@render/utils';
@@ -44,19 +55,31 @@ import { defineComponent, onBeforeMount, reactive } from 'vue';
 
 export default defineComponent({
   setup() {
-    //  应用列表
-    let state = reactive({
-      appList: [],
+    const state = reactive({
+      //  插件列表
+      pluginList: [],
+      //  打开抽屉
       openDrawer: false,
-      currentApp: {}
+      //  当前插件
+      currentPlugin: {},
+      //  拖拽经过
+      isDragOver: false
+    });
+
+    const pluginClassName = computed(() => {
+      const className = [];
+      if (state.isDragOver) {
+        className.push('isDragOver');
+      }
+      return className;
     });
 
     /**
      * 打开应用
      */
-    function openApp(app) {
+    function openApp(plugin) {
       state.openDrawer = true;
-      state.currentApp = app;
+      state.currentPlugin = plugin;
     }
 
     /**
@@ -64,7 +87,7 @@ export default defineComponent({
      */
     function getAppList() {
       ipcRenderer.invoke('dev-list-get').then(result => {
-        state.appList = reactive(result);
+        state.pluginList = reactive(result);
       });
     }
 
@@ -79,14 +102,14 @@ export default defineComponent({
      * 拖拽经过
      */
     function drapOver() {
-      console;
+      state.isDragOver = true;
     }
 
     /**
      * 拖拽离开
      */
     function drapLeave() {
-      console;
+      state.isDragOver = false;
     }
 
     onBeforeMount(() => {
@@ -95,6 +118,7 @@ export default defineComponent({
 
     return {
       state,
+      pluginClassName,
       openApp,
       drop,
       drapOver,
