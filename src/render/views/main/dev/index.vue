@@ -94,8 +94,17 @@ export default defineComponent({
     /**
      * 文件放下
      */
-    function drop() {
-      console;
+    function drop(event) {
+      //  拖拽进来的文件
+      let files = event.dataTransfer && event.dataTransfer.files;
+      //  网络路径
+      let uriList = event.dataTransfer.getData('text/uri-list');
+      //  拖拽进来的文字
+      let text = event.dataTransfer.getData('text/plain');
+      files;
+      uriList;
+      text;
+      debugger;
     }
 
     /**
