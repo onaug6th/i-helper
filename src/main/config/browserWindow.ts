@@ -9,6 +9,7 @@ const commonOptions = {
   width: 750,
   height: 600,
   webPreferences: {
+    webSecurity: false,
     enableRemoteModule: true,
     nodeIntegration: true
   }

@@ -5,6 +5,7 @@
 
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+import path from 'path';
 //  窗体管理
 import windowManage from './core/window/windowManage';
 //  设置管理
@@ -32,6 +33,15 @@ protocol.registerSchemesAsPrivileged([
     }
   }
 ]);
+
+app.whenReady().then(() => {
+  protocol.registerFileProtocol('atom', (request, callback) => {
+    //  截取file:///之后的内容，也就是我们需要的
+    const url = request.url.substr(8);
+    //  使用callback获取真正指向内容
+    callback(decodeURI(url));
+  });
+});
 
 /**
  * 打开主界面

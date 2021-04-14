@@ -18,7 +18,7 @@
         @click="openApp(plugin)"
       >
         <div class="plugin-list_item-left">
-          <img :src="plugin.avatar" />
+          <img :src="plugin.logo" />
         </div>
         <div class="plugin-list_item-right">
           <div class="plugin-list_item-right--title">
@@ -95,16 +95,31 @@ export default defineComponent({
      * 文件放下
      */
     function drop(event) {
+      state.isDragOver = false;
+
       //  拖拽进来的文件
-      let files = event.dataTransfer && event.dataTransfer.files;
+      const files = Array.prototype.slice.call(event.dataTransfer.files);
       //  网络路径
-      let uriList = event.dataTransfer.getData('text/uri-list');
+      const uriList = event.dataTransfer.getData('text/uri-list');
       //  拖拽进来的文字
-      let text = event.dataTransfer.getData('text/plain');
-      files;
+      const text = event.dataTransfer.getData('text/plain');
+
       uriList;
       text;
-      debugger;
+
+      files.forEach(file => {
+        //  为插件的描述文件
+        if (file.name === 'manifest.json') {
+          const fileObj = {
+            name: file.name,
+            path: file.path
+          };
+
+          ipcRenderer.invoke('dev-plugin-add', fileObj).then(result => {
+            state.pluginList.push(result);
+          });
+        }
+      });
     }
 
     /**

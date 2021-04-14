@@ -9,5 +9,10 @@ ipcMain.on('dev-open', (event, id) => {
 
 //  获取开发者插件窗口
 ipcMain.handle('dev-list-get', () => {
-  return devManage.getAppList();
+  return devManage.getDevPluginList();
+});
+
+//  获取开发者插件窗口
+ipcMain.handle('dev-plugin-add', (event, plugin) => {
+  return devManage.addDevPlugin(plugin);
 });
