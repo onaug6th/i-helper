@@ -25,11 +25,6 @@
 <script lang="ts">
 import { ipcRenderer } from 'electron';
 import { defineComponent, onBeforeMount, reactive } from 'vue';
-// import { useRoute } from 'vue-router';
-// import { ipcRenderer } from 'electron';
-// import { uuid } from '@render/utils';
-// import dayjs from 'dayjs';
-// import RightMenu from '@render/components/rightMenu/src/rightMenu';
 
 export default defineComponent({
   setup() {

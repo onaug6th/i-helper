@@ -7,7 +7,7 @@ ipcMain.on('plugin-open', (event, id) => {
   return windowManage.createPluginBrowserWindow(id);
 });
 
-//  获取插件详情
+//  获取插件列表
 ipcMain.handle('plugin-list-get', () => {
   return pluginManage.getPluginList();
 });

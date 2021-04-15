@@ -1,31 +1,26 @@
 import fs from 'fs';
-
-const appList = [
-  {
-    id: 'a2s14d1s3q5f1e121fs',
-    name: '测试插件',
-    path: 'C:\\Users\\onaug6th\\Desktop\\新建文件夹\\index.html',
-    logo: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg',
-    desc: '测试'
-  }
-];
+//  便笺数据库
+import devPluginDB from '@/main/dataBase/devPlugin.db';
+import { uuid } from '@/render/utils';
 
 class DevManage {
-  appList: Array<any> = [];
+  pluginList: Array<any> = [];
 
   /**
    * 在应用启动后执行的回调
    */
   appOnReady() {
-    this.appList = appList;
+    devPluginDB._db.find({}).exec((e, d) => {
+      this.pluginList = d;
+    });
   }
 
   /**
    * 获取开发者插件列表
    * @returns
    */
-  getDevPluginList() {
-    return this.appList;
+  getPluginList() {
+    return this.pluginList;
   }
 
   /**
@@ -33,15 +28,35 @@ class DevManage {
    * @param plugin
    * @returns
    */
-  addDevPlugin(plugin) {
+  async addPlugin(plugin) {
     const { path, name } = plugin;
-    const file = JSON.parse(fs.readFileSync(path, 'utf8'));
+    const text = fs.readFileSync(path, 'utf8');
+    const file = JSON.parse(text);
 
     const folderPath = path.replace(name, '');
     file.logo = `atom:///${folderPath}${file.logo}`;
     file.main = `${folderPath}${file.main}`;
+
+    const result = await devPluginDB.insert({
+      id: uuid(),
+      ...file
+    });
     debugger;
-    return file;
+    this.pluginList.push(result);
+
+    return result;
+  }
+
+  /**
+   * 删除开发者插件
+   * @param id
+   */
+  delPlugin(id) {
+    devPluginDB.remove({
+      uid: id
+    });
+    const index = this.pluginList.findIndex(plugin => plugin.id === id);
+    this.pluginList.splice(index, 1);
   }
 
   /**
@@ -49,8 +64,8 @@ class DevManage {
    * @param id
    * @returns
    */
-  getDevApp(id) {
-    return this.appList.find(app => app.id === id);
+  getPlugin(id) {
+    return this.pluginList.find(plugin => plugin.id === id);
   }
 }
 

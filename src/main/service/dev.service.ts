@@ -9,10 +9,19 @@ ipcMain.on('dev-open', (event, id) => {
 
 //  获取开发者插件窗口
 ipcMain.handle('dev-list-get', () => {
-  return devManage.getDevPluginList();
+  return devManage.getPluginList();
 });
 
-//  获取开发者插件窗口
+//  新增开发者插件
 ipcMain.handle('dev-plugin-add', (event, plugin) => {
-  return devManage.addDevPlugin(plugin);
+  return devManage.addPlugin(plugin);
+});
+//  新增开发者插件
+ipcMain.handle('dev-plugin-detail-get', (event, id) => {
+  return devManage.getPlugin(id);
+});
+
+//  删除开发者插件
+ipcMain.handle('dev-plugin-del', (event, id) => {
+  return devManage.delPlugin(id);
 });

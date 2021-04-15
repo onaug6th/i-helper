@@ -15,7 +15,7 @@
         v-for="(plugin, appIndex) in state.pluginList"
         class="plugin-list_item"
         :key="appIndex"
-        @click="openApp(plugin)"
+        @click="choosePlugin(plugin)"
       >
         <div class="plugin-list_item-left">
           <img :src="plugin.logo" />
@@ -33,12 +33,32 @@
   </div>
 
   <el-drawer v-model="state.openDrawer" :title="state.currentPlugin.name" size="40%" direction="rtl">
-    <div>
-      <div>
-        打包
+    <div class="drawer">
+      <div class="drawer-row">
+        <div class="drawer-row__title">
+          启动插件
+        </div>
+        <div>
+          <el-button type="primary" size="small" @click="openPlugin(state.currentPlugin)">启动</el-button>
+        </div>
       </div>
-      <div>
-        删除
+
+      <div class="drawer-row">
+        <div class="drawer-row__title">
+          打包
+        </div>
+        <div>
+          <el-button size="small">打包</el-button>
+        </div>
+      </div>
+
+      <div class="drawer-row">
+        <div class="drawer-row__title">
+          删除插件
+        </div>
+        <div>
+          <el-button type="danger" plain size="small" @click="delPlugin">删除</el-button>
+        </div>
       </div>
     </div>
   </el-drawer>
@@ -47,15 +67,10 @@
 <script lang="ts">
 import { ipcRenderer } from 'electron';
 import { computed, defineComponent, onBeforeMount, reactive } from 'vue';
-// import { useRoute } from 'vue-router';
-// import { ipcRenderer } from 'electron';
-// import { uuid } from '@render/utils';
-// import dayjs from 'dayjs';
-// import RightMenu from '@render/components/rightMenu/src/rightMenu';
 
 export default defineComponent({
   setup() {
-    const state = reactive({
+    const state: any = reactive({
       //  插件列表
       pluginList: [],
       //  打开抽屉
@@ -75,11 +90,26 @@ export default defineComponent({
     });
 
     /**
-     * 打开应用
+     * 选择插件
      */
-    function openApp(plugin) {
+    function choosePlugin(plugin) {
       state.openDrawer = true;
       state.currentPlugin = plugin;
+    }
+
+    /**
+     * 打开插件
+     */
+    function openPlugin(plugin) {
+      ipcRenderer.send('plugin-open', plugin.id);
+    }
+
+    /**
+     * 删除插件
+     */
+    function delPlugin(index) {
+      ipcRenderer.invoke('dev-plugin-del', state.currentPlugin.id);
+      state.pluginList.slice(index, 1);
     }
 
     /**
@@ -109,7 +139,7 @@ export default defineComponent({
 
       files.forEach(file => {
         //  为插件的描述文件
-        if (file.name === 'manifest.json') {
+        if (file.name === 'plugin.json') {
           const fileObj = {
             name: file.name,
             path: file.path
@@ -143,7 +173,9 @@ export default defineComponent({
     return {
       state,
       pluginClassName,
-      openApp,
+      choosePlugin,
+      openPlugin,
+      delPlugin,
       drop,
       drapOver,
       drapLeave
