@@ -101,7 +101,7 @@ export default defineComponent({
      * 打开插件
      */
     function openPlugin(plugin) {
-      ipcRenderer.send('plugin-open', plugin.id);
+      ipcRenderer.invoke('dev-plugin-open', plugin.id);
     }
 
     /**

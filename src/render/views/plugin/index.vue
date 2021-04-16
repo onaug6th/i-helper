@@ -25,6 +25,7 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
+    const { id, isDev } = route.query;
     let minAppDetail: any = reactive({});
     let webview: any;
 
@@ -32,19 +33,24 @@ export default defineComponent({
      * 设置webView
      */
     function initWebView() {
-      openWebViewDevTools();
+      isDev && openWebViewDevTools();
       webview.removeEventListener('dom-ready', initWebView);
     }
 
+    /**
+     * 打开开发者工具
+     */
     function openWebViewDevTools() {
       webview.openDevTools();
     }
 
     onMounted(() => {
-      ipcRenderer.invoke('plugin-detail-get', route.query.id).then(result => {
+      const event = isDev ? 'dev-plugin-detail-get' : 'plugin-detail-get';
+
+      ipcRenderer.invoke(event, id).then(result => {
         minAppDetail = reactive(result);
         webview = document.querySelector('webview');
-        webview.src = minAppDetail.path;
+        webview.src = minAppDetail.main;
         webview.addEventListener('dom-ready', initWebView);
       });
     });
