@@ -81,6 +81,7 @@ export default defineComponent({
       isDragOver: false
     });
 
+    //  插件样式名
     const pluginClassName = computed(() => {
       const className = [];
       if (state.isDragOver) {
@@ -91,6 +92,7 @@ export default defineComponent({
 
     /**
      * 选择插件
+     * @param plugin
      */
     function choosePlugin(plugin) {
       state.openDrawer = true;
@@ -99,6 +101,7 @@ export default defineComponent({
 
     /**
      * 打开插件
+     * @param plugin
      */
     function openPlugin(plugin) {
       ipcRenderer.invoke('dev-plugin-open', plugin.id);
@@ -106,6 +109,7 @@ export default defineComponent({
 
     /**
      * 删除插件
+     * @param index
      */
     function delPlugin(index) {
       ipcRenderer.invoke('dev-plugin-del', state.currentPlugin.id);
