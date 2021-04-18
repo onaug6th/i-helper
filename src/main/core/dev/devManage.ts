@@ -35,13 +35,16 @@ class DevManage {
 
     const folderPath = path.replace(name, '');
     file.logo = `atom:///${folderPath}${file.logo}`;
-    file.main = `${folderPath}${file.main}`;
+
+    //  如不为 http 协议开头，补全文件夹目录加入口文件地址
+    if (!file.main.startsWith('http')) {
+      file.main = `${folderPath}${file.main}`;
+    }
 
     const result = await devPluginDB.insert({
       id: uuid(),
       ...file
     });
-    debugger;
     this.pluginList.push(result);
 
     return result;
@@ -53,7 +56,7 @@ class DevManage {
    */
   delPlugin(id) {
     devPluginDB.remove({
-      uid: id
+      id
     });
     const index = this.pluginList.findIndex(plugin => plugin.id === id);
     this.pluginList.splice(index, 1);

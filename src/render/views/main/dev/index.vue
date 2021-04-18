@@ -15,7 +15,7 @@
         v-for="(plugin, appIndex) in state.pluginList"
         class="plugin-list_item"
         :key="appIndex"
-        @click="choosePlugin(plugin)"
+        @click="choosePlugin(appIndex)"
       >
         <div class="plugin-list_item-left">
           <img :src="plugin.logo" />
@@ -32,14 +32,32 @@
     </div>
   </div>
 
-  <el-drawer v-model="state.openDrawer" :title="state.currentPlugin.name" size="40%" direction="rtl">
+  <el-drawer v-model="state.openDrawer" :title="currentPlugin.name" size="40%" direction="rtl">
     <div class="drawer">
+      <div class="drawer-row">
+        <div class="drawer-row__title">
+          插件ID
+        </div>
+        <div class="drawer-row__value">
+          {{ currentPlugin.id }}
+        </div>
+      </div>
+
+      <div class="drawer-row">
+        <div class="drawer-row__title">
+          插件路径
+        </div>
+        <div class="drawer-row__value">
+          {{ currentPlugin.main }}
+        </div>
+      </div>
+
       <div class="drawer-row">
         <div class="drawer-row__title">
           启动插件
         </div>
         <div>
-          <el-button type="primary" size="small" @click="openPlugin(state.currentPlugin)">启动</el-button>
+          <el-button type="primary" size="small" @click="openPlugin(currentPlugin)">启动</el-button>
         </div>
       </div>
 
@@ -48,7 +66,16 @@
           打包
         </div>
         <div>
-          <el-button size="small">打包</el-button>
+          <el-button type="success" size="small">打包</el-button>
+        </div>
+      </div>
+
+      <div class="drawer-row">
+        <div class="drawer-row__title">
+          重新加载插件
+        </div>
+        <div>
+          <el-button type="success" size="small">重新加载</el-button>
         </div>
       </div>
 
@@ -67,6 +94,7 @@
 <script lang="ts">
 import { ipcRenderer } from 'electron';
 import { computed, defineComponent, onBeforeMount, reactive } from 'vue';
+import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   setup() {
@@ -76,7 +104,7 @@ export default defineComponent({
       //  打开抽屉
       openDrawer: false,
       //  当前插件
-      currentPlugin: {},
+      currentIndex: 0,
       //  拖拽经过
       isDragOver: false
     });
@@ -90,13 +118,18 @@ export default defineComponent({
       return className;
     });
 
+    //  当前插件
+    const currentPlugin = computed(() => {
+      return state.pluginList[state.currentIndex] || {};
+    });
+
     /**
      * 选择插件
-     * @param plugin
+     * @param index
      */
-    function choosePlugin(plugin) {
+    function choosePlugin(index) {
       state.openDrawer = true;
-      state.currentPlugin = plugin;
+      state.currentIndex = index;
     }
 
     /**
@@ -111,9 +144,14 @@ export default defineComponent({
      * 删除插件
      * @param index
      */
-    function delPlugin(index) {
-      ipcRenderer.invoke('dev-plugin-del', state.currentPlugin.id);
-      state.pluginList.slice(index, 1);
+    function delPlugin() {
+      ipcRenderer.invoke('dev-plugin-del', currentPlugin.value.id);
+      state.pluginList.splice(state.currentIndex, 1);
+      state.openDrawer = false;
+      ElNotification({
+        type: 'success',
+        message: '删除成功'
+      });
     }
 
     /**
@@ -177,6 +215,7 @@ export default defineComponent({
     return {
       state,
       pluginClassName,
+      currentPlugin,
       choosePlugin,
       openPlugin,
       delPlugin,
