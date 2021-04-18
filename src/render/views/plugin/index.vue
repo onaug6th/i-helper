@@ -50,6 +50,10 @@ export default defineComponent({
       ipcRenderer.invoke(event, id).then(result => {
         minAppDetail = reactive(result);
         webview = document.querySelector('webview');
+
+        if (minAppDetail.preload) {
+          webview.setAttribute('preload', minAppDetail.preload);
+        }
         webview.src = minAppDetail.main;
         webview.addEventListener('dom-ready', initWebView);
       });

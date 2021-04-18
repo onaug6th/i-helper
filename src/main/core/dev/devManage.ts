@@ -36,15 +36,22 @@ class DevManage {
     const folderPath = path.replace(name, '');
     file.logo = `atom:///${folderPath}${file.logo}`;
 
+    //  入口文件
     //  如不为 http 协议开头，补全文件夹目录加入口文件地址
     if (!file.main.startsWith('http')) {
       file.main = `${folderPath}${file.main}`;
+    }
+
+    //  预加载js文件
+    if (file.preload) {
+      file.preload = `file://${folderPath}/preload.js`;
     }
 
     const result = await devPluginDB.insert({
       id: uuid(),
       ...file
     });
+
     this.pluginList.push(result);
 
     return result;
