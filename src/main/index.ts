@@ -5,7 +5,6 @@
 
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
-import path from 'path';
 //  窗体管理
 import windowManage from './core/window/windowManage';
 //  设置管理

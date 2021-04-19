@@ -1,8 +1,8 @@
 <template>
-  <div class="app">
+  <div>
     <Header />
     {{ minAppDetail.name }}
-    <webview nodeintegration></webview>
+    <webview class="webview" nodeintegration></webview>
   </div>
 </template>
 
@@ -12,11 +12,6 @@ import Header from '@render/components/header/index.vue';
 import { ipcRenderer } from 'electron';
 import { useRoute } from 'vue-router';
 import { defineComponent, onMounted, reactive } from 'vue';
-// import { useRoute } from 'vue-router';
-// import { ipcRenderer } from 'electron';
-// import { uuid } from '@render/utils';
-// import dayjs from 'dayjs';
-// import RightMenu from '@render/components/rightMenu/src/rightMenu';
 
 export default defineComponent({
   name: 'plugin',
@@ -33,7 +28,11 @@ export default defineComponent({
      * 设置webView
      */
     function initWebView() {
-      isDev && openWebViewDevTools();
+      if (isDev) {
+        openWebViewDevTools();
+      }
+
+      // webview.executeJavaScript();
       webview.removeEventListener('dom-ready', initWebView);
     }
 
@@ -51,9 +50,12 @@ export default defineComponent({
         minAppDetail = reactive(result);
         webview = document.querySelector('webview');
 
+        //  预加载文件
         if (minAppDetail.preload) {
           webview.setAttribute('preload', minAppDetail.preload);
         }
+
+        //  页面入口
         webview.src = minAppDetail.main;
         webview.addEventListener('dom-ready', initWebView);
       });

@@ -84,16 +84,6 @@ export default defineComponent({
         icon: 'document'
       },
       {
-        label: '提醒',
-        path: '/notices',
-        icon: 'bell'
-      },
-      {
-        label: '待办事项',
-        path: '/todo',
-        icon: 'date'
-      },
-      {
         label: '设置',
         path: '/setting/common',
         icon: 'setting'

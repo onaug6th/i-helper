@@ -42,22 +42,6 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: '/notices',
-        name: 'notices',
-        component: () => import('../views/main/notices/index.vue'),
-        meta: {
-          title: '提醒'
-        }
-      },
-      {
-        path: '/todo',
-        name: 'todo',
-        component: () => import('../views/main/todo/index.vue'),
-        meta: {
-          title: '待办事项'
-        }
-      },
-      {
         path: '/setting',
         name: 'setting',
         component: () => import('../views/main/setting/index.vue'),
