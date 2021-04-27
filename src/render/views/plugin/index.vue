@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <Header />
-    {{ minAppDetail.name }}
+    {{ plugin.name }}
     <webview nodeintegration></webview>
   </div>
 </template>
@@ -12,11 +12,6 @@ import Header from '@render/components/header/index.vue';
 import { ipcRenderer } from 'electron';
 import { useRoute } from 'vue-router';
 import { defineComponent, onMounted, reactive } from 'vue';
-// import { useRoute } from 'vue-router';
-// import { ipcRenderer } from 'electron';
-// import { uuid } from '@render/utils';
-// import dayjs from 'dayjs';
-// import RightMenu from '@render/components/rightMenu/src/rightMenu';
 
 export default defineComponent({
   name: 'plugin',
@@ -26,7 +21,7 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const { id, isDev } = route.query;
-    let minAppDetail: any = reactive({});
+    let plugin: any = reactive({});
     let webview: any;
 
     /**
@@ -48,19 +43,19 @@ export default defineComponent({
       const event = isDev ? 'dev-plugin-detail-get' : 'plugin-detail-get';
 
       ipcRenderer.invoke(event, id).then(result => {
-        minAppDetail = reactive(result);
+        plugin = reactive(result);
         webview = document.querySelector('webview');
 
-        if (minAppDetail.preload) {
-          webview.setAttribute('preload', minAppDetail.preload);
+        if (plugin.preload) {
+          webview.setAttribute('preload', plugin.preload);
         }
-        webview.src = minAppDetail.main;
+        webview.src = plugin.main;
         webview.addEventListener('dom-ready', initWebView);
       });
     });
 
     return {
-      minAppDetail
+      plugin
     };
   }
 });

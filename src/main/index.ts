@@ -92,7 +92,7 @@ app.on('ready', async () => {
   settingManage.appOnReady(app);
   shortcutKeyManage.appOnReady();
   trayManage.appOnReady();
-  pluginManage.appOnReady();
+  pluginManage.appOnReady(app);
   devManage.appOnReady();
 });
 

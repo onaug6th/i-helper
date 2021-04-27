@@ -39,15 +39,25 @@ const appList = [
 class PluginManage {
   appList: Array<any> = [];
 
-  appOnReady() {
+  appOnReady(app) {
     this.appList = appList;
+
+    app.on('web-contents-created', (event, contents) => {
+      contents.on('will-attach-webview', (event, webPreferences, params) => {
+        //  启用NodeJS集成。
+        webPreferences.nodeIntegration = true;
+        params;
+        contents;
+        debugger;
+      });
+    });
   }
 
   getPluginList() {
     return this.appList;
   }
 
-  getPlugin(id) {
+  getPlugin(id: string) {
     return this.appList.find(app => app.id === id);
   }
 }
