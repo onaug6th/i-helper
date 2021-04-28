@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header />
-    {{ minAppDetail.name }}
+    {{ plugin.name }}
     <webview class="webview" nodeintegration></webview>
   </div>
 </template>
@@ -21,7 +21,7 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const { id, isDev } = route.query;
-    let minAppDetail: any = reactive({});
+    let plugin: any = reactive({});
     let webview: any;
 
     /**
@@ -47,22 +47,19 @@ export default defineComponent({
       const event = isDev ? 'dev-plugin-detail-get' : 'plugin-detail-get';
 
       ipcRenderer.invoke(event, id).then(result => {
-        minAppDetail = reactive(result);
+        plugin = reactive(result);
         webview = document.querySelector('webview');
 
-        //  预加载文件
-        if (minAppDetail.preload) {
-          webview.setAttribute('preload', minAppDetail.preload);
+        if (plugin.preload) {
+          webview.setAttribute('preload', plugin.preload);
         }
-
-        //  页面入口
-        webview.src = minAppDetail.main;
+        webview.src = plugin.main;
         webview.addEventListener('dom-ready', initWebView);
       });
     });
 
     return {
-      minAppDetail
+      plugin
     };
   }
 });
