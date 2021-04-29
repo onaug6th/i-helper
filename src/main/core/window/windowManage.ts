@@ -2,6 +2,10 @@
 import { BrowserWindow, ipcMain } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
+import { session, BrowserView } from 'electron';
+import path from 'path';
+import pluginManage from '@/main/core/plugin/pluginManage';
+import devManage from '@/main/core/dev/devManage';
 
 //  创建窗口的参数模型
 interface CreateBrowserWindowParams {
@@ -127,20 +131,44 @@ class WindowManage {
    * @param isDev
    * @returns
    */
-  createPluginBrowserWindow(id: string, isDev = false): BrowserWindow {
+  createPluginBrowserWindow(id: string, isDev = false): void {
     const url = this.getWebUrl(`plugin?id=${id}&isDev=${isDev}`);
     const name = id;
+    const pluginWindow = this.createBrowserWindow({ type: 'plugin', url, name });
 
-    return this.createBrowserWindow({ type: 'plugin', url, name });
-  }
+    const plugin = isDev ? devManage.getPlugin(id) : pluginManage.getPlugin(id);
+    const sessionItem = session.fromPartition(name);
 
-  /**
-   * 创建应用窗体
-   * @param param0
-   * @returns
-   */
-  createAppBrowserWindow({ url, name }) {
-    return this.createBrowserWindow({ type: 'app', url, name });
+    const trayPath = {
+      dev: path.join(process.cwd(), 'public', 'apisdk.js'),
+      prod: path.join(__dirname, 'apisdk.js')
+    };
+
+    const apisdk = trayPath.dev;
+    sessionItem.setPreloads([apisdk]);
+
+    const webPreferences: any = {
+      //  启用NodeJS集成。
+      nodeIntegration: true,
+      session: sessionItem
+    };
+
+    if (plugin.preload) {
+      webPreferences.preload = plugin.preload;
+    }
+
+    const browserViewItem = new BrowserView({
+      webPreferences
+    });
+
+    pluginWindow.setBrowserView(browserViewItem);
+    browserViewItem.setBounds({ x: 0, y: 70, width: 800, height: 600 });
+    browserViewItem.setAutoResize({ width: true, height: true });
+    browserViewItem.webContents.loadURL(plugin.main);
+    browserViewItem.webContents.on('dom-ready', (...args) => {
+      args;
+      browserViewItem.webContents.openDevTools();
+    });
   }
 
   /**
