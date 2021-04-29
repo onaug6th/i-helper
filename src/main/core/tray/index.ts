@@ -19,9 +19,11 @@ class TrayManage {
    * 应用初始化时执行
    */
   appOnReady() {
-    tray = new Tray(
-      isDevelopment ? path.join(process.cwd(), 'public', 'favicon.ico') : path.join(__dirname, 'favicon.ico')
-    );
+    const trayPath = {
+      dev: path.join(process.cwd(), 'public', 'favicon.ico'),
+      prod: path.join(__dirname, 'favicon.ico')
+    };
+    tray = new Tray(isDevelopment ? trayPath.dev : trayPath.prod);
     const contextMenu = Menu.buildFromTemplate(menus);
     tray.setContextMenu(contextMenu);
     tray.setToolTip('i-helper');

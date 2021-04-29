@@ -1,17 +1,13 @@
 <template>
   <div>
     <Header />
-    {{ plugin.name }}
-    <webview class="webview" nodeintegration></webview>
   </div>
 </template>
 
 <script lang="ts">
-// import { ipcRenderer } from 'electron';
 import Header from '@render/components/header/index.vue';
-import { ipcRenderer } from 'electron';
-import { useRoute } from 'vue-router';
-import { defineComponent, onMounted, reactive } from 'vue';
+// import { useRoute } from 'vue-router';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'plugin',
@@ -19,48 +15,9 @@ export default defineComponent({
     Header
   },
   setup() {
-    const route = useRoute();
-    const { id, isDev } = route.query;
-    let plugin: any = reactive({});
-    let webview: any;
-
-    /**
-     * 设置webView
-     */
-    function initWebView() {
-      if (isDev) {
-        openWebViewDevTools();
-      }
-
-      // webview.executeJavaScript();
-      webview.removeEventListener('dom-ready', initWebView);
-    }
-
-    /**
-     * 打开开发者工具
-     */
-    function openWebViewDevTools() {
-      webview.openDevTools();
-    }
-
-    onMounted(() => {
-      const event = isDev ? 'dev-plugin-detail-get' : 'plugin-detail-get';
-
-      ipcRenderer.invoke(event, id).then(result => {
-        plugin = reactive(result);
-        webview = document.querySelector('webview');
-
-        if (plugin.preload) {
-          webview.setAttribute('preload', plugin.preload);
-        }
-        webview.src = plugin.main;
-        webview.addEventListener('dom-ready', initWebView);
-      });
-    });
-
-    return {
-      plugin
-    };
+    // const route = useRoute();
+    // const { id, isDev } = route.query;
+    return {};
   }
 });
 </script>

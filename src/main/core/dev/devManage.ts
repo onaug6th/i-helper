@@ -44,7 +44,7 @@ class DevManage {
 
     //  预加载js文件
     if (file.preload) {
-      file.preload = `file://${folderPath}/preload.js`;
+      file.preload = `file://${folderPath}preload.js`;
     }
 
     const result = await devPluginDB.insert({
