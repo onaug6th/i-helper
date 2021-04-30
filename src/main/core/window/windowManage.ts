@@ -70,7 +70,7 @@ class WindowManage {
     window = new BrowserWindow(option);
     windows[windowName] = window;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (global.isDev) {
       window.webContents.openDevTools();
     }
 

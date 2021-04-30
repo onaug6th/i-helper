@@ -1,4 +1,3 @@
-const globalEnv = process.env.NODE_ENV;
 //  通用配置
 const commonOptions = {
   frame: false,
@@ -40,6 +39,6 @@ const browserWindowOptions = {
  * 开发环境: http://localhost:9527
  * 正式环境: file://${__dirname}/index.html
  */
-const winURL = globalEnv === 'development' ? 'http://localhost:9527' : `file://${__dirname}/index.html`;
+const winURL = global.isDev ? 'http://localhost:9527' : `file://${__dirname}/index.html`;
 
 export { browserWindowOptions, winURL };

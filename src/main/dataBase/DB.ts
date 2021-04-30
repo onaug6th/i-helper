@@ -18,10 +18,9 @@ class DB<T = any> {
    * @param dbName
    */
   init(dbName: string): void {
-    const dbPath =
-      process.env.NODE_ENV === 'development'
-        ? path.join(__dirname, `db/${dbName}.db`)
-        : path.join(remote.app.getPath('userData'), `db/${dbName}.db`);
+    const dbPath = global.isDev
+      ? path.join(__dirname, `db/${dbName}.db`)
+      : path.join(remote.app.getPath('userData'), `db/${dbName}.db`);
 
     const db = new Datastore({
       /**

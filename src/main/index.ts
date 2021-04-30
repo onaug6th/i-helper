@@ -20,8 +20,6 @@ import devManage from './core/dev/devManage';
 //  ipcMain
 import './service/index';
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
 let win: BrowserWindow | null;
 protocol.registerSchemesAsPrivileged([
   {
@@ -79,7 +77,7 @@ app.on('activate', () => {
 });
 
 app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
+  if (global.isDev && !process.env.IS_TEST) {
     const path =
       'C:/Users/onaug6th/AppData/Local/Google/Chrome/User Data/Default/Extensions/ljjemllljcmogpfapbkkighbhhppjdbg/6.0.0.7_0';
     //  加载vue开发者工具
@@ -95,7 +93,7 @@ app.on('ready', async () => {
   devManage.appOnReady();
 });
 
-if (isDevelopment) {
+if (global.isDev) {
   if (process.platform === 'win32') {
     process.on('message', data => {
       if (data === 'graceful-exit') {

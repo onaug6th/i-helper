@@ -1,7 +1,6 @@
 import { Menu, MenuItem, Tray } from 'electron';
 import path from 'path';
 import windowManage from '@/main/core/window/windowManage';
-const isDevelopment = process.env.NODE_ENV !== 'production';
 
 let tray = null;
 
@@ -23,7 +22,7 @@ class TrayManage {
       dev: path.join(process.cwd(), 'public', 'favicon.ico'),
       prod: path.join(__dirname, 'favicon.ico')
     };
-    tray = new Tray(isDevelopment ? trayPath.dev : trayPath.prod);
+    tray = new Tray(global.isDev ? trayPath.dev : trayPath.prod);
     const contextMenu = Menu.buildFromTemplate(menus);
     tray.setContextMenu(contextMenu);
     tray.setToolTip('i-helper');
