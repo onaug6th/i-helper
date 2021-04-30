@@ -139,12 +139,12 @@ class WindowManage {
     const plugin = isDev ? devManage.getPlugin(id) : pluginManage.getPlugin(id);
     const sessionItem = session.fromPartition(name);
 
-    const trayPath = {
+    const sdkPath = {
       dev: path.join(process.cwd(), 'public', 'apisdk.js'),
       prod: path.join(__dirname, 'apisdk.js')
     };
 
-    const apisdk = trayPath.dev;
+    const apisdk = global.isDev ? sdkPath.dev : sdkPath.prod;
     sessionItem.setPreloads([apisdk]);
 
     const webPreferences: any = {
@@ -168,6 +168,9 @@ class WindowManage {
     browserViewItem.webContents.on('dom-ready', (...args) => {
       args;
       browserViewItem.webContents.openDevTools();
+    });
+    pluginWindow.on('closed', () => {
+      browserViewItem.webContents.closeDevTools();
     });
   }
 
