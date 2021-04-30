@@ -162,7 +162,7 @@ class WindowManage {
     });
 
     pluginWindow.setBrowserView(browserViewItem);
-    browserViewItem.setBounds({ x: 0, y: 70, width: 800, height: 600 });
+    browserViewItem.setBounds({ x: 0, y: 40, width: 800, height: 600 });
     browserViewItem.setAutoResize({ width: true, height: true });
     browserViewItem.webContents.loadURL(plugin.main);
     browserViewItem.webContents.on('dom-ready', (...args) => {
