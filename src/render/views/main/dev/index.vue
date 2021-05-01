@@ -137,7 +137,7 @@ export default defineComponent({
      * @param plugin
      */
     function openPlugin(plugin) {
-      ipcRenderer.invoke('dev-plugin-open', plugin.id);
+      ipcRenderer.send('plugin-open', plugin.id, true);
     }
 
     /**
