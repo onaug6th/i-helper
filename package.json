@@ -11,6 +11,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@onaug6th/vue3-context-menu": "^0.0.2",
     "@types/nedb": "^1.8.11",
     "core-js": "^3.7.0",
     "dayjs": "^1.9.7",

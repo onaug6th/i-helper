@@ -27,7 +27,7 @@ import { uuid } from '@render/utils';
 import dayjs from 'dayjs';
 //  便笺数据库
 import notesDB from '@/main/dataBase/notes.db';
-import RightMenu from '@render/components/rightMenu/src/rightMenu';
+import ContextMenu from '@onaug6th/vue3-context-menu/dist/vue3-context-menu.es';
 import { NoteItem } from './types';
 
 export default defineComponent({
@@ -106,7 +106,7 @@ export default defineComponent({
      * @param noteIndex
      */
     function contextMenu(event: MouseEvent, note: NoteItem, noteIndex: number) {
-      RightMenu({
+      ContextMenu({
         event,
         list: [
           {
