@@ -7,13 +7,18 @@ ipcMain.handle('dev-list-get', () => {
 });
 
 //  新增开发者插件
-ipcMain.handle('dev-plugin-add', (event, plugin) => {
-  return devManage.addPlugin(plugin);
+ipcMain.handle('dev-plugin-add', (event, path) => {
+  return devManage.addPlugin(path);
 });
 
 //  获取开发者插件详情
 ipcMain.handle('dev-plugin-detail-get', (event, id) => {
   return devManage.getPlugin(id);
+});
+
+//  更新开发者插件
+ipcMain.handle('dev-plugin-update', (event, id) => {
+  return devManage.updatePlugin(id);
 });
 
 //  删除开发者插件

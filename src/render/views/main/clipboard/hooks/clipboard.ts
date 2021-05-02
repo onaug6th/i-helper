@@ -248,8 +248,7 @@ function toggleStar(row: any) {
  * @param clipboardItem
  */
 async function updateClipboardList(query: any, options: any) {
-  const result = await clipboardDB.update(query, options);
-  return result;
+  await clipboardDB.update(query, options);
 }
 
 export {

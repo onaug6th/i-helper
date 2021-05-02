@@ -2,6 +2,22 @@ import fs from 'fs';
 //  便笺数据库
 import devPluginDB from '@/main/dataBase/devPlugin.db';
 import { uuid } from '@/render/utils';
+/**
+ * 补全路径
+ * @param obj
+ * @param folderPath 文件目录路径
+ */
+function pathCompletion(obj, folderPath) {
+  //  入口文件，如不为 http 协议开头，补全文件夹目录加入口文件地址
+  if (!obj.main.startsWith('http')) {
+    obj.main = `${folderPath}${obj.main}`;
+  }
+
+  //  预加载js文件
+  if (obj.preload) {
+    obj.preload = `${folderPath}${obj.preload}`;
+  }
+}
 
 class DevManage {
   pluginList: Array<any> = [];
@@ -24,28 +40,39 @@ class DevManage {
   }
 
   /**
-   * 新增开发者插件
-   * @param plugin
+   * 根据文件获取插件信息
+   * @param filePath
    * @returns
    */
-  async addPlugin(plugin) {
-    const { path, name } = plugin;
-    const text = fs.readFileSync(path, 'utf8');
+  getPluginInfoByFile(filePath) {
+    const text = fs.readFileSync(filePath, 'utf8');
     const file = JSON.parse(text);
 
-    const folderPath = path.replace(name, '');
+    //  文件夹路径
+    const folderPath = filePath.replace('plugin.json', '');
+    //  插件图标
     file.logo = `atom:///${folderPath}${file.logo}`;
 
-    //  入口文件
-    //  如不为 http 协议开头，补全文件夹目录加入口文件地址
-    if (!file.main.startsWith('http')) {
-      file.main = `${folderPath}${file.main}`;
+    //  补全路径
+    pathCompletion(file, folderPath);
+
+    if (file.dev) {
+      //  补全dev的路径
+      pathCompletion(file.dev, folderPath);
     }
 
-    //  预加载js文件
-    if (file.preload) {
-      file.preload = `${folderPath}${file.preload}`;
-    }
+    //  增加json文件的路径
+    file.pluginJSONPath = filePath;
+    return file;
+  }
+
+  /**
+   * 新增开发者插件
+   * @param path
+   * @returns
+   */
+  async addPlugin(path) {
+    const file = this.getPluginInfoByFile(path);
 
     const result = await devPluginDB.insert({
       id: uuid(),
@@ -76,6 +103,28 @@ class DevManage {
    */
   getPlugin(id) {
     return this.pluginList.find(plugin => plugin.id === id);
+  }
+
+  /**
+   * 更新开发者插件
+   * @param id
+   */
+  async updatePlugin(id) {
+    const plugin = this.getPlugin(id);
+    const file = this.getPluginInfoByFile(plugin.pluginJSONPath);
+    const updateContent = {
+      id,
+      ...file
+    };
+
+    await devPluginDB.update(
+      {
+        id
+      },
+      updateContent
+    );
+
+    return updateContent;
   }
 }
 

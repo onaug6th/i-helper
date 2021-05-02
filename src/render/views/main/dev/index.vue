@@ -45,6 +45,15 @@
 
       <div class="drawer-row">
         <div class="drawer-row__title">
+          版本号
+        </div>
+        <div class="drawer-row__value">
+          {{ currentPlugin.version }}
+        </div>
+      </div>
+
+      <div class="drawer-row">
+        <div class="drawer-row__title">
           插件路径
         </div>
         <div class="drawer-row__value">
@@ -54,37 +63,15 @@
 
       <div class="drawer-row">
         <div class="drawer-row__title">
-          启动插件
+          操作
         </div>
         <div>
-          <el-button type="primary" size="small" @click="openPlugin(currentPlugin)">启动</el-button>
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          打包
-        </div>
-        <div>
-          <el-button type="success" size="small">打包</el-button>
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          重新加载插件
-        </div>
-        <div>
-          <el-button type="success" size="small">重新加载</el-button>
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          删除插件
-        </div>
-        <div>
-          <el-button type="danger" plain size="small" @click="delPlugin">删除</el-button>
+          <el-button type="primary" size="small" title="启动开发者插件" @click="openPlugin">启动</el-button>
+          <el-button type="success" size="small" title="将插件打包并上传到插件中心" @click="build">打包</el-button>
+          <el-button type="warning" size="small" title="将会重新读取插件json配置文件" @click="reload">
+            重新加载
+          </el-button>
+          <el-button type="danger" plain size="small" title="删除插件" @click="delPlugin">删除</el-button>
         </div>
       </div>
     </div>
@@ -134,10 +121,26 @@ export default defineComponent({
 
     /**
      * 打开插件
-     * @param plugin
      */
-    function openPlugin(plugin) {
-      ipcRenderer.send('plugin-open', plugin.id, true);
+    function openPlugin() {
+      ipcRenderer.send('plugin-open', currentPlugin.value.id, true);
+    }
+
+    /**
+     * 重新加载插件
+     */
+    function reload() {
+      ipcRenderer.invoke('dev-plugin-update', currentPlugin.value.id).then(plugin => {
+        state.pluginList[state.currentIndex] = plugin;
+        ElNotification({
+          type: 'success',
+          message: '更新成功'
+        });
+      });
+    }
+
+    function build() {
+      console;
     }
 
     /**
@@ -182,12 +185,7 @@ export default defineComponent({
       files.forEach(file => {
         //  为插件的描述文件
         if (file.name === 'plugin.json') {
-          const fileObj = {
-            name: file.name,
-            path: file.path
-          };
-
-          ipcRenderer.invoke('dev-plugin-add', fileObj).then(result => {
+          ipcRenderer.invoke('dev-plugin-add', file.path).then(result => {
             state.pluginList.push(result);
           });
         }
@@ -220,6 +218,8 @@ export default defineComponent({
       openPlugin,
       delPlugin,
       drop,
+      build,
+      reload,
       drapOver,
       drapLeave
     };

@@ -23,6 +23,8 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
   const sessionItem = session.fromPartition(plugin.name);
   //  设置会话预加载文件
   sessionItem.setPreloads([apisdk]);
+  //  读取配置的对象
+  const readObj = isDev ? plugin.dev || plugin : plugin;
 
   const webPreferences: any = {
     //  启用NodeJS集成。
@@ -34,18 +36,23 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
 
   //  如插件存在预加载文件
   if (plugin.preload) {
-    webPreferences.preload = plugin.preload;
+    webPreferences.preload = readObj.preload;
   }
 
   //  实例化 BrowserView
-  const browserViewItem = new BrowserView({
+  let browserViewItem = new BrowserView({
     webPreferences
   });
   //  BrowserView挂载到插件窗口中
   pluginWindow.setBrowserView(browserViewItem);
-  browserViewItem.setBounds({ x: 0, y: 40, width: 800, height: 600 });
+  //  获取插件窗体的大小
+  const { width: pluginWidth, height: pluginHeight } = pluginWindow.getBounds();
+  //  头部栏高度
+  const headerHeight = 40;
+  //  设置嵌入视图的位置
+  browserViewItem.setBounds({ x: 0, y: headerHeight, width: pluginWidth, height: pluginHeight });
   browserViewItem.setAutoResize({ width: true, height: true });
-  browserViewItem.webContents.loadURL(plugin.main);
+  browserViewItem.webContents.loadURL(readObj.main);
 
   browserViewItem.webContents.on('dom-ready', (...args) => {
     args;
@@ -54,6 +61,7 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
 
   pluginWindow.on('closed', () => {
     browserViewItem.webContents.closeDevTools();
+    browserViewItem = null;
   });
 });
 
