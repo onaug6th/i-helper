@@ -44,7 +44,7 @@ export default defineComponent({
      * 获取便笺列表
      */
     async function getAllNotes() {
-      notesDB._db
+      notesDB.$db
         ?.find({})
         .sort({ updatedAt: -1 })
         .exec((e, d) => {

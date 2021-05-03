@@ -1,27 +1,37 @@
+/**
+ * github：https://github.com/louischatriot/nedb
+ * w3c api参考文档：https://www.w3cschool.cn/nedbintro/
+ * nedb介绍：http://www.alloyteam.com/2016/03/node-embedded-database-nedb/
+ */
+
 import Datastore from 'nedb';
 import path from 'path';
-import { remote } from 'electron';
+import { app } from 'electron';
 
 type QueryDB<T> = {
   [K in keyof T]?: T[K];
 };
 
 class DB<T = any> {
-  _db: Datastore<Datastore.DataStoreOptions>;
+  //  数据库实例
+  $db: Datastore<Datastore.DataStoreOptions>;
 
   constructor(dbName: string) {
     this.init(dbName);
   }
 
   /**
-   * 初始化
+   * 数据库初始化
    * @param dbName
    */
   init(dbName: string): void {
     const dbPath = global.isDev
-      ? path.join(__dirname, `db/${dbName}.db`)
-      : path.join(remote.app.getPath('userData'), `db/${dbName}.db`);
+      ? //  开发模式下
+        path.join(__dirname, `db/${dbName}.db`)
+      : //  生产环境下
+        path.join(app.getPath('userData'), `db/${dbName}.db`);
 
+    //  https://www.w3cschool.cn/nedbintro/nedbintro-t9z327mh.html
     const db = new Datastore({
       /**
        * autoload
@@ -34,19 +44,30 @@ class DB<T = any> {
       timestampData: true
     });
 
-    this._db = db;
+    this.$db = db;
   }
 
   /**
    * 分页查找
+   * https://github.com/louischatriot/nedb#sorting-and-paginating
    * @param param0
    * @returns
    */
-  paging({ pageNum = 0, pageSize = 10 }: { pageNum: number; pageSize: number }): any {
+  paging({
+    pageNum = 0,
+    pageSize = 10,
+    sort = {
+      createdAt: -1
+    }
+  }: {
+    pageNum: number;
+    pageSize: number;
+    sort: any;
+  }): any {
     return new Promise(resolve => {
-      this._db
+      this.$db
         .find({})
-        .sort({ createdAt: -1 })
+        .sort(sort)
         .skip(pageNum)
         .limit(pageSize)
         .exec(function(result) {
@@ -57,12 +78,13 @@ class DB<T = any> {
 
   /**
    * 新增某项
+   * https://github.com/louischatriot/nedb#inserting-documents
    * @param doc
    * @returns
    */
   insert(doc: unknown): any {
     return new Promise((resolve: (value: any) => void) => {
-      this._db.insert(doc, (error: Error | null, document: any) => {
+      this.$db.insert(doc, (error: Error | null, document: any) => {
         if (!error) {
           resolve(document);
         }
@@ -72,12 +94,13 @@ class DB<T = any> {
 
   /**
    * 寻找某项
+   * https://github.com/louischatriot/nedb#finding-documents
    * @param query
    * @returns
    */
-  find(query: QueryDB<T>): any {
+  find(query: QueryDB<T> = {}): any {
     return new Promise((resolve: (value: T[]) => void) => {
-      this._db.find(query, (error: Error | null, document: T[]) => {
+      this.$db.find(query, (error: Error | null, document: T[]) => {
         if (!error) {
           resolve(document as T[]);
         }
@@ -87,12 +110,13 @@ class DB<T = any> {
 
   /**
    * 寻找某一个项
+   * https://github.com/louischatriot/nedb#finding-documents
    * @param query
    * @returns
    */
-  findOne(query: QueryDB<T>): any {
+  findOne(query: QueryDB<T> = {}): any {
     return new Promise((resolve: (value: T) => void) => {
-      this._db.findOne(query, (error: Error | null, document) => {
+      this.$db.findOne(query, (error: Error | null, document) => {
         if (!error) {
           resolve(document as T);
         }
@@ -102,30 +126,24 @@ class DB<T = any> {
 
   /**
    * 删除数据库项
+   * https://github.com/louischatriot/nedb#removing-documents
    * @param query
    * @param options
    * @returns
    */
-  remove(query: QueryDB<T>, options?: Nedb.RemoveOptions): any {
+  remove(query: QueryDB<T>, options: Nedb.RemoveOptions = {}): any {
     return new Promise((resolve: (value: number) => void) => {
-      if (options) {
-        this._db.remove(query, options, (error: Error | null, n: number) => {
-          if (!error) {
-            resolve(n);
-          }
-        });
-      } else {
-        this._db.remove(query, (error: Error | null, n: number) => {
-          if (!error) {
-            resolve(n);
-          }
-        });
-      }
+      this.$db.remove(query, options, (error: Error | null, n: number) => {
+        if (!error) {
+          resolve(n);
+        }
+      });
     });
   }
 
   /**
    * 更新数据库项
+   * https://github.com/louischatriot/nedb#updating-documents
    * @param query
    * @param updateQuery
    * @param options
@@ -133,7 +151,7 @@ class DB<T = any> {
    */
   update(query: unknown, updateQuery: unknown, options: Nedb.UpdateOptions = {}): any {
     return new Promise((resolve: (value: any) => void) => {
-      this._db.update(
+      this.$db.update(
         query,
         updateQuery,
         options,

@@ -138,7 +138,7 @@ let copyFromList: string;
  * 获取剪贴板记录列表
  */
 function getAllClipboardList(): void {
-  clipboardDB._db
+  clipboardDB.$db
     ?.find({})
     .sort({ createdAt: -1 })
     .exec((e, d) => {

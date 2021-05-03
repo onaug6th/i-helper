@@ -26,8 +26,8 @@ class DevManage {
    * 在应用启动后执行的回调
    */
   appOnReady() {
-    devPluginDB._db.find({}).exec((e, d) => {
-      this.pluginList = d;
+    devPluginDB.find().then(pluginList => {
+      this.pluginList = pluginList;
     });
   }
 
