@@ -17,6 +17,11 @@ const apisdk = global.isDev ? sdkPath.dev : sdkPath.prod;
 ipcMain.on('plugin-open', (event, id, isDev) => {
   const pluginWindow = windowManage.createPluginBrowserWindow(id, isDev);
 
+  //  返回为null时，说明已经打开过了
+  if (!pluginWindow) {
+    return;
+  }
+
   //  获取插件信息
   const plugin = isDev ? devManage.getPlugin(id) : pluginManage.getPlugin(id);
   //  创建插件会话
@@ -62,7 +67,16 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
   pluginWindow.on('closed', () => {
     browserViewItem.webContents.closeDevTools();
     browserViewItem = null;
+    windowManage.deletePluginView(plugin.name, browserViewItem.webContents.id);
   });
+
+  windowManage.addPluginView(plugin.name, browserViewItem.webContents.id, browserViewItem);
+});
+
+ipcMain.handle('plugin-createBrowserWindow', (event, url, option) => {
+  debugger;
+  event;
+  option;
 });
 
 //  获取插件列表

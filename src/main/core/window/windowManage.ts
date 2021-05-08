@@ -1,15 +1,16 @@
 //  创建窗口
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow, ipcMain, BrowserWindowConstructorOptions, BrowserView } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
 
 //  创建窗口的参数模型
 interface CreateBrowserWindowParams {
-  type: string;
+  //  路径
+  option: BrowserWindowConstructorOptions;
   //  窗体路径
   url: string;
   //  窗体名称
-  name?: string;
+  name: string;
 }
 
 //  根据windowId获取BrowserWindow返回模型
@@ -34,6 +35,18 @@ class WindowManage {
     [propName: string]: BrowserWindow;
   } = {};
 
+  /**
+   * 视图集合
+   * @private
+   * @type {{
+   *     [propName: string]: BrowserView;
+   *   }}
+   * @memberof WindowManage
+   */
+  private pluginViews: {
+    [propName: string]: { [propName: number]: BrowserView };
+  } = {};
+
   //  主面板
   mainWindow: BrowserWindow;
 
@@ -41,10 +54,10 @@ class WindowManage {
    * 创建窗口
    * @param param0 窗口配置
    */
-  createBrowserWindow({ type = 'main', url, name = '' }: CreateBrowserWindowParams): BrowserWindow {
+  createBrowserWindow({ option, url, name }: CreateBrowserWindowParams): BrowserWindow | null {
     const windows = this.windows;
     //  窗体名称
-    let windowName = `${type}${name}`;
+    let windowName = name;
 
     //  存在窗口实例
     if (windows[windowName]) {
@@ -56,15 +69,14 @@ class WindowManage {
       else {
         const window = windows[windowName];
         window.show();
-        return window;
+        return null;
       }
     }
 
     let window: BrowserWindow | null;
-    const option = browserWindowOptions[type];
 
     window = new BrowserWindow(option);
-    windows[windowName] = window;
+    this.addWindow(windowName, window);
 
     if (global.isDev) {
       window.webContents.openDevTools();
@@ -104,8 +116,9 @@ class WindowManage {
     }
 
     const url = this.getWebUrl();
+    const option = browserWindowOptions.main;
 
-    this.mainWindow = this.createBrowserWindow({ type: 'main', url });
+    this.mainWindow = this.createBrowserWindow({ option, url, name: 'main' });
     return this.mainWindow;
   }
 
@@ -117,8 +130,9 @@ class WindowManage {
   createNoteBrowserWindow(uid?: string): BrowserWindow {
     const url = this.getWebUrl(`note?uid=${uid}`);
     const name = uid;
+    const option = browserWindowOptions.note;
 
-    return this.createBrowserWindow({ type: 'note', url, name });
+    return this.createBrowserWindow({ option, url, name });
   }
 
   /**
@@ -127,17 +141,22 @@ class WindowManage {
    * @param isDev
    * @returns
    */
-  createPluginBrowserWindow(id: string, isDev = false): BrowserWindow {
+  createPluginBrowserWindow(id: string, isDev = false): BrowserWindow | null {
     const url = this.getWebUrl(`plugin?id=${id}&isDev=${isDev}`);
     const name = id;
-    return this.createBrowserWindow({ type: 'plugin', url, name });
+    const option = browserWindowOptions.plugin;
+
+    return this.createBrowserWindow({ option, url, name });
+  }
+
+  createPluginApiWin(name, url, option) {
+    return this.createBrowserWindow({ option, url, name });
   }
 
   /**
    * 根据windowId获取BrowserWindow
-   * @export
    * @param {number} windowId
-   * @returns {BrowserWindow}
+   * @returns {BrowserWindowResult}
    */
   findWindowById(windowId: number): BrowserWindowResult {
     const windowAttrs = Object.keys(this.windows);
@@ -158,11 +177,44 @@ class WindowManage {
   }
 
   /**
+   * 新增window
+   * @param windowName
+   * @param window
+   */
+  addWindow(windowName: string, window: BrowserWindow) {
+    this.windows[windowName] = window;
+  }
+  /**
    * 从窗口对象中删除窗口
    * @param name
    */
-  deleteWindow(name) {
+  deleteWindow(name: string) {
     delete this.windows[name];
+  }
+
+  /**
+   * 增加plugin的view
+   * @param pluginName
+   * @param viewId
+   * @param view
+   */
+  addPluginView(pluginName: string, viewId: number, view: BrowserView) {
+    if (this.pluginViews[pluginName]) {
+      this.pluginViews[pluginName][viewId] = view;
+    } else {
+      this.pluginViews[pluginName] = { [viewId]: view };
+    }
+  }
+
+  /**
+   * 删除插件的view
+   * @param pluginName
+   * @param viewId
+   */
+  deletePluginView(pluginName, viewId) {
+    if (this.pluginViews[pluginName]) {
+      delete this.pluginViews[pluginName][viewId];
+    }
   }
 
   /**
