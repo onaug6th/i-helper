@@ -43,7 +43,7 @@ class WindowManage {
    *   }}
    * @memberof WindowManage
    */
-  private pluginViews: {
+  pluginViews: {
     [propName: string]: { [propName: number]: BrowserView };
   } = {};
 
