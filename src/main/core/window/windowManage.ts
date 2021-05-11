@@ -44,7 +44,7 @@ class WindowManage {
    * @memberof WindowManage
    */
   pluginViews: {
-    [propName: string]: { [propName: number]: BrowserView };
+    [propName: string]: { [propName: number]: any };
   } = {};
 
   //  主面板
@@ -195,14 +195,22 @@ class WindowManage {
   /**
    * 增加plugin的view
    * @param pluginName
-   * @param viewId
    * @param view
+   * @param isDev
    */
-  addPluginView(pluginName: string, viewId: number, view: BrowserView) {
+  addPluginView({ pluginName, view, isDev }: { pluginName: string; view: BrowserView; isDev: boolean }) {
+    const viewId = view.webContents.id;
+    const data = {
+      view,
+      isDev
+    };
+
     if (this.pluginViews[pluginName]) {
-      this.pluginViews[pluginName][viewId] = view;
+      this.pluginViews[pluginName][viewId] = data;
     } else {
-      this.pluginViews[pluginName] = { [viewId]: view };
+      this.pluginViews[pluginName] = {
+        [viewId]: data
+      };
     }
   }
 

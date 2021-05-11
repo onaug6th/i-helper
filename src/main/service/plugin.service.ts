@@ -70,13 +70,27 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
     windowManage.deletePluginView(plugin.name, browserViewItem.webContents.id);
   });
 
-  windowManage.addPluginView(plugin.name, browserViewItem.webContents.id, browserViewItem);
+  windowManage.addPluginView({
+    pluginName: plugin.name,
+    view: browserViewItem,
+    isDev
+  });
 });
 
 ipcMain.handle('plugin-createBrowserWindow', (event, url, option) => {
   debugger;
-  event;
+  const pluginViews = windowManage.pluginViews;
+
+  event.frameId;
   option;
+
+  let pluginName: string;
+  for (const i in pluginViews) {
+    if (pluginViews[i][event.sender.id]) {
+      pluginName = i;
+    }
+  }
+  pluginName;
 });
 
 //  获取插件列表
