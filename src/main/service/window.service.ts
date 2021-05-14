@@ -2,14 +2,6 @@ import { ipcMain } from 'electron';
 import windowManage from '@/main/core/window/windowManage';
 import settingManage from '@/main/core/setting/settingManage';
 
-//  打开browserWindow
-ipcMain.on('browser-window-open', (event, result) => {
-  const { type, params } = result;
-  if (type === 'note') {
-    windowManage.createNoteBrowserWindow(...params);
-  }
-});
-
 //  关闭browserWindow
 ipcMain.on('browser-window-close', (event, windowId) => {
   if (windowId) {
@@ -32,6 +24,6 @@ ipcMain.on('browser-main-window-onTop', (event, onTop) => {
 
 //  渲染进程间通信
 ipcMain.on('browser-window-communication', (event, { windowId, params, eventName }) => {
-  const { win } = windowManage.findWindowById(windowId);
+  const win = windowManage.findWindowById(windowId);
   win.webContents.send(eventName, params);
 });

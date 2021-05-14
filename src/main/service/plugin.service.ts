@@ -67,30 +67,23 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
   pluginWindow.on('closed', () => {
     browserViewItem.webContents.closeDevTools();
     browserViewItem = null;
-    windowManage.deletePluginView(plugin.name, browserViewItem.webContents.id);
+
+    //  插件关闭时，需要判断是不是主插件。
+    //  如果是主插件，将全部子插件关闭
+    //  如果不是，仅关闭子插件
   });
 
-  windowManage.addPluginView({
-    pluginName: plugin.name,
-    view: browserViewItem,
-    isDev
-  });
+  //  记录插件ID与插件的窗体ID映射关系
+  windowManage.pluginWinMap[plugin.id] = pluginWindow.id;
+  //  记录此视图与所属插件ID的映射关系
+  windowManage.viewPluginMap[browserViewItem.webContents.id] = plugin.id;
 });
 
 ipcMain.handle('plugin-createBrowserWindow', (event, url, option) => {
   debugger;
-  const pluginViews = windowManage.pluginViews;
-
-  event.frameId;
+  const pluginId = windowManage.viewPluginMap[event.sender.id];
+  pluginId;
   option;
-
-  let pluginName: string;
-  for (const i in pluginViews) {
-    if (pluginViews[i][event.sender.id]) {
-      pluginName = i;
-    }
-  }
-  pluginName;
 });
 
 //  获取插件列表

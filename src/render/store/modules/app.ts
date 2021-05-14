@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const state = {
   //  主面板windowId
@@ -19,7 +19,8 @@ const mutations = {
 };
 
 const actions = {
-  setWindowId({ commit }: any, windowId: any) {
+  setWindowId({ commit }: any) {
+    const windowId = remote.getCurrentWebContents().id;
     commit('setWindowId', windowId);
   },
   setNewestSetting({ commit }: any) {
