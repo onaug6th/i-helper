@@ -1,8 +1,6 @@
 //  通用配置
 const commonOptions = {
   frame: false,
-  hasShadow: true,
-  transparent: true,
   minWidth: 750,
   minHeight: 600,
   width: 750,
