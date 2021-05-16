@@ -9,7 +9,7 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
 
-import { WindowItem, Windows, ViewPluginMap, PluginWinMap } from './types';
+import { WindowItem, Windows, ViewWinMap } from './types';
 class WindowManage {
   /**
    * 窗体集合
@@ -25,14 +25,10 @@ class WindowManage {
   windows: Windows = {};
 
   /**
-   * 视图插件ID映射
+   * 视图窗体ID映射
+   * 视图ID：窗体ID
    */
-  viewPluginMap: ViewPluginMap = {};
-
-  /**
-   * 插件窗体映射
-   */
-  pluginWinMap: PluginWinMap = {};
+  viewWinMap: ViewWinMap = {};
 
   //  主面板实例
   mainWindow: BrowserWindow;
@@ -99,14 +95,17 @@ class WindowManage {
 
   /**
    * 创建插件窗口
-   * @param id
+   * @param pluginId
    * @param isDev
    * @returns
    */
-  createPluginBrowserWindow(id: string, isDev = false): BrowserWindow | null {
-    const url = this.getWebUrl(`plugin?id=${id}&isDev=${isDev}`);
+  createPluginBrowserWindow(
+    pluginId: string,
+    option: BrowserWindowConstructorOptions,
+    isDev = false
+  ): BrowserWindow | null {
+    const url = this.getWebUrl(`plugin?id=${pluginId}&isDev=${isDev}`);
     const type = 'plugin';
-    const option = browserWindowOptions.plugin;
 
     return this.createBrowserWindowPro({ option, url, type });
   }

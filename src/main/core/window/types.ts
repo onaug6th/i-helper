@@ -18,14 +18,8 @@ export interface Windows {
   [propName: number]: WindowItem;
 }
 
-//  视图ID，插件ID映射
-export interface ViewPluginMap {
-  //  视图ID：插件ID
-  [propName: number]: string;
-}
-
-//  插件ID，窗体ID映射表
-export interface PluginWinMap {
-  //  插件ID: 窗体ID
-  [propName: string]: number;
+//  视图ID，窗体ID映射
+export interface ViewWinMap {
+  //  视图ID：窗体ID
+  [propName: number]: number;
 }

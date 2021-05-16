@@ -25,11 +25,7 @@ const browserWindowOptions = {
     minWidth: 250
   },
   plugin: {
-    ...commonOptions,
-    webPreferences: {
-      ...commonOptions.webPreferences,
-      webviewTag: true
-    }
+    ...commonOptions
   }
 };
 

@@ -1,37 +1,49 @@
-import { ipcMain } from 'electron';
+import { ipcMain, WebPreferences } from 'electron';
 import windowManage from '@/main/core/window/windowManage';
 import pluginManage from '@/main/core/plugin/pluginManage';
+//  窗口配置，基础地址
+import { browserWindowOptions } from '@/main/config/browserWindow';
 
 import { session, BrowserView } from 'electron';
 import path from 'path';
 import devManage from '@/main/core/dev/devManage';
 
-const sdkPath = {
-  dev: path.join(process.cwd(), 'public', 'apisdk.js'),
-  prod: path.join(__dirname, 'apisdk.js')
+const apisdk = global.isDev ? path.join(process.cwd(), 'public', 'apisdk.js') : path.join(__dirname, 'apisdk.js');
+
+const pluginConfig = {
+  ID: 'id',
+  NAME: 'name',
+  MAIN: 'main',
+  MULTIPLE: 'multiple',
+  DEV: 'dev',
+  PRELOAD: 'preload'
 };
 
-const apisdk = global.isDev ? sdkPath.dev : sdkPath.prod;
-
 //  打开指定应用的窗口
-ipcMain.on('plugin-open', (event, id, isDev) => {
-  const pluginWindow = windowManage.createPluginBrowserWindow(id, isDev);
+ipcMain.on('plugin-open', (event, pluginId, isDev) => {
+  //  获取插件信息
+  const plugin = isDev ? devManage.getPlugin(pluginId) : pluginManage.getPlugin(pluginId);
+  //  插件是否多开
+  const multiple = plugin[pluginConfig.MULTIPLE];
+  //  已打开的插件ID
+  const pluginWinId = windowManage.pluginWinMap[plugin[pluginConfig.ID]] as number;
 
-  //  返回为null时，说明已经打开过了
-  if (!pluginWindow) {
-    return;
+  //  已拥有插件 且 非设置多开
+  if (pluginWinId && !multiple) {
+    windowManage.findWindowById(pluginWinId).show();
   }
 
-  //  获取插件信息
-  const plugin = isDev ? devManage.getPlugin(id) : pluginManage.getPlugin(id);
+  //  创建插件窗体
+  const pluginWindow = windowManage.createPluginBrowserWindow(pluginId, browserWindowOptions.plugin, isDev);
+
   //  创建插件会话
-  const sessionItem = session.fromPartition(plugin.name);
+  const sessionItem = session.fromPartition(plugin[pluginConfig.NAME]);
   //  设置会话预加载文件
   sessionItem.setPreloads([apisdk]);
   //  读取配置的对象
-  const readObj = isDev ? plugin.dev || plugin : plugin;
+  const readObj = isDev ? plugin[pluginConfig.DEV] || plugin : plugin;
 
-  const webPreferences: any = {
+  const webPreferences: WebPreferences = {
     //  启用NodeJS集成。
     nodeIntegration: true,
     //  允许调用源模块
@@ -40,8 +52,8 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
   };
 
   //  如插件存在预加载文件
-  if (plugin.preload) {
-    webPreferences.preload = readObj.preload;
+  if (plugin[pluginConfig.PRELOAD]) {
+    webPreferences.preload = readObj[pluginConfig.PRELOAD];
   }
 
   //  实例化 BrowserView
@@ -52,18 +64,25 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
   pluginWindow.setBrowserView(browserViewItem);
   //  获取插件窗体的大小
   const { width: pluginWidth, height: pluginHeight } = pluginWindow.getBounds();
-  //  头部栏高度
-  const headerHeight = 40;
-  //  设置嵌入视图的位置
-  browserViewItem.setBounds({ x: 0, y: headerHeight, width: pluginWidth, height: pluginHeight });
-  browserViewItem.setAutoResize({ width: true, height: true });
-  browserViewItem.webContents.loadURL(readObj.main);
 
+  //  设置嵌入视图的位置
+  browserViewItem.setBounds({
+    x: 0,
+    //  头部栏高度固定为40
+    y: 40,
+    width: pluginWidth,
+    height: pluginHeight
+  });
+  browserViewItem.setAutoResize({ width: true, height: true });
+  browserViewItem.webContents.loadURL(readObj[pluginConfig.MAIN]);
+
+  //  监听生命周期，打开开发者控制台
   browserViewItem.webContents.on('dom-ready', (...args) => {
     args;
     browserViewItem.webContents.openDevTools();
   });
 
+  //  插件窗体关闭时，关闭并回收
   pluginWindow.on('closed', () => {
     browserViewItem.webContents.closeDevTools();
     browserViewItem = null;
@@ -73,15 +92,13 @@ ipcMain.on('plugin-open', (event, id, isDev) => {
     //  如果不是，仅关闭子插件
   });
 
-  //  记录插件ID与插件的窗体ID映射关系
-  windowManage.pluginWinMap[plugin.id] = pluginWindow.id;
-  //  记录此视图与所属插件ID的映射关系
-  windowManage.viewPluginMap[browserViewItem.webContents.id] = plugin.id;
+  //  记录此视图与所属窗体ID的映射关系
+  windowManage.viewWinMap[browserViewItem.webContents.id] = pluginWindow.id;
 });
 
 ipcMain.handle('plugin-createBrowserWindow', (event, url, option) => {
   debugger;
-  const pluginId = windowManage.viewPluginMap[event.sender.id];
+  const pluginId = windowManage.viewWinMap[event.sender.id];
   pluginId;
   option;
 });
