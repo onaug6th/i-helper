@@ -26,11 +26,11 @@ ipcMain.on('plugin-open', (event, pluginId, isDev) => {
   //  插件是否多开
   const multiple = plugin[pluginConfig.MULTIPLE];
   //  已打开的插件ID
-  const pluginWinId = windowManage.pluginWinMap[plugin[pluginConfig.ID]] as number;
+  const isOpenPlugin = windowManage.findPluginById(plugin[pluginConfig.ID]);
 
   //  已拥有插件 且 非设置多开
-  if (pluginWinId && !multiple) {
-    windowManage.findWindowById(pluginWinId).show();
+  if (isOpenPlugin && !multiple) {
+    windowManage.findWindowById(isOpenPlugin.id).show();
   }
 
   //  创建插件窗体

@@ -1,15 +1,22 @@
-//  新建插件窗体：通过 pluginWinMap 来寻找插件是否已经打开过
+//
 //  寻找窗体：通过windows1.id寻找
 //  删除窗体：通过windows1.id删除，如果类型为插件，还需要根据窗体的id来寻找其他fatherId为此id的窗体一并销毁掉。
 //  寻找view所属的插件id：通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体
 //  新增插件的子窗体：通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体，新增插件窗体后。将插件窗体的 fatherId 指向 插件主窗体ID
+
+/**
+ * 新建插件窗体：
+ * 通过 pluginWin 来判断插件是否已经打开。
+ *
+ * 寻找窗体
+ */
 
 //  创建窗口
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
 
-import { WindowItem, Windows, ViewWinMap } from './types';
+import { PluginItem, PluginWin, ViewWinMap } from './types';
 class WindowManage {
   /**
    * 窗体集合
@@ -18,11 +25,11 @@ class WindowManage {
    * }
    * @private
    * @type {{
-   *     [propName: string]: BrowserWindow;
+   *     [propName: number]: BrowserWindow;
    *   }}
    * @memberof WindowManage
    */
-  windows: Windows = {};
+  pluginWin: PluginWin = {};
 
   /**
    * 视图窗体ID映射
@@ -38,15 +45,7 @@ class WindowManage {
    * @param param0
    * @returns 窗体实例
    */
-  createBrowserWindowPro({
-    option,
-    type,
-    url
-  }: {
-    option: BrowserWindowConstructorOptions;
-    type: string;
-    url: string;
-  }) {
+  createBrowserWindow({ option, url }: { option: BrowserWindowConstructorOptions; url: string }): BrowserWindow {
     const win = new BrowserWindow(option);
 
     win.loadURL(url);
@@ -54,12 +53,6 @@ class WindowManage {
     if (global.isDev) {
       win.webContents.openDevTools();
     }
-
-    this.addWindowPro(win.id, {
-      id: win.id,
-      type,
-      win
-    });
 
     return win;
   }
@@ -78,8 +71,8 @@ class WindowManage {
    * @param id
    * @param data
    */
-  addWindowPro(id: number, data: WindowItem) {
-    this.windows[id] = data;
+  addPluginWin(id: number, data: PluginItem) {
+    this.pluginWin[id] = data;
   }
 
   /**
@@ -89,7 +82,7 @@ class WindowManage {
     const url = this.getWebUrl();
     const option = browserWindowOptions.main;
 
-    this.mainWindow = this.createBrowserWindowPro({ option, url, type: 'main' });
+    this.mainWindow = this.createBrowserWindow({ option, url });
     return this.mainWindow;
   }
 
@@ -99,15 +92,18 @@ class WindowManage {
    * @param isDev
    * @returns
    */
-  createPluginBrowserWindow(
-    pluginId: string,
-    option: BrowserWindowConstructorOptions,
-    isDev = false
-  ): BrowserWindow | null {
+  createPluginBrowserWindow(pluginId: string, option: BrowserWindowConstructorOptions, isDev = false): BrowserWindow {
     const url = this.getWebUrl(`plugin?id=${pluginId}&isDev=${isDev}`);
-    const type = 'plugin';
 
-    return this.createBrowserWindowPro({ option, url, type });
+    const win = this.createBrowserWindow({ option, url });
+
+    this.addPluginWin(win.id, {
+      id: win.id,
+      pluginId,
+      win
+    });
+
+    return win;
   }
 
   /**
@@ -116,15 +112,26 @@ class WindowManage {
    * @returns {BrowserWindow}
    */
   findWindowById(windowId: number): BrowserWindow {
-    return this.windows[windowId].win;
+    return this.pluginWin[windowId].win;
+  }
+
+  /**
+   * 根据插件ID寻找插件窗体
+   * @param pluginId
+   * @returns
+   */
+  findPluginById(pluginId: string): PluginItem {
+    return Object.values(this.pluginWin).find(plugin => plugin.pulginId === pluginId);
   }
 
   /**
    * 从窗口对象中删除窗口
-   * @param name
+   * @param id
    */
-  deleteWindow(name: string) {
-    delete this.windows[name];
+  deleteWindow(id: number) {
+    if (this.pluginWin[id]) {
+      delete this.pluginWin[id];
+    }
   }
 
   /**
@@ -136,6 +143,7 @@ class WindowManage {
     if (!win.isDestroyed()) {
       win.destroy();
     }
+    this.deleteWindow(windowId);
   }
 
   /**

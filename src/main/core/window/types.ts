@@ -1,7 +1,7 @@
 //  创建窗口
 import { BrowserWindow } from 'electron';
 
-export interface WindowItem {
+export interface PluginItem {
   //  窗体ID
   id: number;
   //  插件ID
@@ -13,7 +13,7 @@ export interface WindowItem {
 }
 
 export interface PluginWin {
-  [propName: number]: WindowItem;
+  [propName: number]: PluginItem;
 }
 
 //  视图ID，窗体ID映射

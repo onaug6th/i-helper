@@ -20,7 +20,7 @@ const mutations = {
 
 const actions = {
   setWindowId({ commit }: any) {
-    const windowId = remote.getCurrentWebContents().id;
+    const windowId = remote.getCurrentWindow().id;
     commit('setWindowId', windowId);
   },
   setNewestSetting({ commit }: any) {
