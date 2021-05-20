@@ -19,7 +19,7 @@ import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
 import { PluginItem, PluginWin, ViewWinMap } from './types';
 class WindowManage {
   /**
-   * 窗体集合
+   * 窗体/插件信息映射
    * {
    *    [窗体ID]: Windows
    * }
@@ -40,6 +40,11 @@ class WindowManage {
   //  主面板实例
   mainWindow: BrowserWindow;
 
+  constructor() {
+    global.pluginWin = this.pluginWin;
+    global.viewWinMap = this.viewWinMap;
+  }
+
   /**
    * 创建窗体
    * @param param0
@@ -50,9 +55,9 @@ class WindowManage {
 
     win.loadURL(url);
 
-    if (global.isDev) {
-      win.webContents.openDevTools();
-    }
+    // if (global.isDev) {
+    //   win.webContents.openDevTools();
+    // }
 
     return win;
   }

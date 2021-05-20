@@ -57,9 +57,33 @@ function openPluginWindow(
     browserViewItem.webContents.closeDevTools();
     browserViewItem = null;
 
-    //  插件关闭时，需要判断是不是插件主窗体。
-    //  如果是主窗体，将全部子窗体关闭
-    //  如果不是，仅关闭子插件
+    //  存在fatherId，说明是插件子窗体
+    if (fatherId) {
+      //  关闭并移除窗体
+      windowManage.closeWindow(pluginWindow.id);
+      //  从视图窗体映射中移除
+      delete windowManage.viewWinMap[browserViewItem.webContents.id];
+    }
+    //  不存在fatherId，说明是主窗体，将全部子窗体关闭
+    else {
+      const pluginWin = windowManage.pluginWin;
+      const viewWinMap = windowManage.viewWinMap;
+
+      for (const winId in pluginWin) {
+        const pluginWinItem = pluginWin[winId];
+        //  如插件窗体的fatherId为关闭的窗体ID
+        if (pluginWinItem.fatherId === fatherId) {
+          windowManage.closeWindow(pluginWinItem.id);
+          //  再移除视图窗体映射
+          for (const viewId in viewWinMap) {
+            const winId = viewWinMap[viewId];
+            if (winId === pluginWinItem.id) {
+              delete viewWinMap[viewId];
+            }
+          }
+        }
+      }
+    }
   });
 
   //  记录此视图与所属窗体ID的映射关系
@@ -139,14 +163,14 @@ ipcMain.on('plugin-open', (event, pluginId, isDev, fatherId) => {
 });
 
 //  打开插件中创建的插件窗体
-ipcMain.handle('plugin-createBrowserWindow', (event, browserViewUrl, option) => {
+ipcMain.handle('plugin-createBrowserWindow', (event, browserViewUrl, option = {}) => {
   //  视图所属的插件窗体ID
   const winId = windowManage.viewWinMap[event.sender.id];
   //  插件窗体信息
-  const pluginItem = windowManage.pluginWin[winId];
+  const pluginWinItem = windowManage.pluginWin[winId];
   //  默认窗体配置
   const defaultOption = browserWindowOptions.plugin;
-  const { pluginId, isDev, id } = pluginItem;
+  const { pluginId, isDev, id } = pluginWinItem;
 
   //  打开插件中创建的插件窗体
   openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl);
