@@ -68,11 +68,11 @@ class WindowManage {
 
   /**
    * 增加窗体
-   * @param id
+   * @param winId
    * @param data
    */
-  addPluginWin(id: number, data: PluginItem) {
-    this.pluginWin[id] = data;
+  addPluginWin(winId: number, data: PluginItem) {
+    this.pluginWin[winId] = data;
   }
 
   /**
@@ -89,18 +89,26 @@ class WindowManage {
   /**
    * 创建插件窗口
    * @param pluginId
+   * @param option
    * @param isDev
+   * @param fatherId
    * @returns
    */
-  createPluginBrowserWindow(pluginId: string, option: BrowserWindowConstructorOptions, isDev = false): BrowserWindow {
+  createPluginBrowserWindow(
+    pluginId: string,
+    option: BrowserWindowConstructorOptions,
+    isDev = false,
+    fatherId = null
+  ): BrowserWindow {
     const url = this.getWebUrl(`plugin?id=${pluginId}&isDev=${isDev}`);
-
     const win = this.createBrowserWindow({ option, url });
 
     this.addPluginWin(win.id, {
       id: win.id,
       pluginId,
-      win
+      win,
+      isDev,
+      fatherId
     });
 
     return win;
@@ -112,7 +120,11 @@ class WindowManage {
    * @returns {BrowserWindow}
    */
   findWindowById(windowId: number): BrowserWindow {
-    return this.pluginWin[windowId].win;
+    if (windowId === 1) {
+      return this.mainWindow;
+    } else {
+      return this.pluginWin[windowId].win;
+    }
   }
 
   /**

@@ -8,11 +8,13 @@ export interface PluginItem {
   pluginId: string;
   //  窗体实例
   win: BrowserWindow;
+  isDev?: boolean;
   //  窗体的父窗体id
-  fatherId?: number;
+  fatherId?: number | null;
 }
 
 export interface PluginWin {
+  //  窗体ID：插件信息对象
   [propName: number]: PluginItem;
 }
 

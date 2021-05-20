@@ -1,4 +1,4 @@
-import { ipcMain, WebPreferences } from 'electron';
+import { ipcMain, WebPreferences, BrowserWindowConstructorOptions } from 'electron';
 import windowManage from '@/main/core/window/windowManage';
 import pluginManage from '@/main/core/plugin/pluginManage';
 //  窗口配置，基础地址
@@ -19,8 +19,22 @@ const pluginConfig = {
   PRELOAD: 'preload'
 };
 
-//  打开指定应用的窗口
-ipcMain.on('plugin-open', (event, pluginId, isDev) => {
+/**
+ * 打开插件窗体
+ * @param pluginId 插件ID
+ * @param option 窗体配置
+ * @param url 窗体地址
+ * @param isDev 是否开发模式
+ * @param fatherId 窗体的父级窗体ID
+ * @param browserViewUrl 视图地址
+ */
+function openPluginWindow(
+  pluginId: string,
+  option: BrowserWindowConstructorOptions,
+  isDev = false,
+  fatherId = null,
+  browserViewUrl = ''
+) {
   //  获取插件信息
   const plugin = isDev ? devManage.getPlugin(pluginId) : pluginManage.getPlugin(pluginId);
   //  插件是否多开
@@ -34,14 +48,41 @@ ipcMain.on('plugin-open', (event, pluginId, isDev) => {
   }
 
   //  创建插件窗体
-  const pluginWindow = windowManage.createPluginBrowserWindow(pluginId, browserWindowOptions.plugin, isDev);
+  const pluginWindow = windowManage.createPluginBrowserWindow(pluginId, option, isDev, fatherId);
+  //  创建视图实例
+  let browserViewItem = initBrowserView(plugin, pluginWindow, browserViewUrl, isDev);
 
+  //  插件窗体关闭时，关闭并回收
+  pluginWindow.on('closed', () => {
+    browserViewItem.webContents.closeDevTools();
+    browserViewItem = null;
+
+    //  插件关闭时，需要判断是不是插件主窗体。
+    //  如果是主窗体，将全部子窗体关闭
+    //  如果不是，仅关闭子插件
+  });
+
+  //  记录此视图与所属窗体ID的映射关系
+  windowManage.viewWinMap[browserViewItem.webContents.id] = pluginWindow.id;
+}
+
+/**
+ * 生成插件视图
+ * @param plugin
+ * @param pluginWindow
+ * @param browserViewUrl
+ * @param isDev
+ * @returns
+ */
+function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserView {
   //  创建插件会话
   const sessionItem = session.fromPartition(plugin[pluginConfig.NAME]);
   //  设置会话预加载文件
   sessionItem.setPreloads([apisdk]);
   //  读取配置的对象
   const readObj = isDev ? plugin[pluginConfig.DEV] || plugin : plugin;
+  //  优先使用传入的视图地址
+  const url = browserViewUrl || readObj[pluginConfig.MAIN];
 
   const webPreferences: WebPreferences = {
     //  启用NodeJS集成。
@@ -57,13 +98,15 @@ ipcMain.on('plugin-open', (event, pluginId, isDev) => {
   }
 
   //  实例化 BrowserView
-  let browserViewItem = new BrowserView({
+  const browserViewItem = new BrowserView({
     webPreferences
   });
-  //  BrowserView挂载到插件窗口中
-  pluginWindow.setBrowserView(browserViewItem);
   //  获取插件窗体的大小
   const { width: pluginWidth, height: pluginHeight } = pluginWindow.getBounds();
+  //  BrowserView挂载到插件窗口中
+  pluginWindow.setBrowserView(browserViewItem);
+
+  //  以下代码需在挂载后执行
 
   //  设置嵌入视图的位置
   browserViewItem.setBounds({
@@ -73,8 +116,10 @@ ipcMain.on('plugin-open', (event, pluginId, isDev) => {
     width: pluginWidth,
     height: pluginHeight
   });
+  //  设置视图自适应尺寸
   browserViewItem.setAutoResize({ width: true, height: true });
-  browserViewItem.webContents.loadURL(readObj[pluginConfig.MAIN]);
+  //  加载页面资源
+  browserViewItem.webContents.loadURL(url);
 
   //  监听生命周期，打开开发者控制台
   browserViewItem.webContents.on('dom-ready', (...args) => {
@@ -82,25 +127,29 @@ ipcMain.on('plugin-open', (event, pluginId, isDev) => {
     browserViewItem.webContents.openDevTools();
   });
 
-  //  插件窗体关闭时，关闭并回收
-  pluginWindow.on('closed', () => {
-    browserViewItem.webContents.closeDevTools();
-    browserViewItem = null;
+  return browserViewItem;
+}
 
-    //  插件关闭时，需要判断是不是主插件。
-    //  如果是主插件，将全部子插件关闭
-    //  如果不是，仅关闭子插件
-  });
+//  打开指定插件窗体
+ipcMain.on('plugin-open', (event, pluginId, isDev, fatherId) => {
+  const defaultOption = browserWindowOptions.plugin;
 
-  //  记录此视图与所属窗体ID的映射关系
-  windowManage.viewWinMap[browserViewItem.webContents.id] = pluginWindow.id;
+  //  打开插件窗体
+  openPluginWindow(pluginId, defaultOption, isDev, fatherId);
 });
 
-ipcMain.handle('plugin-createBrowserWindow', (event, url, option) => {
-  debugger;
-  const pluginId = windowManage.viewWinMap[event.sender.id];
-  pluginId;
-  option;
+//  打开插件中创建的插件窗体
+ipcMain.handle('plugin-createBrowserWindow', (event, browserViewUrl, option) => {
+  //  视图所属的插件窗体ID
+  const winId = windowManage.viewWinMap[event.sender.id];
+  //  插件窗体信息
+  const pluginItem = windowManage.pluginWin[winId];
+  //  默认窗体配置
+  const defaultOption = browserWindowOptions.plugin;
+  const { pluginId, isDev, id } = pluginItem;
+
+  //  打开插件中创建的插件窗体
+  openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl);
 });
 
 //  获取插件列表

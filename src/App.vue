@@ -13,8 +13,8 @@ import { useStore } from 'vuex';
 export default defineComponent({
   setup() {
     const store = useStore();
-    //  获取设置应用的窗体id
-    store.dispatch('app/setWindowId');
+    //  获取设置应用的窗体实例
+    store.dispatch('app/setWindow');
     //  获取应用最新设置
     store.dispatch('app/setNewestSetting');
   }

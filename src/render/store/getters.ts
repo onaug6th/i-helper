@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 const getters = {
-  windowId: (state: any) => state.app.windowId,
+  currentWindow: (state: any) => state.app.currentWindow,
+  windowId: (state: any) => state.app.currentWindow.id,
   mainWindowId: (state: any) => state.app.mainWindowId,
   setting: (state: any) => state.app.setting
 };

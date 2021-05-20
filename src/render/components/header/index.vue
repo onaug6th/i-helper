@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer } from 'electron';
 import { computed, defineComponent, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
@@ -27,10 +27,9 @@ export default defineComponent({
   emits: ['close'],
   setup(props, { emit }) {
     const store = useStore();
-    const { windowId, mainWindowId, setting } = store.getters;
+    const { currentWindow, windowId, mainWindowId, setting } = store.getters;
 
     const currentRouteName = ref(useRoute().name);
-    const currentWindow = remote.getCurrentWindow();
     //  是否置顶
     const isAlwaysOnTop = ref(setting.common.isAlwaysOnTop);
 
