@@ -1,22 +1,27 @@
-//
-//  寻找窗体：通过windows1.id寻找
-//  删除窗体：通过windows1.id删除，如果类型为插件，还需要根据窗体的id来寻找其他fatherId为此id的窗体一并销毁掉。
-//  寻找view所属的插件id：通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体
-//  新增插件的子窗体：通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体，新增插件窗体后。将插件窗体的 fatherId 指向 插件主窗体ID
-
 /**
  * 新建插件窗体：
  * 通过 pluginWin 来判断插件是否已经打开。
  *
- * 寻找窗体
+ * 寻找窗体：
+ * 通过windows1.id寻找
+ *
+ * 删除窗体：
+ * 通过windows1.id删除
+ *
+ * 寻找view所属的插件id：
+ * 通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体
+ *
+ * 新增插件的子窗体：
+ * 通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体
+ * 新增插件窗体后。将插件窗体的 fatherId 指向 插件主窗体ID
  */
 
 //  创建窗口
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
-
 import { PluginItem, PluginWin, ViewWinMap } from './types';
+
 class WindowManage {
   /**
    * 窗体/插件信息映射
