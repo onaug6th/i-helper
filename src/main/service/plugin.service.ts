@@ -49,45 +49,41 @@ function openPluginWindow(
 
   //  创建插件窗体
   const pluginWindow = windowManage.createPluginBrowserWindow(pluginId, option, isDev, fatherId);
+  //  插件窗体ID
+  const pluginWinId = pluginWindow.id;
   //  创建视图实例
   let browserViewItem = initBrowserView(plugin, pluginWindow, browserViewUrl, isDev);
+  //  视图ID
+  const browserViewId = browserViewItem.webContents.id;
 
-  //  插件窗体关闭时，关闭并回收
+  //  插件窗体关闭时，回收视图信息或回收子插件窗体
   pluginWindow.on('closed', () => {
-    browserViewItem.webContents.closeDevTools();
-    browserViewItem = null;
+    //  从视图窗体映射中移除
+    delete windowManage.viewWinMap[browserViewId];
 
-    //  存在fatherId，说明是插件子窗体
-    if (fatherId) {
-      //  关闭并移除窗体
-      windowManage.closeWindow(pluginWindow.id);
-      //  从视图窗体映射中移除
-      delete windowManage.viewWinMap[browserViewItem.webContents.id];
-    }
     //  不存在fatherId，说明是主窗体，将全部子窗体关闭
-    else {
+    if (!fatherId) {
       const pluginWin = windowManage.pluginWin;
-      const viewWinMap = windowManage.viewWinMap;
 
       for (const winId in pluginWin) {
         const pluginWinItem = pluginWin[winId];
-        //  如插件窗体的fatherId为关闭的窗体ID
-        if (pluginWinItem.fatherId === fatherId) {
+        //  如插件窗体的fatherId为关闭窗体ID
+        const isFatherWin = pluginWinItem.fatherId === pluginWinId;
+        if (isFatherWin) {
           windowManage.closeWindow(pluginWinItem.id);
-          //  再移除视图窗体映射
-          for (const viewId in viewWinMap) {
-            const winId = viewWinMap[viewId];
-            if (winId === pluginWinItem.id) {
-              delete viewWinMap[viewId];
-            }
-          }
         }
       }
     }
+
+    //  手动gc
+    if (global.isDev) {
+      browserViewItem.webContents.closeDevTools();
+    }
+    browserViewItem = null;
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowManage.viewWinMap[browserViewItem.webContents.id] = pluginWindow.id;
+  windowManage.viewWinMap[browserViewId] = pluginWinId;
 }
 
 /**
@@ -148,7 +144,9 @@ function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserVi
   //  监听生命周期，打开开发者控制台
   browserViewItem.webContents.on('dom-ready', (...args) => {
     args;
-    browserViewItem.webContents.openDevTools();
+    if (global.isDev) {
+      browserViewItem.webContents.openDevTools();
+    }
   });
 
   return browserViewItem;

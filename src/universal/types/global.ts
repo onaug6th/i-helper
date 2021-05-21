@@ -6,6 +6,10 @@ declare global {
     interface Global {
       //  是否开发模式
       isDev: boolean;
+      //  窗体/插件信息映射
+      pluginWin: any;
+      //  视图窗体ID映射
+      viewWinMap: any;
     }
   }
 }
