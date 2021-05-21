@@ -1,23 +1,13 @@
 import { ipcMain, WebPreferences, BrowserWindowConstructorOptions } from 'electron';
+//  窗体管理
 import windowManage from '@/main/core/window/windowManage';
+//  插件管理
 import pluginManage from '@/main/core/plugin/pluginManage';
-//  窗口配置，基础地址
-import { browserWindowOptions } from '@/main/config/browserWindow';
-
-import { session, BrowserView } from 'electron';
-import path from 'path';
+//  开发者管理
 import devManage from '@/main/core/dev/devManage';
-
-const apisdk = global.isDev ? path.join(process.cwd(), 'public', 'apisdk.js') : path.join(__dirname, 'apisdk.js');
-
-const pluginConfig = {
-  ID: 'id',
-  NAME: 'name',
-  MAIN: 'main',
-  MULTIPLE: 'multiple',
-  DEV: 'dev',
-  PRELOAD: 'preload'
-};
+//  窗口配置，基础地址
+import { browserWindowOptions, apisdk, pluginConfigKey } from '@/main/config/browserWindow';
+import { session, BrowserView } from 'electron';
 
 /**
  * 打开插件窗体
@@ -38,9 +28,9 @@ function openPluginWindow(
   //  获取插件信息
   const plugin = isDev ? devManage.getPlugin(pluginId) : pluginManage.getPlugin(pluginId);
   //  插件是否多开
-  const multiple = plugin[pluginConfig.MULTIPLE];
+  const multiple = plugin[pluginConfigKey.MULTIPLE];
   //  已打开的插件ID
-  const isOpenPlugin = windowManage.findPluginById(plugin[pluginConfig.ID]);
+  const isOpenPlugin = windowManage.findPluginById(plugin[pluginConfigKey.ID]);
 
   //  已拥有插件 且 非设置多开
   if (isOpenPlugin && !multiple) {
@@ -50,11 +40,11 @@ function openPluginWindow(
   //  创建插件窗体
   const pluginWindow = windowManage.createPluginBrowserWindow(pluginId, option, isDev, fatherId);
   //  插件窗体ID
-  const pluginWinId = pluginWindow.id;
+  let pluginWinId = pluginWindow.id;
   //  创建视图实例
   let browserViewItem = initBrowserView(plugin, pluginWindow, browserViewUrl, isDev);
   //  视图ID
-  const browserViewId = browserViewItem.webContents.id;
+  let browserViewId = browserViewItem.webContents.id;
 
   //  插件窗体关闭时，回收视图信息或回收子插件窗体
   pluginWindow.on('closed', () => {
@@ -69,17 +59,22 @@ function openPluginWindow(
         const pluginWinItem = pluginWin[winId];
         //  如插件窗体的fatherId为关闭窗体ID
         const isFatherWin = pluginWinItem.fatherId === pluginWinId;
+
         if (isFatherWin) {
+          //  在插件窗体关闭后，会进入上面的 'close' 回调，进行回收视图
           windowManage.closeWindow(pluginWinItem.id);
         }
       }
     }
 
-    //  手动gc
     if (global.isDev) {
       browserViewItem.webContents.closeDevTools();
     }
+
+    //  手动gc
     browserViewItem = null;
+    pluginWinId = null;
+    browserViewId = null;
   });
 
   //  记录此视图与所属窗体ID的映射关系
@@ -96,13 +91,13 @@ function openPluginWindow(
  */
 function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserView {
   //  创建插件会话
-  const sessionItem = session.fromPartition(plugin[pluginConfig.NAME]);
+  const sessionItem = session.fromPartition(plugin[pluginConfigKey.NAME]);
   //  设置会话预加载文件
   sessionItem.setPreloads([apisdk]);
   //  读取配置的对象
-  const readObj = isDev ? plugin[pluginConfig.DEV] || plugin : plugin;
+  const readObj = isDev ? plugin[pluginConfigKey.DEV] || plugin : plugin;
   //  优先使用传入的视图地址
-  const url = browserViewUrl || readObj[pluginConfig.MAIN];
+  const url = browserViewUrl || readObj[pluginConfigKey.MAIN];
 
   const webPreferences: WebPreferences = {
     //  启用NodeJS集成。
@@ -113,8 +108,8 @@ function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserVi
   };
 
   //  如插件存在预加载文件
-  if (plugin[pluginConfig.PRELOAD]) {
-    webPreferences.preload = readObj[pluginConfig.PRELOAD];
+  if (plugin[pluginConfigKey.PRELOAD]) {
+    webPreferences.preload = readObj[pluginConfigKey.PRELOAD];
   }
 
   //  实例化 BrowserView
