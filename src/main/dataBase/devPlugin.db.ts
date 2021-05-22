@@ -1,3 +1,3 @@
 import DB from './DB';
 
-export default new DB<DBNotes>('devPlugin');
+export default new DB('devPlugin');

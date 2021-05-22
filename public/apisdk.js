@@ -5,12 +5,14 @@ console.info('apisdk ready');
 
 window.iHelper = {
   createBrowserWindow(url, options) {
-    ipcRenderer.invoke('plugin-createBrowserWindow', url, options);
+    ipcRenderer.invoke('plugin-app', 'createBrowserWindow', url, options);
   },
-  getPlugin(id) {
-    ipcRenderer.invoke('plugin-detail-get', id);
-  },
-  test() {
-    console.info('apisdk is ready');
-  }
+  db: Object.freeze({
+    paging: query => ipcRenderer.invoke('plugin-db', 'paging', query),
+    insert: doc => ipcRenderer.invoke('plugin-db', 'insert', doc),
+    find: query => ipcRenderer.invoke('plugin-db', 'find', query),
+    findOne: query => ipcRenderer.invoke('plugin-db', 'findOne', query),
+    remove: (query, options) => ipcRenderer.invoke('plugin-db', 'remove', query, options),
+    update: (query, updateQuery, options) => ipcRenderer.invoke('plugin-db', 'update', query, updateQuery, options)
+  })
 };

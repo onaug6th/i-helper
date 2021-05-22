@@ -24,7 +24,7 @@ function openPluginWindow(
   isDev = false,
   fatherId = null,
   browserViewUrl = ''
-) {
+): void {
   //  获取插件信息
   const plugin = isDev ? devManage.getPlugin(pluginId) : pluginManage.getPlugin(pluginId);
   //  插件是否多开
@@ -61,7 +61,7 @@ function openPluginWindow(
         const isFatherWin = pluginWinItem.fatherId === pluginWinId;
 
         if (isFatherWin) {
-          //  在插件窗体关闭后，会进入上面的 'close' 回调，进行回收视图
+          //  在插件窗体关闭后，会进入该窗体的 'close' 回调，进行回收视图
           windowManage.closeWindow(pluginWinItem.id);
         }
       }
@@ -137,8 +137,7 @@ function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserVi
   browserViewItem.webContents.loadURL(url);
 
   //  监听生命周期，打开开发者控制台
-  browserViewItem.webContents.on('dom-ready', (...args) => {
-    args;
+  browserViewItem.webContents.on('dom-ready', () => {
     if (global.isDev) {
       browserViewItem.webContents.openDevTools();
     }
@@ -155,20 +154,6 @@ ipcMain.on('plugin-open', (event, pluginId, isDev, fatherId) => {
   openPluginWindow(pluginId, defaultOption, isDev, fatherId);
 });
 
-//  打开插件中创建的插件窗体
-ipcMain.handle('plugin-createBrowserWindow', (event, browserViewUrl, option = {}) => {
-  //  视图所属的插件窗体ID
-  const winId = windowManage.viewWinMap[event.sender.id];
-  //  插件窗体信息
-  const pluginWinItem = windowManage.pluginWin[winId];
-  //  默认窗体配置
-  const defaultOption = browserWindowOptions.plugin;
-  const { pluginId, isDev, id } = pluginWinItem;
-
-  //  打开插件中创建的插件窗体
-  openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl);
-});
-
 //  获取插件列表
 ipcMain.handle('plugin-list-get', () => {
   return pluginManage.getPluginList();
@@ -178,3 +163,5 @@ ipcMain.handle('plugin-list-get', () => {
 ipcMain.handle('plugin-detail-get', (event, id) => {
   return pluginManage.getPlugin(id);
 });
+
+export { openPluginWindow };
