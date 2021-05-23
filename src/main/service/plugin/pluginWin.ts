@@ -24,7 +24,7 @@ function openPluginWindow(
   isDev = false,
   fatherId = null,
   browserViewUrl = ''
-): void {
+): any {
   //  获取插件信息
   const plugin = isDev ? devManage.getPlugin(pluginId) : pluginManage.getPlugin(pluginId);
   //  插件是否多开
@@ -78,7 +78,12 @@ function openPluginWindow(
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowManage.viewWinMap[browserViewId] = pluginWinId;
+  windowManage.viewWinMap[browserViewId] = { pluginWinId, browserViewItem };
+
+  return {
+    pluginWinId,
+    browserViewId
+  };
 }
 
 /**

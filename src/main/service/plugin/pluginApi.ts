@@ -16,32 +16,57 @@ import DB from '@/main/dataBase/DB';
  */
 function getPluginBySenderId(id: number) {
   //  视图所属的插件窗体ID
-  const winId = windowManage.viewWinMap[id];
+  const { pluginWinId } = windowManage.viewWinMap[id];
   //  插件窗体信息
-  const pluginWinItem = windowManage.pluginWin[winId];
+  const pluginWinItem = windowManage.pluginWin[pluginWinId];
   return pluginWinItem;
 }
 
 const app = {
-  //  打开插件中创建的插件窗体
-  createBrowserWindow: ({ pluginWinItem }, browserViewUrl, option = {}) => {
+  /**
+   * 打开插件中创建的插件窗体
+   * @param pluginWinItem
+   * @param browserViewUrl
+   * @param option
+   * @returns
+   */
+  createBrowserWindow: (pluginWinItem, browserViewUrl, option = {}) => {
     const { pluginId, isDev, id } = pluginWinItem;
     //  默认窗体配置
     const defaultOption = browserWindowOptions.plugin;
 
     //  打开插件中创建的插件窗体
-    openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl);
+    return openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl);
+  },
+
+  /**
+   * 插件窗体间通信
+   * @param pluginWinItem
+   * @param id
+   * @param event
+   * @param data
+   */
+  communication: (pluginWinItem, id, event, data) => {
+    const viewWinItem = windowManage.viewWinMap[id];
+
+    if (viewWinItem) {
+      const dataArg = typeof data === 'object' ? JSON.stringify(data) : data;
+
+      viewWinItem.browserViewItem.webContents.executeJavaScript(`window.iHelper.trigger('${event}', ${dataArg})`);
+    }
   }
 };
 
-ipcMain.handle('plugin-app', (event, method, ...args) => {
+ipcMain.on('plugin-app', (event, method, ...args) => {
   //  插件窗体信息
   const pluginWinItem = getPluginBySenderId(event.sender.id);
 
   if (app[method]) {
-    app[method]({ pluginWinItem }, ...args);
+    const result = app[method](pluginWinItem, ...args);
+    event.returnValue = result;
   }
 });
+
 const dbAPI = {
   //  插件数据库储存对象
   pluginDb: {},
