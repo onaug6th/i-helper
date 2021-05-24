@@ -2,6 +2,9 @@ import fs from 'fs';
 //  便笺数据库
 import devPluginDB from '@/main/dataBase/devPlugin.db';
 import { uuid } from '@/render/utils';
+import compressing from 'compressing';
+import * as utils from '@/render/utils';
+
 /**
  * 补全路径
  * @param obj
@@ -61,8 +64,10 @@ class DevManage {
       pathCompletion(file.dev, folderPath);
     }
 
-    //  增加json文件的路径
-    file.pluginJSONPath = filePath;
+    //  json文件的路径
+    file.jsonPath = filePath;
+    //  文件夹路径（移除了最后的斜杠）
+    file.folderPath = folderPath.slice(0, -1);
     return file;
   }
 
@@ -106,12 +111,57 @@ class DevManage {
   }
 
   /**
+   * 打包开发者插件
+   * @param id
+   */
+  async buildPlugin(id) {
+    return new Promise(resolve => {
+      const plugin = this.getPlugin(id);
+
+      const folderPath = plugin.folderPath;
+      const zipPath = `${folderPath}.zip`;
+
+      compressing.zip
+        .compressDir(folderPath, zipPath)
+        .then(() => {
+          const afterFilePath = `${folderPath}\\${utils.getLastPath(folderPath)}.zip`;
+
+          fs.rename(`${folderPath}.zip`, afterFilePath, function(err) {
+            if (err) {
+              console.info(err);
+              resolve(false);
+            }
+            resolve(true);
+          });
+        })
+        .catch(() => {
+          resolve(false);
+        });
+    });
+  }
+
+  /**
+   * @desc 解压缩插件压缩包
+   */
+  uncompressPlugin() {
+    // 解压缩
+    // compressing.zip
+    //   .uncompress('nodejs-compressing-demo.zip', 'nodejs-compressing-demo3')
+    //   .then(() => {
+    //     console.log('success');
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //   });
+  }
+
+  /**
    * 更新开发者插件
    * @param id
    */
   async updatePlugin(id) {
     const plugin = this.getPlugin(id);
-    const file = this.getPluginInfoByFile(plugin.pluginJSONPath);
+    const file = this.getPluginInfoByFile(plugin.jsonPath);
     const updateContent = {
       id,
       ...file

@@ -87,3 +87,13 @@ export function safeGet(target: unknown, path: string, defaultValue: unknown): a
 
   return isNil(value) ? defaultValue : value;
 }
+
+/**
+ * 获取路径地址的最后一位
+ * @param path
+ * @returns
+ */
+export function getLastPath(path: string): string {
+  const pathArr = path.split('\\');
+  return pathArr[pathArr.length - 1];
+}

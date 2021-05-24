@@ -68,7 +68,7 @@
         <div>
           <el-button type="primary" size="small" title="启动开发者插件" @click="openPlugin">启动</el-button>
           <el-button type="success" size="small" title="将插件打包并上传到插件中心" @click="build">打包</el-button>
-          <el-button type="warning" size="small" title="将会重新读取插件json配置文件" @click="reload">
+          <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
             重新加载
           </el-button>
           <el-button type="danger" plain size="small" title="删除插件" @click="delPlugin">删除</el-button>
@@ -139,8 +139,16 @@ export default defineComponent({
       });
     }
 
+    /**
+     * 打包插件
+     */
     function build() {
-      console;
+      ipcRenderer.invoke('dev-plugin-build', currentPlugin.value.id).then(success => {
+        ElNotification({
+          type: success ? 'success' : 'error',
+          message: success ? '打包成功' : '打包失败'
+        });
+      });
     }
 
     /**

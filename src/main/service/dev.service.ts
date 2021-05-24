@@ -21,6 +21,11 @@ ipcMain.handle('dev-plugin-update', (event, id) => {
   return devManage.updatePlugin(id);
 });
 
+//  打包开发者插件
+ipcMain.handle('dev-plugin-build', (event, id) => {
+  return devManage.buildPlugin(id);
+});
+
 //  删除开发者插件
 ipcMain.handle('dev-plugin-del', (event, id) => {
   return devManage.delPlugin(id);
