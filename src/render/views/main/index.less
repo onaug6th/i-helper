@@ -3,6 +3,14 @@
     height: 100%;
 }
 
+.shade {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,.5);
+  z-index: 1;
+}
+
 .home-content {
     height: calc(100% - 41px);
     background-color: #fff;
@@ -10,7 +18,7 @@
 
     &__sidebar {
         width: 64px;
-        
+
         /deep/ .el-menu {
             height: 100%;
         }

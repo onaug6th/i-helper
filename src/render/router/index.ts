@@ -14,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'pluginList',
         component: () => import('../views/main/pluginList/index.vue'),
         meta: {
-          title: '应用'
+          title: '插件列表'
         }
       },
       {
@@ -22,23 +22,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'dev',
         component: () => import('../views/main/dev/index.vue'),
         meta: {
-          title: '应用'
-        }
-      },
-      {
-        path: '/notes',
-        name: 'notes',
-        component: () => import('../views/main/notes/index.vue'),
-        meta: {
-          title: '笔记'
-        }
-      },
-      {
-        path: '/clipboard',
-        name: 'clipboard',
-        component: () => import('../views/main/clipboard/index.vue'),
-        meta: {
-          title: '剪贴板'
+          title: '开发者模式'
         }
       },
       {
@@ -68,15 +52,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/plugin/index.vue'),
     meta: {
       title: '插件'
-    }
-  },
-
-  {
-    path: '/note',
-    name: 'note',
-    component: () => import('../views/note/index.vue'),
-    meta: {
-      title: '便笺'
     }
   }
 ];

@@ -4,6 +4,7 @@ import devPluginDB from '@/main/dataBase/devPlugin.db';
 import { uuid } from '@/render/utils';
 import compressing from 'compressing';
 import * as utils from '@/render/utils';
+import { exec } from 'child_process';
 
 /**
  * 补全路径
@@ -131,6 +132,7 @@ class DevManage {
               console.info(err);
               resolve(false);
             }
+            exec(`explorer.exe /select,${afterFilePath}`);
             resolve(true);
           });
         })
