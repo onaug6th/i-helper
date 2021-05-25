@@ -1,6 +1,17 @@
 <template>
   <div class="home" @dragover.prevent="drapOver">
-    <div v-show="state.showShade" class="shade" @drop.prevent="drop" @dragleave.prevent="drapLeave"></div>
+    <!-- 操作遮罩层 -->
+    <div v-show="state.showShade" class="shade" @drop.prevent="drop" @dragleave.prevent="drapLeave">
+      <div class="shade-content">
+        <div v-if="state.currentFile.name" class="file-name">{{ state.currentFile.name }} 可能是一个插件</div>
+        <div class="operate">
+          <el-button v-if="isJson" type="primary" size="small" @click="addDev">添加到开发者</el-button>
+          <el-button v-if="isZip" type="primary" size="small" @click="install">安装插件</el-button>
+        </div>
+      </div>
+    </div>
+    <!-- 操作遮罩层 -->
+
     <Header />
 
     <div class="home-content">
@@ -40,9 +51,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
+import { ipcRenderer } from 'electron';
+import { defineComponent, ref, reactive, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Header from '@render/components/header/index.vue';
+import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   components: {
@@ -53,9 +66,18 @@ export default defineComponent({
     const router = useRouter();
     const routeName = ref(route.name);
 
-    const state: any = reactive({
+    const state: {
+      showShade: boolean;
+      currentFile: {
+        name?: string;
+        type?: string;
+        file?: File;
+      };
+    } = reactive({
       //  展示操作遮罩层
-      showShade: false
+      showShade: false,
+      //  当前文件
+      currentFile: {}
     });
 
     const menuList: Array<{
@@ -80,6 +102,14 @@ export default defineComponent({
       }
     ];
 
+    const isJson = computed(() => {
+      return state.currentFile.type === 'json';
+    });
+
+    const isZip = computed(() => {
+      return state.currentFile.type === 'zip';
+    });
+
     /**
      * 跳转路由
      */
@@ -93,7 +123,7 @@ export default defineComponent({
      * 文件放下
      */
     function drop(event) {
-      state.showShade = false;
+      state.showShade = true;
 
       //  拖拽进来的文件
       const files = Array.prototype.slice.call(event.dataTransfer.files);
@@ -104,8 +134,34 @@ export default defineComponent({
 
       uriList;
       text;
-      files;
-      debugger;
+
+      if (files.length === 1) {
+        const fileName = files[0].name;
+        const reg = /([^\\/]+)\.([^\\/]+)/i;
+        reg.test(fileName);
+        const fileType = RegExp.$2;
+
+        switch (fileType) {
+          case 'json': {
+            if (fileName === 'plugin.json') {
+              state.currentFile = {
+                name: 'plugin.json',
+                type: 'json',
+                file: files[0]
+              };
+            }
+            break;
+          }
+          case 'zip': {
+            state.currentFile = {
+              name: fileName,
+              type: 'zip',
+              file: files[0]
+            };
+            break;
+          }
+        }
+      }
     }
 
     /**
@@ -119,7 +175,24 @@ export default defineComponent({
      * 拖拽离开
      */
     function drapLeave() {
+      closeShade();
+    }
+
+    function closeShade() {
       state.showShade = false;
+    }
+
+    function addDev() {
+      ipcRenderer.invoke('dev-plugin-add', state.currentFile.file.path);
+      ElNotification({
+        type: 'success',
+        message: '添加开发者插件成功'
+      });
+      closeShade();
+    }
+
+    function install() {
+      debugger;
     }
 
     return {
@@ -127,9 +200,13 @@ export default defineComponent({
       routeName,
       menuTo,
       state,
+      isJson,
+      isZip,
       drop,
       drapOver,
-      drapLeave
+      drapLeave,
+      addDev,
+      install
     };
   }
 });
