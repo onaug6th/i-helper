@@ -2,10 +2,12 @@
   <div class="home" @dragover.prevent="drapOver">
     <!-- 操作遮罩层 -->
     <div v-show="state.showShade" class="shade" @drop.prevent="drop" @dragleave.prevent="drapLeave">
+      <i class="iconfont flex-center icon-close" @click="drapLeave"></i>
       <div class="shade-content">
-        <div v-if="state.currentFile.name" class="file-name">{{ state.currentFile.name }} 可能是一个插件</div>
+        <div v-if="state.currentFile.name" class="file-name">{{ state.currentFile.name }} {{ state.shadeText }}</div>
+
         <div class="operate">
-          <el-button v-if="isJson" type="primary" size="small" @click="addDev">添加到开发者</el-button>
+          <el-button v-if="isJson" type="primary" size="small" @click="addDev">添加到开发者插件</el-button>
           <el-button v-if="isZip" type="primary" size="small" @click="install">安装插件</el-button>
         </div>
       </div>
@@ -36,7 +38,7 @@
         <el-scrollbar>
           <router-view v-slot="{ Component }">
             <transition name="main-fade">
-              <div class="transition" :key="routeName">
+              <div class="transition">
                 <keep-alive>
                   <component :is="Component" />
                 </keep-alive>
@@ -52,8 +54,8 @@
 
 <script lang="ts">
 import { ipcRenderer } from 'electron';
-import { defineComponent, ref, reactive, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { getCurrentInstance, defineComponent, reactive, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import Header from '@render/components/header/index.vue';
 import { ElNotification } from 'element-plus';
 
@@ -62,12 +64,12 @@ export default defineComponent({
     Header
   },
   setup() {
-    const route = useRoute();
+    const { ctx }: any = getCurrentInstance();
     const router = useRouter();
-    const routeName = ref(route.name);
 
     const state: {
       showShade: boolean;
+      shadeText: string;
       currentFile: {
         name?: string;
         type?: string;
@@ -76,6 +78,7 @@ export default defineComponent({
     } = reactive({
       //  展示操作遮罩层
       showShade: false,
+      shadeText: '',
       //  当前文件
       currentFile: {}
     });
@@ -149,6 +152,7 @@ export default defineComponent({
                 type: 'json',
                 file: files[0]
               };
+              state.shadeText = '是一个插件配置文件';
             }
             break;
           }
@@ -158,6 +162,7 @@ export default defineComponent({
               type: 'zip',
               file: files[0]
             };
+            state.shadeText = '可能是一个插件';
             break;
           }
         }
@@ -178,26 +183,35 @@ export default defineComponent({
       closeShade();
     }
 
+    /**
+     * 关闭遮罩
+     */
     function closeShade() {
       state.showShade = false;
     }
 
-    function addDev() {
-      ipcRenderer.invoke('dev-plugin-add', state.currentFile.file.path);
+    /**
+     * 添加开发者插件
+     */
+    async function addDev() {
+      await ipcRenderer.invoke('dev-plugin-add', state.currentFile.file.path);
       ElNotification({
         type: 'success',
         message: '添加开发者插件成功'
       });
+      ctx.$eventBus.emit('dev-updateList');
       closeShade();
     }
 
+    /**
+     * 安装插件
+     */
     function install() {
       debugger;
     }
 
     return {
       menuList,
-      routeName,
       menuTo,
       state,
       isJson,

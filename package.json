@@ -19,6 +19,7 @@
     "electron-settings": "^4.0.2",
     "element-plus": "^1.0.2-beta.30",
     "fs-extra": "^9.0.1",
+    "mitt": "^2.1.0",
     "nedb": "^1.8.0",
     "style-resources-loader": "^1.4.1",
     "vue": "3.0.4",

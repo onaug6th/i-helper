@@ -1,11 +1,5 @@
 <template>
-  <div
-    class="plugin"
-    :class="pluginClassName"
-    @drop.prevent="drop"
-    @dragover.prevent="drapOver"
-    @dragleave.prevent="drapLeave"
-  >
+  <div>
     <h1 class="plugin-title">
       开发者模式
     </h1>
@@ -80,29 +74,20 @@
 
 <script lang="ts">
 import { ipcRenderer } from 'electron';
-import { computed, defineComponent, onBeforeMount, reactive } from 'vue';
+import { getCurrentInstance, computed, defineComponent, onBeforeMount, reactive } from 'vue';
 import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   setup() {
+    const { ctx }: any = getCurrentInstance();
+
     const state: any = reactive({
       //  插件列表
       pluginList: [],
       //  打开抽屉
       openDrawer: false,
       //  当前插件
-      currentIndex: 0,
-      //  拖拽经过
-      isDragOver: false
-    });
-
-    //  插件样式名
-    const pluginClassName = computed(() => {
-      const className = [];
-      if (state.isDragOver) {
-        className.push('isDragOver');
-      }
-      return className;
+      currentIndex: 0
     });
 
     //  当前插件
@@ -174,45 +159,10 @@ export default defineComponent({
       });
     }
 
-    /**
-     * 文件放下
-     */
-    function drop(event) {
-      state.isDragOver = false;
-
-      //  拖拽进来的文件
-      const files = Array.prototype.slice.call(event.dataTransfer.files);
-      //  网络路径
-      const uriList = event.dataTransfer.getData('text/uri-list');
-      //  拖拽进来的文字
-      const text = event.dataTransfer.getData('text/plain');
-
-      uriList;
-      text;
-
-      files.forEach(file => {
-        //  为插件的描述文件
-        if (file.name === 'plugin.json') {
-          ipcRenderer.invoke('dev-plugin-add', file.path).then(result => {
-            state.pluginList.push(result);
-          });
-        }
-      });
-    }
-
-    /**
-     * 拖拽经过
-     */
-    function drapOver() {
-      state.isDragOver = true;
-    }
-
-    /**
-     * 拖拽离开
-     */
-    function drapLeave() {
-      state.isDragOver = false;
-    }
+    // 监听-如果有新任务则播放音效
+    ctx.$eventBus.on('dev-updateList', () => {
+      getAppList();
+    });
 
     onBeforeMount(() => {
       getAppList();
@@ -220,16 +170,12 @@ export default defineComponent({
 
     return {
       state,
-      pluginClassName,
       currentPlugin,
       choosePlugin,
       openPlugin,
       delPlugin,
-      drop,
       build,
-      reload,
-      drapOver,
-      drapLeave
+      reload
     };
   }
 });
