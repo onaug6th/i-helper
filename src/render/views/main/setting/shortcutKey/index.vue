@@ -17,17 +17,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, getCurrentInstance } from 'vue';
 import KeyDialog from './component/keyDialog/index.vue';
 import { showDialog, state, openKeyDialog, close } from './hook';
 import { useStore } from 'vuex';
-import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   components: {
     KeyDialog
   },
   setup() {
+    const { ctx }: any = getCurrentInstance();
     const store = useStore();
 
     /**
@@ -36,7 +36,7 @@ export default defineComponent({
     function confirm() {
       store.dispatch('app/setNewestSetting');
 
-      ElNotification({
+      ctx.$notify({
         type: 'success',
         message: '设置成功'
       });

@@ -44,13 +44,44 @@ class DevManage {
   }
 
   /**
-   * 根据文件获取插件信息
+   * 根据json文件路径获取json数据
    * @param filePath
    * @returns
    */
-  getPluginInfoByFile(filePath) {
+  getJSONFileData(filePath: string) {
     const text = fs.readFileSync(filePath, 'utf8');
-    const file = JSON.parse(text);
+    return JSON.parse(text);
+  }
+
+  /**
+   * 校验json文件是否合法
+   */
+  validFile(path) {
+    const file = this.getJSONFileData(path);
+    const main = file.main;
+    const name = file.name;
+    let result: string;
+
+    if (main) {
+      if (!/\.html$/i.test(main)) {
+        result = '入口文件不是HTML文件（main）';
+      }
+    } else {
+      result = '没有指定入口文件（main）';
+    }
+
+    if (!name) {
+      result = '没有指定插件名称（name）';
+    }
+    return result;
+  }
+  /**
+   * 根据文件路径获取插件信息
+   * @param filePath
+   * @returns
+   */
+  getPluginInfoByFile(filePath: string) {
+    const file = this.getJSONFileData(filePath);
 
     //  文件夹路径
     const folderPath = filePath.replace('plugin.json', '');
@@ -77,7 +108,13 @@ class DevManage {
    * @param path
    * @returns
    */
-  async addPlugin(path) {
+  async addPlugin(path: string) {
+    const validFile = this.validFile(path);
+    //  校验文件的合法
+    if (validFile) {
+      return Promise.reject(validFile);
+    }
+
     const file = this.getPluginInfoByFile(path);
 
     const result = await devPluginDB.insert({

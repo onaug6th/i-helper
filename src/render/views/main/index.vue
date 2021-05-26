@@ -57,7 +57,6 @@ import { ipcRenderer } from 'electron';
 import { getCurrentInstance, defineComponent, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Header from '@render/components/header/index.vue';
-import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   components: {
@@ -194,13 +193,24 @@ export default defineComponent({
      * 添加开发者插件
      */
     async function addDev() {
-      await ipcRenderer.invoke('dev-plugin-add', state.currentFile.file.path);
-      ElNotification({
-        type: 'success',
-        message: '添加开发者插件成功'
-      });
-      ctx.$eventBus.emit('dev-updateList');
-      closeShade();
+      ipcRenderer
+        .invoke('dev-plugin-add', state.currentFile.file.path)
+        .then(() => {
+          ctx.$notify({
+            type: 'success',
+            message: '添加开发者插件成功'
+          });
+          ctx.$eventBus.emit('dev-updateList');
+        })
+        .catch(message => {
+          ctx.$notify({
+            type: 'error',
+            message
+          });
+        })
+        .finally(() => {
+          closeShade();
+        });
     }
 
     /**

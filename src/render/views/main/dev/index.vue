@@ -65,7 +65,7 @@
           <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
             重新加载
           </el-button>
-          <el-button type="danger" plain size="small" title="删除插件" @click="delPlugin">删除</el-button>
+          <el-button type="danger" plain size="small" title="删除插件" @click="confirmDel">删除</el-button>
         </div>
       </div>
     </div>
@@ -75,7 +75,6 @@
 <script lang="ts">
 import { ipcRenderer } from 'electron';
 import { getCurrentInstance, computed, defineComponent, onBeforeMount, reactive } from 'vue';
-import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   setup() {
@@ -117,7 +116,7 @@ export default defineComponent({
     function reload() {
       ipcRenderer.invoke('dev-plugin-update', currentPlugin.value.id).then(plugin => {
         state.pluginList[state.currentIndex] = plugin;
-        ElNotification({
+        ctx.$notify({
           type: 'success',
           message: '更新成功'
         });
@@ -129,11 +128,28 @@ export default defineComponent({
      */
     function build() {
       ipcRenderer.invoke('dev-plugin-build', currentPlugin.value.id).then(success => {
-        ElNotification({
+        ctx.$notify({
           type: success ? 'success' : 'error',
           message: success ? '打包成功' : '打包失败'
         });
       });
+    }
+
+    /**
+     * 确认删除
+     */
+    function confirmDel() {
+      ctx
+        .$confirm('此操作将永久删除该插件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          delPlugin();
+        })
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        .catch(() => {});
     }
 
     /**
@@ -144,7 +160,7 @@ export default defineComponent({
       ipcRenderer.invoke('dev-plugin-del', currentPlugin.value.id);
       state.pluginList.splice(state.currentIndex, 1);
       state.openDrawer = false;
-      ElNotification({
+      ctx.$notify({
         type: 'success',
         message: '删除成功'
       });
@@ -159,7 +175,7 @@ export default defineComponent({
       });
     }
 
-    // 监听-如果有新任务则播放音效
+    //  开发者面板监听——更新列表
     ctx.$eventBus.on('dev-updateList', () => {
       getAppList();
     });
@@ -173,7 +189,7 @@ export default defineComponent({
       currentPlugin,
       choosePlugin,
       openPlugin,
-      delPlugin,
+      confirmDel,
       build,
       reload
     };
