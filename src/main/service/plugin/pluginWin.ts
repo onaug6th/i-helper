@@ -159,14 +159,4 @@ ipcMain.on('plugin-open', (event, pluginId, isDev, fatherId) => {
   openPluginWindow(pluginId, defaultOption, isDev, fatherId);
 });
 
-//  获取插件列表
-ipcMain.handle('plugin-list-get', () => {
-  return pluginManage.getPluginList();
-});
-
-//  获取插件详情
-ipcMain.handle('plugin-detail-get', (event, id) => {
-  return pluginManage.getPlugin(id);
-});
-
 export { openPluginWindow };

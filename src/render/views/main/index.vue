@@ -217,7 +217,9 @@ export default defineComponent({
      * 安装插件
      */
     function install() {
-      debugger;
+      ipcRenderer.invoke('plugin-install', state.currentFile.file.path).then(() => {
+        debugger;
+      });
     }
 
     return {
