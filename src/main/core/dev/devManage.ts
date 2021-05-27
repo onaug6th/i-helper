@@ -5,21 +5,26 @@ import { uuid } from '@/render/utils';
 import compressing from 'compressing';
 import * as utils from '@/render/utils';
 import { exec } from 'child_process';
+//  窗口配置，基础地址
+import { pluginConfigKey } from '@/main/config/browserWindow';
 
 /**
- * 补全路径
+ * 补全对象的属性路径
  * @param obj
  * @param folderPath 文件目录路径
  */
-function pathCompletion(obj, folderPath) {
+function pathCompletion(obj: any, folderPath: string) {
+  const main = obj[pluginConfigKey.MAIN];
+  const preload = obj[pluginConfigKey.PRELOAD];
+
   //  入口文件，如不为 http 协议开头，补全文件夹目录加入口文件地址
-  if (!obj.main.startsWith('http')) {
-    obj.main = `${folderPath}${obj.main}`;
+  if (!main.startsWith('http')) {
+    obj[pluginConfigKey.MAIN] = `${folderPath}${main}`;
   }
 
   //  预加载js文件
-  if (obj.preload) {
-    obj.preload = `${folderPath}${obj.preload}`;
+  if (preload) {
+    obj[pluginConfigKey.PRELOAD] = `${folderPath}${preload}`;
   }
 }
 
@@ -56,10 +61,10 @@ class DevManage {
   /**
    * 校验json文件是否合法
    */
-  validFile(path) {
+  validFile(path: string) {
     const file = this.getJSONFileData(path);
-    const main = file.main;
-    const name = file.name;
+    const main = file[pluginConfigKey.MAIN];
+    const name = file[pluginConfigKey.NAME];
     let result: string;
 
     if (main) {
@@ -75,6 +80,7 @@ class DevManage {
     }
     return result;
   }
+
   /**
    * 根据文件路径获取插件信息
    * @param filePath
@@ -85,8 +91,10 @@ class DevManage {
 
     //  文件夹路径
     const folderPath = filePath.replace('plugin.json', '');
-    //  插件图标
-    file.logo = `atom:///${folderPath}${file.logo}`;
+    //  图标
+    const logo = file[pluginConfigKey.LOGO];
+    //  补全插件图标路径
+    file[pluginConfigKey.LOGO] = `atom:///${folderPath}${logo}`;
 
     //  补全路径
     pathCompletion(file, folderPath);
@@ -97,9 +105,10 @@ class DevManage {
     }
 
     //  json文件的路径
-    file.jsonPath = filePath;
+    file[pluginConfigKey.FILE_PATH] = filePath;
     //  文件夹路径（移除了最后的斜杠）
-    file.folderPath = folderPath.slice(0, -1);
+    file[pluginConfigKey.FOLDER_PATH] = folderPath.slice(0, -1);
+
     return file;
   }
 
@@ -131,7 +140,7 @@ class DevManage {
    * 删除开发者插件
    * @param id
    */
-  delPlugin(id) {
+  delPlugin(id: string) {
     devPluginDB.remove({
       id
     });
@@ -144,7 +153,7 @@ class DevManage {
    * @param id
    * @returns
    */
-  getPlugin(id) {
+  getPlugin(id: string) {
     return this.pluginList.find(plugin => plugin.id === id);
   }
 
@@ -152,11 +161,11 @@ class DevManage {
    * 打包开发者插件
    * @param id
    */
-  async buildPlugin(id) {
+  async buildPlugin(id: string) {
     return new Promise(resolve => {
       const plugin = this.getPlugin(id);
 
-      const folderPath = plugin.folderPath;
+      const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
       const zipPath = `${folderPath}.zip`;
 
       compressing.zip
@@ -198,7 +207,7 @@ class DevManage {
    * 更新开发者插件
    * @param id
    */
-  async updatePlugin(id) {
+  async updatePlugin(id: string) {
     const plugin = this.getPlugin(id);
     const file = this.getPluginInfoByFile(plugin.jsonPath);
     const updateContent = {

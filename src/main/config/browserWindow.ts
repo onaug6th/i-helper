@@ -42,10 +42,13 @@ const apisdk = global.isDev ? path.join(process.cwd(), 'public', 'apisdk.js') : 
 const pluginConfigKey = {
   ID: 'id',
   NAME: 'name',
+  LOGO: 'logo',
   MAIN: 'main',
   MULTIPLE: 'multiple',
   DEV: 'dev',
-  PRELOAD: 'preload'
+  PRELOAD: 'preload',
+  FILE_PATH: 'filePath',
+  FOLDER_PATH: 'folderPath'
 };
 
 export { browserWindowOptions, winURL, apisdk, pluginConfigKey };
