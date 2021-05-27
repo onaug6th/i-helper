@@ -48,7 +48,7 @@ export const uuid = (): string => {
 };
 
 /**
- * @desc 安全设置对象的值
+ * 安全设置对象的值
  * @param {*} target 目标对象
  * @param {*} path 路径
  * @param {*} value 值
@@ -71,7 +71,7 @@ export function safeSet(target: unknown, path: string, value: unknown): void {
 }
 
 /**
- * @desc 安全地获取嵌套对象的属性
+ * 安全地获取嵌套对象的属性
  * 特别注意：为了简化判断流程，undefined 和 null 均返回 undefined
  * @param {object} target - 目标对象
  * @param {string} path - 属性路径

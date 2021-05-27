@@ -3,9 +3,8 @@ import fs from 'fs';
 import devPluginDB from '@/main/dataBase/devPlugin.db';
 import { uuid } from '@/render/utils';
 import compressing from 'compressing';
-import * as utils from '@/render/utils';
 import { exec } from 'child_process';
-//  窗口配置，基础地址
+//  插件属性名称常量
 import { pluginConfigKey } from '@/main/config/browserWindow';
 
 /**
@@ -50,19 +49,19 @@ class DevManage {
 
   /**
    * 根据json文件路径获取json数据
-   * @param filePath
+   * @param jsonPath
    * @returns
    */
-  getJSONFileData(filePath: string) {
-    const text = fs.readFileSync(filePath, 'utf8');
+  getJSONFileData(jsonPath: string) {
+    const text = fs.readFileSync(jsonPath, 'utf8');
     return JSON.parse(text);
   }
 
   /**
    * 校验json文件是否合法
    */
-  validFile(path: string) {
-    const file = this.getJSONFileData(path);
+  validPluginJSON(jsonPath: string) {
+    const file = this.getJSONFileData(jsonPath);
     const main = file[pluginConfigKey.MAIN];
     const name = file[pluginConfigKey.NAME];
     let result: string;
@@ -83,14 +82,14 @@ class DevManage {
 
   /**
    * 根据文件路径获取插件信息
-   * @param filePath
+   * @param jsonPath
    * @returns
    */
-  getPluginInfoByFile(filePath: string) {
-    const file = this.getJSONFileData(filePath);
+  getPluginInfoByFile(jsonPath: string) {
+    const file = this.getJSONFileData(jsonPath);
 
     //  文件夹路径
-    const folderPath = filePath.replace('plugin.json', '');
+    const folderPath = jsonPath.replace('plugin.json', '');
     //  图标
     const logo = file[pluginConfigKey.LOGO];
     //  补全插件图标路径
@@ -98,33 +97,35 @@ class DevManage {
 
     //  补全路径
     pathCompletion(file, folderPath);
-
-    if (file.dev) {
+    //  存在开发者配置
+    if (file[pluginConfigKey.DEV]) {
       //  补全dev的路径
-      pathCompletion(file.dev, folderPath);
+      pathCompletion(file[pluginConfigKey.DEV], folderPath);
     }
 
     //  json文件的路径
-    file[pluginConfigKey.FILE_PATH] = filePath;
+    file[pluginConfigKey.JSON_PATH] = jsonPath;
     //  文件夹路径（移除了最后的斜杠）
     file[pluginConfigKey.FOLDER_PATH] = folderPath.slice(0, -1);
+    file[pluginConfigKey.FOLDER_NAME] = file[pluginConfigKey.FOLDER_PATH].split('\\').pop();
 
     return file;
   }
 
   /**
    * 新增开发者插件
-   * @param path
+   * @param jsonPath
    * @returns
    */
-  async addPlugin(path: string) {
-    const validFile = this.validFile(path);
+  async addPlugin(jsonPath: string) {
+    const validFile = this.validPluginJSON(jsonPath);
+
     //  校验文件的合法
     if (validFile) {
       return Promise.reject(validFile);
     }
 
-    const file = this.getPluginInfoByFile(path);
+    const file = this.getPluginInfoByFile(jsonPath);
 
     const result = await devPluginDB.insert({
       id: uuid(),
@@ -164,16 +165,21 @@ class DevManage {
   async buildPlugin(id: string) {
     return new Promise(resolve => {
       const plugin = this.getPlugin(id);
-
+      //  插件名称
+      const name = plugin[pluginConfigKey.NAME];
+      //  插件所在文件夹路径
       const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
-      const zipPath = `${folderPath}.zip`;
+      //  插件配置文件所属文件夹名称
+      const folderName = plugin[pluginConfigKey.FOLDER_NAME];
+      //  打包后的压缩包名称
+      const zipPath = `${folderPath.replace(folderName, name)}.zip`;
 
       compressing.zip
         .compressDir(folderPath, zipPath)
         .then(() => {
-          const afterFilePath = `${folderPath}\\${utils.getLastPath(folderPath)}.zip`;
+          const afterFilePath = `${folderPath}\\${name}.zip`;
 
-          fs.rename(`${folderPath}.zip`, afterFilePath, function(err) {
+          fs.rename(zipPath, afterFilePath, function(err) {
             if (err) {
               console.info(err);
               resolve(false);
@@ -189,27 +195,12 @@ class DevManage {
   }
 
   /**
-   * @desc 解压缩插件压缩包
-   */
-  uncompressPlugin() {
-    // 解压缩
-    // compressing.zip
-    //   .uncompress('nodejs-compressing-demo.zip', 'nodejs-compressing-demo3')
-    //   .then(() => {
-    //     console.log('success');
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //   });
-  }
-
-  /**
    * 更新开发者插件
    * @param id
    */
   async updatePlugin(id: string) {
     const plugin = this.getPlugin(id);
-    const file = this.getPluginInfoByFile(plugin.jsonPath);
+    const file = this.getPluginInfoByFile(plugin[pluginConfigKey.JSON_PATH]);
     const updateContent = {
       id,
       ...file

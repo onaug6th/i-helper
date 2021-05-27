@@ -6,7 +6,6 @@
 
 import Datastore from 'nedb';
 import path from 'path';
-import { app } from 'electron';
 
 type QueryDB<T> = {
   [K in keyof T]?: T[K];
@@ -25,11 +24,7 @@ class DB<T = any> {
    * @param dbName
    */
   init(dbName: string): void {
-    const dbPath = global.isDev
-      ? //  开发模式下
-        path.join(__dirname, `db/${dbName}.db`)
-      : //  生产环境下
-        path.join(app.getPath('userData'), `db/${dbName}.db`);
+    const dbPath = path.join(global.rootPath, `db/${dbName}.db`);
 
     //  https://www.w3cschool.cn/nedbintro/nedbintro-t9z327mh.html
     const db = new Datastore({
