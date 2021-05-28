@@ -18,3 +18,7 @@ ipcMain.handle('plugin-detail-get', (event, id) => {
 ipcMain.handle('plugin-install', (event, path) => {
   return pluginManage.installPlugin(path);
 });
+
+ipcMain.handle('plugin-del', (event, id) => {
+  return pluginManage.delPlugin(id);
+});

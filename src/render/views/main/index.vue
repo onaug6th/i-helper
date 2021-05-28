@@ -218,6 +218,10 @@ export default defineComponent({
      */
     async function install() {
       const plugin = await ipcRenderer.invoke('plugin-install', state.currentFile.file.path);
+      ctx.$notify({
+        type: 'success',
+        message: '安装插件成功'
+      });
       ctx.$eventBus.emit('pluginList-add', plugin);
       closeShade();
     }

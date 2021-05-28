@@ -6,10 +6,10 @@
 
     <div class="plugin-list">
       <div
-        v-for="(plugin, appIndex) in state.appList"
+        v-for="(plugin, appIndex) in state.pluginList"
         class="plugin-list_item"
         :key="appIndex"
-        @click="openApp(plugin)"
+        @click="choosePlugin(appIndex)"
       >
         <div class="plugin-list_item-left">
           <img :src="plugin.logo" />
@@ -25,49 +25,78 @@
       </div>
     </div>
   </div>
+
+  <Plugin-drawer v-model:visible="state.openDrawer" :plugin="currentPlugin" @remove="delPlugin" />
 </template>
 
 <script lang="ts">
 import { ipcRenderer } from 'electron';
-import { defineComponent, onBeforeMount, reactive, getCurrentInstance } from 'vue';
+import { defineComponent, onBeforeMount, reactive, getCurrentInstance, computed } from 'vue';
+import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
 
 export default defineComponent({
+  components: {
+    // eslint-disable-next-line vue/no-unused-components
+    PluginDrawer
+  },
   setup() {
     const { ctx }: any = getCurrentInstance();
     //  插件列表
     let state = reactive({
-      appList: []
+      //  打开抽屉
+      openDrawer: false,
+      //  插件列表
+      pluginList: [],
+      //  当前插件
+      currentIndex: 0
+    });
+
+    //  当前插件
+    const currentPlugin = computed(() => {
+      return state.pluginList[state.currentIndex] || {};
     });
 
     /**
      * 打开插件
-     * @param plugin
+     * @param index
      */
-    function openApp(plugin) {
-      ipcRenderer.send('plugin-open', plugin.id);
+    function choosePlugin(index: number) {
+      state.openDrawer = true;
+      state.currentIndex = index;
     }
 
     /**
      * 获取插件列表
      */
-    function getAppList() {
+    function getPluginList() {
       ipcRenderer.invoke('plugin-list-get').then(result => {
-        state.appList = reactive(result);
+        state.pluginList = reactive(result);
       });
+    }
+
+    /**
+     * 删除插件
+     * @param index
+     */
+    function delPlugin() {
+      state.pluginList.splice(state.currentIndex, 1);
+      state.openDrawer = false;
     }
 
     //  开发者面板监听——更新列表
     ctx.$eventBus.on('pluginList-add', plugin => {
-      state.appList.push(plugin);
+      state.pluginList.push(plugin);
     });
 
     onBeforeMount(() => {
-      getAppList();
+      getPluginList();
     });
 
     return {
       state,
-      openApp
+      currentPlugin,
+      choosePlugin,
+      delPlugin
     };
   }
 });

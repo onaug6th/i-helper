@@ -26,57 +26,24 @@
     </div>
   </div>
 
-  <el-drawer v-model="state.openDrawer" :title="currentPlugin.name" size="40%" direction="rtl">
-    <div class="drawer">
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          插件ID
-        </div>
-        <div class="drawer-row__value">
-          {{ currentPlugin.id }}
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          版本号
-        </div>
-        <div class="drawer-row__value">
-          {{ currentPlugin.version }}
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          插件路径
-        </div>
-        <div class="drawer-row__value">
-          {{ currentPlugin.main }}
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          操作
-        </div>
-        <div>
-          <el-button type="primary" size="small" title="启动开发者插件" @click="openPlugin">启动</el-button>
-          <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
-          <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
-            重新加载
-          </el-button>
-          <el-button type="danger" plain size="small" title="删除插件" @click="confirmDel">删除</el-button>
-        </div>
-      </div>
-    </div>
-  </el-drawer>
+  <Plugin-drawer
+    v-model:visible="state.openDrawer"
+    :plugin="currentPlugin"
+    :isDev="true"
+    @reload="reload"
+    @remove="delPlugin"
+  />
 </template>
 
 <script lang="ts">
 import { ipcRenderer } from 'electron';
 import { getCurrentInstance, computed, defineComponent, onBeforeMount, reactive } from 'vue';
+import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
 
 export default defineComponent({
+  components: {
+    PluginDrawer
+  },
   setup() {
     const { ctx }: any = getCurrentInstance();
 
@@ -104,58 +71,11 @@ export default defineComponent({
     }
 
     /**
-     * 打开插件
-     */
-    function openPlugin() {
-      ipcRenderer.send('plugin-open', currentPlugin.value.id, true);
-    }
-
-    /**
      * 重新加载插件
+     * @param plugin
      */
-    function reload() {
-      ipcRenderer
-        .invoke('dev-plugin-update', currentPlugin.value.id)
-        .then(plugin => {
-          state.pluginList[state.currentIndex] = plugin;
-          ctx.$notify({
-            type: 'success',
-            message: '更新成功'
-          });
-        })
-        .catch(error => {
-          ctx.$notify({
-            type: 'error',
-            message: `更新失败${error}`
-          });
-        });
-    }
-
-    /**
-     * 打包插件
-     */
-    function build() {
-      ipcRenderer.invoke('dev-plugin-build', currentPlugin.value.id).then(() => {
-        ctx.$notify({
-          type: 'success',
-          message: '打包成功'
-        });
-      });
-    }
-
-    /**
-     * 确认删除
-     */
-    function confirmDel() {
-      ctx
-        .$confirm('此操作将永久删除该插件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        .then(() => {
-          delPlugin();
-        });
+    function reload(plugin) {
+      state.pluginList[state.currentIndex] = plugin;
     }
 
     /**
@@ -163,13 +83,8 @@ export default defineComponent({
      * @param index
      */
     function delPlugin() {
-      ipcRenderer.invoke('dev-plugin-del', currentPlugin.value.id);
       state.pluginList.splice(state.currentIndex, 1);
       state.openDrawer = false;
-      ctx.$notify({
-        type: 'success',
-        message: '删除成功'
-      });
     }
 
     /**
@@ -194,10 +109,9 @@ export default defineComponent({
       state,
       currentPlugin,
       choosePlugin,
-      openPlugin,
-      confirmDel,
-      build,
-      reload
+
+      reload,
+      delPlugin
     };
   }
 });

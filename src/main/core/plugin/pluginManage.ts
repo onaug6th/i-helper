@@ -57,12 +57,33 @@ class PluginManage {
     });
   }
 
+  /**
+   * 获取插件列表
+   * @returns
+   */
   getPluginList() {
     return this.pluginList;
   }
 
+  /**
+   * 获取插件信息
+   * @param id
+   * @returns
+   */
   getPlugin(id: string) {
     return this.pluginList.find(app => app.id === id);
+  }
+
+  /**
+   * 删除插件
+   * @param id
+   */
+  delPlugin(id: string) {
+    pluginDB.remove({
+      id
+    });
+    const index = this.pluginList.findIndex(plugin => plugin.id === id);
+    this.pluginList.splice(index, 1);
   }
 
   /**
@@ -70,8 +91,11 @@ class PluginManage {
    * @param zipPath
    */
   async uncompressZip(zipPath: string): Promise<string> {
+    //  文件夹名称
     const folderName = utils.getLastPath(zipPath).replace('.zip', '');
+    //  解压缩后的文件夹路径
     const afterFilePath = path.join(global.rootPath, `pluginPackages\\${folderName}`);
+    //  解压缩后的文件夹内的插件配置路径
     const jsonPath = `${afterFilePath}\\${folderName}\\plugin.json`;
 
     try {
@@ -89,7 +113,7 @@ class PluginManage {
    * @param zipPath
    */
   async installPlugin(zipPath: string) {
-    // 解压缩
+    //  解压缩
     const jsonPath = await this.uncompressZip(zipPath);
 
     const { error, file } = pluginUtils.getPluginInfoByFile(jsonPath);
