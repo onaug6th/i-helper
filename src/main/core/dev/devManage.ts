@@ -1,4 +1,4 @@
-//  便笺数据库
+//  开发者插件数据库
 import devPluginDB from '@/main/dataBase/devPlugin.db';
 import { exec } from 'child_process';
 //  插件属性名称常量
@@ -37,7 +37,7 @@ class DevManage {
     const { error, file } = pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
-      return Promise.reject(error);
+      throw new Error(error);
     }
 
     const result = await devPluginDB.insert({
@@ -87,7 +87,6 @@ class DevManage {
 
     try {
       //  将插件文件拷到根目录压缩包文件夹
-
       await fsUtils.copy(folderPath, rootFolderPath);
 
       //  打包后的压缩包名称
@@ -97,7 +96,7 @@ class DevManage {
       exec(`explorer.exe /select,${zipPath}`);
       fsUtils.delDir(rootFolderPath);
     } catch (error) {
-      return false;
+      throw new Error('打包失败');
     }
   }
 

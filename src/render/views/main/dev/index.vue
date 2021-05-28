@@ -98,7 +98,7 @@ export default defineComponent({
      * 选择插件
      * @param index
      */
-    function choosePlugin(index) {
+    function choosePlugin(index: number) {
       state.openDrawer = true;
       state.currentIndex = index;
     }

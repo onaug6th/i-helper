@@ -216,10 +216,10 @@ export default defineComponent({
     /**
      * 安装插件
      */
-    function install() {
-      ipcRenderer.invoke('plugin-install', state.currentFile.file.path).then(() => {
-        debugger;
-      });
+    async function install() {
+      const plugin = await ipcRenderer.invoke('plugin-install', state.currentFile.file.path);
+      ctx.$eventBus.emit('pluginList-add', plugin);
+      closeShade();
     }
 
     return {
