@@ -1,31 +1,12 @@
-import fs from 'fs';
 //  便笺数据库
 import devPluginDB from '@/main/dataBase/devPlugin.db';
-import { uuid } from '@/render/utils';
-import compressing from 'compressing';
 import { exec } from 'child_process';
 //  插件属性名称常量
 import { pluginConfigKey } from '@/main/config/browserWindow';
-
-/**
- * 补全对象的属性路径
- * @param obj
- * @param folderPath 文件目录路径
- */
-function pathCompletion(obj: any, folderPath: string) {
-  const main = obj[pluginConfigKey.MAIN];
-  const preload = obj[pluginConfigKey.PRELOAD];
-
-  //  入口文件，如不为 http 协议开头，补全文件夹目录加入口文件地址
-  if (!main.startsWith('http')) {
-    obj[pluginConfigKey.MAIN] = `${folderPath}${main}`;
-  }
-
-  //  预加载js文件
-  if (preload) {
-    obj[pluginConfigKey.PRELOAD] = `${folderPath}${preload}`;
-  }
-}
+import compressing from 'compressing';
+import * as utils from '@/render/utils';
+import * as fsUtils from '@/render/utils/fs';
+import * as pluginUtils from '@/main/utils/plugin';
 
 class DevManage {
   pluginList: Array<any> = [];
@@ -48,87 +29,19 @@ class DevManage {
   }
 
   /**
-   * 根据json文件路径获取json数据
-   * @param jsonPath
-   * @returns
-   */
-  getJSONFileData(jsonPath: string) {
-    const text = fs.readFileSync(jsonPath, 'utf8');
-    return JSON.parse(text);
-  }
-
-  /**
-   * 校验json文件是否合法
-   */
-  validPluginJSON(jsonPath: string) {
-    const file = this.getJSONFileData(jsonPath);
-    const main = file[pluginConfigKey.MAIN];
-    const name = file[pluginConfigKey.NAME];
-    let result: string;
-
-    if (main) {
-      if (!/\.html$/i.test(main)) {
-        result = '入口文件不是HTML文件（main）';
-      }
-    } else {
-      result = '没有指定入口文件（main）';
-    }
-
-    if (!name) {
-      result = '没有指定插件名称（name）';
-    }
-    return result;
-  }
-
-  /**
-   * 根据文件路径获取插件信息
-   * @param jsonPath
-   * @returns
-   */
-  getPluginInfoByFile(jsonPath: string) {
-    const file = this.getJSONFileData(jsonPath);
-
-    //  文件夹路径
-    const folderPath = jsonPath.replace('plugin.json', '');
-    //  图标
-    const logo = file[pluginConfigKey.LOGO];
-    //  补全插件图标路径
-    file[pluginConfigKey.LOGO] = `atom:///${folderPath}${logo}`;
-
-    //  补全路径
-    pathCompletion(file, folderPath);
-    //  存在开发者配置
-    if (file[pluginConfigKey.DEV]) {
-      //  补全dev的路径
-      pathCompletion(file[pluginConfigKey.DEV], folderPath);
-    }
-
-    //  json文件的路径
-    file[pluginConfigKey.JSON_PATH] = jsonPath;
-    //  文件夹路径（移除了最后的斜杠）
-    file[pluginConfigKey.FOLDER_PATH] = folderPath.slice(0, -1);
-    file[pluginConfigKey.FOLDER_NAME] = file[pluginConfigKey.FOLDER_PATH].split('\\').pop();
-
-    return file;
-  }
-
-  /**
    * 新增开发者插件
    * @param jsonPath
    * @returns
    */
   async addPlugin(jsonPath: string) {
-    const validFile = this.validPluginJSON(jsonPath);
+    const { error, file } = pluginUtils.getPluginInfoByFile(jsonPath);
 
-    //  校验文件的合法
-    if (validFile) {
-      return Promise.reject(validFile);
+    if (error) {
+      return Promise.reject(error);
     }
 
-    const file = this.getPluginInfoByFile(jsonPath);
-
     const result = await devPluginDB.insert({
-      id: uuid(),
+      id: utils.uuid(),
       ...file
     });
 
@@ -163,35 +76,29 @@ class DevManage {
    * @param id
    */
   async buildPlugin(id: string) {
-    return new Promise(resolve => {
-      const plugin = this.getPlugin(id);
-      //  插件名称
-      const name = plugin[pluginConfigKey.NAME];
-      //  插件所在文件夹路径
-      const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
-      //  插件配置文件所属文件夹名称
-      const folderName = plugin[pluginConfigKey.FOLDER_NAME];
+    const plugin = this.getPlugin(id);
+    //  插件名称
+    const name = plugin[pluginConfigKey.NAME];
+    //  插件所在文件夹路径
+    const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
+
+    //  根目录压缩包文件夹
+    const rootFolderPath = `${global.rootPath}\\pluginZips\\${name}`;
+
+    try {
+      //  将插件文件拷到根目录压缩包文件夹
+
+      await fsUtils.copy(folderPath, rootFolderPath);
+
       //  打包后的压缩包名称
-      const zipPath = `${folderPath.replace(folderName, name)}.zip`;
+      const zipPath = `${rootFolderPath}.zip`;
+      await compressing.zip.compressDir(rootFolderPath, zipPath);
 
-      compressing.zip
-        .compressDir(folderPath, zipPath)
-        .then(() => {
-          const afterFilePath = `${folderPath}\\${name}.zip`;
-
-          fs.rename(zipPath, afterFilePath, function(err) {
-            if (err) {
-              console.info(err);
-              resolve(false);
-            }
-            exec(`explorer.exe /select,${afterFilePath}`);
-            resolve(true);
-          });
-        })
-        .catch(() => {
-          resolve(false);
-        });
-    });
+      exec(`explorer.exe /select,${zipPath}`);
+      fsUtils.delDir(rootFolderPath);
+    } catch (error) {
+      return false;
+    }
   }
 
   /**
@@ -200,7 +107,14 @@ class DevManage {
    */
   async updatePlugin(id: string) {
     const plugin = this.getPlugin(id);
-    const file = this.getPluginInfoByFile(plugin[pluginConfigKey.JSON_PATH]);
+    const jsonPath = plugin[pluginConfigKey.JSON_PATH];
+
+    const { error, file } = pluginUtils.getPluginInfoByFile(jsonPath);
+
+    if (error) {
+      return Promise.reject(error);
+    }
+
     const updateContent = {
       id,
       ...file

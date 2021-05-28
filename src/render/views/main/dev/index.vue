@@ -61,7 +61,7 @@
         </div>
         <div>
           <el-button type="primary" size="small" title="启动开发者插件" @click="openPlugin">启动</el-button>
-          <el-button type="success" size="small" title="将插件打包并上传到插件中心" @click="build">打包</el-button>
+          <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
           <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
             重新加载
           </el-button>
@@ -114,23 +114,31 @@ export default defineComponent({
      * 重新加载插件
      */
     function reload() {
-      ipcRenderer.invoke('dev-plugin-update', currentPlugin.value.id).then(plugin => {
-        state.pluginList[state.currentIndex] = plugin;
-        ctx.$notify({
-          type: 'success',
-          message: '更新成功'
+      ipcRenderer
+        .invoke('dev-plugin-update', currentPlugin.value.id)
+        .then(plugin => {
+          state.pluginList[state.currentIndex] = plugin;
+          ctx.$notify({
+            type: 'success',
+            message: '更新成功'
+          });
+        })
+        .catch(error => {
+          ctx.$notify({
+            type: 'error',
+            message: `更新失败${error}`
+          });
         });
-      });
     }
 
     /**
      * 打包插件
      */
     function build() {
-      ipcRenderer.invoke('dev-plugin-build', currentPlugin.value.id).then(success => {
+      ipcRenderer.invoke('dev-plugin-build', currentPlugin.value.id).then(() => {
         ctx.$notify({
-          type: success ? 'success' : 'error',
-          message: success ? '打包成功' : '打包失败'
+          type: 'success',
+          message: '打包成功'
         });
       });
     }
@@ -147,9 +155,7 @@ export default defineComponent({
         })
         .then(() => {
           delPlugin();
-        })
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        .catch(() => {});
+        });
     }
 
     /**
