@@ -79,9 +79,7 @@ class PluginManage {
    * @param id
    */
   delPlugin(id: string) {
-    pluginDB.remove({
-      id
-    });
+    pluginDB.remove({ id });
     const index = this.pluginList.findIndex(plugin => plugin.id === id);
     this.pluginList.splice(index, 1);
   }

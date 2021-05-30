@@ -11,7 +11,7 @@ class SettingManage {
   settingData: any = {
     common: {
       openAtLogin: true,
-      isAlwaysOnTop: true
+      isAlwaysOnTop: false
     },
     shortcutKey: {
       open: 'Ctrl+Space'
@@ -54,7 +54,7 @@ class SettingManage {
    * @param path
    * @param value
    */
-  async setSetting(path: string, value: any): Promise<void> {
+  setSetting(path: string, value: any): void {
     settings.setSync(path, value);
     this.getNewestAllSetting();
   }

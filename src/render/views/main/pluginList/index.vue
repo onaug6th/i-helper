@@ -36,7 +36,6 @@ import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
 
 export default defineComponent({
   components: {
-    // eslint-disable-next-line vue/no-unused-components
     PluginDrawer
   },
   setup() {
@@ -76,7 +75,6 @@ export default defineComponent({
 
     /**
      * 删除插件
-     * @param index
      */
     function delPlugin() {
       state.pluginList.splice(state.currentIndex, 1);

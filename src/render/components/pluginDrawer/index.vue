@@ -119,16 +119,13 @@ export default defineComponent({
     /**
      * 确认删除
      */
-    function confirmDel() {
-      ctx
-        .$confirm('此操作将永久删除该插件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        .then(() => {
-          delPlugin();
-        });
+    async function confirmDel() {
+      await ctx.$confirm('此操作将永久删除该插件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      });
+      delPlugin();
     }
 
     /**
