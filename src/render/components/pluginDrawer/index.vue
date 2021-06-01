@@ -80,6 +80,7 @@ export default defineComponent({
      */
     function openPlugin() {
       ipcRenderer.send('plugin-open', plugin.value.id, props.isDev);
+      visibleModel.value = false;
     }
 
     /**

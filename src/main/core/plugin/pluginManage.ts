@@ -3,7 +3,10 @@ import pluginDB from '@/main/dataBase/plugin.db';
 import compressing from 'compressing';
 import path from 'path';
 import * as utils from '@/render/utils';
+import * as fsUtils from '@/render/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
+//  插件属性名称常量
+import { pluginConfigKey } from '@/main/config/browserWindow';
 
 // const pluginList = [
 //   {
@@ -80,8 +83,12 @@ class PluginManage {
    */
   delPlugin(id: string) {
     pluginDB.remove({ id });
+    const plugin = this.getPlugin(id);
     const index = this.pluginList.findIndex(plugin => plugin.id === id);
     this.pluginList.splice(index, 1);
+
+    const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
+    fsUtils.delDir(folderPath);
   }
 
   /**

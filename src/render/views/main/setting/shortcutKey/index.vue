@@ -1,7 +1,14 @@
 <template>
   <el-form ref="form" label-width="80px">
     <el-form-item label="打开应用">
-      <el-button type="primary" size="small" plain title="设置应用的打开快捷键" @click="openKeyDialog('open')">
+      <el-button
+        type="primary"
+        size="small"
+        plain
+        title="设置应用的打开快捷键"
+        @click="openKeyDialog('open')"
+        :disabled="true"
+      >
         {{ getters.setting.shortcutKey.open }}
       </el-button>
     </el-form-item>
