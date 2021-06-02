@@ -63,7 +63,7 @@ export default defineComponent({
     Header
   },
   setup() {
-    const { ctx }: any = getCurrentInstance();
+    const { proxy }: any = getCurrentInstance();
     const router = useRouter();
 
     const state: {
@@ -196,14 +196,14 @@ export default defineComponent({
       ipcRenderer
         .invoke('dev-plugin-add', state.currentFile.file.path)
         .then(() => {
-          ctx.$notify({
+          proxy.$notify({
             type: 'success',
             message: '添加开发者插件成功'
           });
-          ctx.$eventBus.emit('dev-updateList');
+          proxy.$eventBus.emit('dev-updateList');
         })
         .catch(message => {
-          ctx.$notify({
+          proxy.$notify({
             type: 'error',
             message
           });
@@ -218,11 +218,11 @@ export default defineComponent({
      */
     async function install() {
       const plugin = await ipcRenderer.invoke('plugin-install', state.currentFile.file.path);
-      ctx.$notify({
+      proxy.$notify({
         type: 'success',
         message: '安装插件成功'
       });
-      ctx.$eventBus.emit('pluginList-add', plugin);
+      proxy.$eventBus.emit('pluginList-add', plugin);
       closeShade();
     }
 

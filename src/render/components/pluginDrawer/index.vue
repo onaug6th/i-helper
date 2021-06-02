@@ -62,7 +62,7 @@ export default defineComponent({
   },
   emits: ['update:visible', 'reload', 'remove'],
   setup(props, { emit }) {
-    const { ctx }: any = getCurrentInstance();
+    const { proxy }: any = getCurrentInstance();
 
     const plugin = computed(() => props.plugin);
 
@@ -92,13 +92,13 @@ export default defineComponent({
         .then(plugin => {
           emit('reload', plugin);
 
-          ctx.$notify({
+          proxy.$notify({
             type: 'success',
             message: '更新成功'
           });
         })
         .catch(error => {
-          ctx.$notify({
+          proxy.$notify({
             type: 'error',
             message: `更新失败${error}`
           });
@@ -110,7 +110,7 @@ export default defineComponent({
      */
     function build() {
       ipcRenderer.invoke('dev-plugin-build', plugin.value.id).then(() => {
-        ctx.$notify({
+        proxy.$notify({
           type: 'success',
           message: '打包成功'
         });
@@ -121,7 +121,7 @@ export default defineComponent({
      * 确认删除
      */
     async function confirmDel() {
-      await ctx.$confirm('此操作将永久删除该插件, 是否继续?', '提示', {
+      await proxy.$confirm('此操作将永久删除该插件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -136,7 +136,7 @@ export default defineComponent({
       ipcRenderer.invoke(props.isDev ? 'dev-plugin-del' : 'plugin-del', plugin.value.id);
       emit('remove');
       visibleModel.value = false;
-      ctx.$notify({
+      proxy.$notify({
         type: 'success',
         message: '删除成功'
       });

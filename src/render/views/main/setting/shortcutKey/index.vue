@@ -34,7 +34,7 @@ export default defineComponent({
     KeyDialog
   },
   setup() {
-    const { ctx }: any = getCurrentInstance();
+    const { proxy }: any = getCurrentInstance();
     const store = useStore();
 
     /**
@@ -43,7 +43,7 @@ export default defineComponent({
     function confirm() {
       store.dispatch('app/setNewestSetting');
 
-      ctx.$notify({
+      proxy.$notify({
         type: 'success',
         message: '设置成功'
       });

@@ -39,7 +39,7 @@ export default defineComponent({
     PluginDrawer
   },
   setup() {
-    const { ctx }: any = getCurrentInstance();
+    const { proxy }: any = getCurrentInstance();
     //  插件列表
     let state = reactive({
       //  打开抽屉
@@ -82,7 +82,7 @@ export default defineComponent({
     }
 
     //  开发者面板监听——更新列表
-    ctx.$eventBus.on('pluginList-add', plugin => {
+    proxy.$eventBus.on('pluginList-add', plugin => {
       state.pluginList.push(plugin);
     });
 

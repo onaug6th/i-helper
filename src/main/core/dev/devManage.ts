@@ -114,6 +114,13 @@ class DevManage {
       return Promise.reject(error);
     }
 
+    for (let i = 0; i < this.pluginList.length; i++) {
+      if (this.pluginList[i].id === id) {
+        this.pluginList[i] = file;
+        break;
+      }
+    }
+
     const updateContent = {
       id,
       ...file

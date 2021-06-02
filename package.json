@@ -6,6 +6,8 @@
   "description": "A desktop assistant",
   "main": "background.js",
   "scripts": {
+    "serve": "npm run electron:serve",
+    "build": "npm run electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "electron:build": "node src/script/clean && vue-cli-service electron:build",
     "lint": "vue-cli-service lint"
