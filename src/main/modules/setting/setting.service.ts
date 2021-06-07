@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import settingManage from '@/main/core/setting/settingManage';
+import settingManage from './setting.controller';
 
 //  获取快捷键
 ipcMain.handle('get-setting', () => {

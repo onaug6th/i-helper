@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import devManage from '@/main/core/dev/devManage';
+import devManage from './dev.controller';
 
 //  获取开发者插件窗口
 ipcMain.handle('dev-list-get', () => {

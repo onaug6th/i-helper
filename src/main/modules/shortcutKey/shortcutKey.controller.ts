@@ -1,6 +1,6 @@
 import { globalShortcut } from 'electron';
-import windowManage from '@/main/core/window/windowManage';
-import settingManage from '@/main/core/setting/settingManage';
+import windowManage from '@/main/modules/window/window.controller';
+import settingManage from '@/main/modules/setting/setting.controller';
 
 /**
  * 快捷键回调

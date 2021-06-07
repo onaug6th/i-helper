@@ -1,10 +1,10 @@
 import { ipcMain, WebPreferences, BrowserWindowConstructorOptions } from 'electron';
 //  窗体管理
-import windowManage from '@/main/core/window/windowManage';
+import windowManage from '@/main/modules/window/window.controller';
 //  插件管理
-import pluginManage from '@/main/core/plugin/pluginManage';
+import pluginManage from '@/main/modules/plugin/plugin.controller';
 //  开发者管理
-import devManage from '@/main/core/dev/devManage';
+import devManage from '@/main/modules/dev/dev.controller';
 //  窗口配置，基础地址
 import { browserWindowOptions, apisdk, pluginConfigKey } from '@/main/config/browserWindow';
 import { session, BrowserView } from 'electron';

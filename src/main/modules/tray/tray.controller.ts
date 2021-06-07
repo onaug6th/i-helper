@@ -1,6 +1,6 @@
 import { Menu, MenuItem, Tray } from 'electron';
 import path from 'path';
-import windowManage from '@/main/core/window/windowManage';
+import windowManage from '@/main/modules/window/window.controller';
 
 let tray = null;
 

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 //  窗体管理
-import windowManage from '@/main/core/window/windowManage';
+import windowManage from '@/main/modules/window/window.controller';
 //  窗口配置
 import { browserWindowOptions } from '@/main/config/browserWindow';
 import {

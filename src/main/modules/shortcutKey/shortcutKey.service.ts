@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import shortcutKeyManage from '@/main/core/shortcutKey/shortcutKeyManage';
+import shortcutKeyManage from './shortcutKey.controller';
 
 //  更新快捷键
 ipcMain.handle('shortcutKey-update', (event, result) => {

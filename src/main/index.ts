@@ -5,20 +5,10 @@
 
 import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+
 //  窗体管理
-import windowManage from './core/window/windowManage';
-//  设置管理
-import settingManage from './core/setting/settingManage';
-//  快捷键管理
-import shortcutKeyManage from './core/shortcutKey/shortcutKeyManage';
-//  托盘管理
-import trayManage from './core/tray';
-//  插件管理
-import pluginManage from './core/plugin/pluginManage';
-//  开发者管理
-import devManage from './core/dev/devManage';
-//  ipcMain
-import './service/index';
+import windowController from './modules/window/window.controller';
+import modules from './modules';
 
 let win: BrowserWindow | null;
 protocol.registerSchemesAsPrivileged([
@@ -44,7 +34,7 @@ app.whenReady().then(() => {
  * 打开主界面
  */
 function createWindow() {
-  win = windowManage.createHomeBrowserWindow();
+  win = windowController.createHomeBrowserWindow();
 
   if (!process.env.WEBPACK_DEV_SERVER_URL) {
     createProtocol('app');
@@ -60,7 +50,7 @@ app.on('window-all-closed', () => {
 //  运行第二个实例
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.on('second-instance', (event, commandLine, workingDirectory) => {
-  const mainWindow = windowManage.mainWindow;
+  const mainWindow = windowController.mainWindow;
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
@@ -86,11 +76,7 @@ app.on('ready', async () => {
 
   createWindow();
 
-  settingManage.appOnReady(app);
-  shortcutKeyManage.appOnReady();
-  trayManage.appOnReady();
-  pluginManage.appOnReady(app);
-  devManage.appOnReady();
+  modules.init(app);
 });
 
 if (global.isDev) {
