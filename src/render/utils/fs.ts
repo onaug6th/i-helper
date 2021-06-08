@@ -1,12 +1,40 @@
 import fs from 'fs';
 import path from 'path';
+import { exec } from 'child_process';
+import compressing from 'compressing';
+
+/**
+ * 亚索文件夹到指定目录（没错，就是亚索）
+ * @param from 从哪来
+ * @param to 想去哪
+ * @param explorer 是否在资源管理目录中查看
+ */
+async function buildDirTo(from: string, to: string, explorer = true): Promise<string> {
+  //  打包后的压缩包路径
+  const zipPath = `${to}.zip`;
+  try {
+    //  将插件文件拷到根目录压缩包文件夹
+    await copy(from, to);
+
+    await compressing.zip.compressDir(to, zipPath);
+
+    if (explorer) {
+      exec(`explorer.exe /select,${zipPath}`);
+    }
+
+    delDir(to);
+  } catch (error) {
+    throw new Error('打包失败');
+  }
+  return zipPath;
+}
 
 /**
  * 复制文件
  * @param from
  * @param to
  */
-function copyFile(from, to) {
+function copyFile(from: string, to: string) {
   fs.copyFileSync(from, to);
 }
 
@@ -16,7 +44,7 @@ function copyFile(from, to) {
  * @param toPath
  * @returns
  */
-export async function copy(fromPath: string, toPath: string): Promise<any> {
+async function copy(fromPath: string, toPath: string): Promise<any> {
   return new Promise(resolve => {
     fs.access(toPath, function(err) {
       if (err) {
@@ -54,7 +82,7 @@ export async function copy(fromPath: string, toPath: string): Promise<any> {
  * 删除目录
  * @param path
  */
-export function delDir(path: string): void {
+function delDir(path: string): void {
   let files = [];
   if (fs.existsSync(path)) {
     files = fs.readdirSync(path);
@@ -71,3 +99,5 @@ export function delDir(path: string): void {
     fs.rmdirSync(path);
   }
 }
+
+export { buildDirTo, copy, delDir };

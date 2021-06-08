@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-model="visibleModel" :title="plugin.name" size="40%" direction="rtl">
+  <el-drawer v-model="visibleModel" size="40%" direction="rtl" :title="plugin.name">
     <div class="drawer">
       <div class="drawer-row">
         <div class="drawer-row__title">
@@ -32,26 +32,35 @@
         <div class="drawer-row__title">
           操作
         </div>
-        <div>
+        <div class="drawer-row__content">
           <el-button type="primary" size="small" title="启动开发者插件" @click="openPlugin">启动</el-button>
           <template v-if="isDev">
-            <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
+            <el-button type="primary" plain size="small" title="打包插件" @click="build">打包</el-button>
             <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
               重新加载
             </el-button>
           </template>
           <el-button type="danger" plain size="small" title="删除插件" @click="confirmDel">删除</el-button>
         </div>
+        <div>
+          <el-button type="success" size="small" title="发布插件到插件中心" @click="publishConfirm">发布</el-button>
+        </div>
       </div>
     </div>
   </el-drawer>
+
+  <Publish-Dialog v-model:visible="state.showDialog" @confirm="publish" />
 </template>
 
 <script lang="ts">
 import { ipcRenderer } from 'electron';
-import { getCurrentInstance, defineComponent, computed } from 'vue';
+import PublishDialog from './components/publishDialog/index.vue';
+import { getCurrentInstance, defineComponent, computed, reactive } from 'vue';
 
 export default defineComponent({
+  components: {
+    PublishDialog
+  },
   props: {
     isDev: Boolean,
     visible: {
@@ -73,6 +82,10 @@ export default defineComponent({
       set(visible: boolean) {
         emit('update:visible', visible);
       }
+    });
+
+    const state = reactive({
+      showDialog: false
     });
 
     /**
@@ -142,12 +155,29 @@ export default defineComponent({
       });
     }
 
+    /**
+     * 发布确认
+     */
+    function publishConfirm() {
+      state.showDialog = true;
+    }
+
+    /**
+     * 发布插件
+     */
+    function publish(desc: string) {
+      ipcRenderer.invoke('dev-plugin-publish', plugin.value.id, desc);
+    }
+
     return {
+      state,
       visibleModel,
       openPlugin,
       confirmDel,
       build,
-      reload
+      reload,
+      publish,
+      publishConfirm
     };
   }
 });

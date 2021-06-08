@@ -30,3 +30,8 @@ ipcMain.handle('dev-plugin-build', (event, id) => {
 ipcMain.handle('dev-plugin-del', (event, id) => {
   return devManage.delPlugin(id);
 });
+
+//  发布开发者插件
+ipcMain.handle('dev-plugin-publish', (event, id, desc) => {
+  return devManage.publish(id, desc);
+});

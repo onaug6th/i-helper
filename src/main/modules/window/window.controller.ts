@@ -19,7 +19,7 @@
 //  创建窗口
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 //  窗口配置，基础地址
-import { browserWindowOptions, winURL } from '@/main/config/browserWindow';
+import { browserWindowOptions, winURL } from '@/main/constants/config/browserWindow';
 import { PluginItem, PluginWin, ViewWinMap } from './types';
 
 class WindowManage {

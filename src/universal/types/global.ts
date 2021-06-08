@@ -13,11 +13,14 @@ declare global {
       pluginWin: any;
       //  视图窗体ID映射
       viewWinMap: any;
+      //  下载文件夹路径
+      downloadPath: string;
     }
   }
 }
 
 global.isDev = process.env.NODE_ENV !== 'production';
 global.rootPath = global.isDev ? __dirname : app.getPath('userData');
+global.downloadPath = app.getPath('downloads');
 
 export {};

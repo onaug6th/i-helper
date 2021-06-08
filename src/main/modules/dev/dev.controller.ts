@@ -1,13 +1,13 @@
 //  开发者插件数据库
 import devPluginDB from '@/main/dataBase/devPlugin.db';
-import { exec } from 'child_process';
 //  插件属性名称常量
-import { pluginConfigKey } from '@/main/config/browserWindow';
-import compressing from 'compressing';
+import { pluginConfigKey } from '@/main/constants/plugin';
 import * as utils from '@/render/utils';
 import * as fsUtils from '@/render/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
-
+import { publishURL } from '@/main/constants/url';
+import FormData from 'form-data';
+import fs from 'fs';
 class DevManage {
   pluginList: Array<any> = [];
 
@@ -34,7 +34,7 @@ class DevManage {
    * @returns
    */
   async addPlugin(jsonPath: string) {
-    const { error, file } = pluginUtils.getPluginInfoByFile(jsonPath);
+    const { error, file } = await pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
       throw new Error(error);
@@ -77,27 +77,11 @@ class DevManage {
    */
   async buildPlugin(id: string) {
     const plugin = this.getPlugin(id);
-    //  插件名称
-    const name = plugin[pluginConfigKey.NAME];
-    //  插件所在文件夹路径
+
+    //  需要打包的文件夹
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
 
-    //  根目录压缩包文件夹
-    const rootFolderPath = `${global.rootPath}\\pluginZips\\${name}`;
-
-    try {
-      //  将插件文件拷到根目录压缩包文件夹
-      await fsUtils.copy(folderPath, rootFolderPath);
-
-      //  打包后的压缩包名称
-      const zipPath = `${rootFolderPath}.zip`;
-      await compressing.zip.compressDir(rootFolderPath, zipPath);
-
-      exec(`explorer.exe /select,${zipPath}`);
-      fsUtils.delDir(rootFolderPath);
-    } catch (error) {
-      throw new Error('打包失败');
-    }
+    await fsUtils.buildDirTo(folderPath, `${global.downloadPath}\\${plugin.name}`);
   }
 
   /**
@@ -108,17 +92,10 @@ class DevManage {
     const plugin = this.getPlugin(id);
     const jsonPath = plugin[pluginConfigKey.JSON_PATH];
 
-    const { error, file } = pluginUtils.getPluginInfoByFile(jsonPath);
+    const { error, file } = await pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
       return Promise.reject(error);
-    }
-
-    for (let i = 0; i < this.pluginList.length; i++) {
-      if (this.pluginList[i].id === id) {
-        this.pluginList[i] = file;
-        break;
-      }
     }
 
     const updateContent = {
@@ -133,7 +110,58 @@ class DevManage {
       updateContent
     );
 
+    for (let i = 0; i < this.pluginList.length; i++) {
+      if (this.pluginList[i].id === id) {
+        this.pluginList[i] = updateContent;
+        break;
+      }
+    }
+
     return updateContent;
+  }
+
+  /**
+   * 插件发布
+   * @param id
+   * @param desc
+   */
+  async publish(id: string, desc: string) {
+    const plugin = this.getPlugin(id);
+    //  需要打包的文件夹
+    const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
+    //  打包后的路径
+    const rootFolderPath = `${global.rootPath}\\pluginZips\\${plugin.name}`;
+    const zipPath = await fsUtils.buildDirTo(folderPath, rootFolderPath, false);
+
+    const file = fs.createReadStream(zipPath);
+    const logo = fs.createReadStream(plugin[pluginConfigKey.LOGO_PATH]);
+
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('logo', logo);
+
+    const pluginInfo = JSON.stringify({
+      id: plugin.id,
+      name: plugin.name,
+      desc: plugin.desc,
+      createdAt: plugin.createdAt,
+      version: plugin.version
+    });
+    const body = {
+      desc,
+      pluginInfo,
+      readme: plugin[pluginConfigKey.README_CONTENT]
+    };
+    for (const i in body) {
+      formData.append(i, body[i]);
+    }
+
+    formData.submit(publishURL, err => {
+      if (err) {
+        throw new Error('上传失败');
+      }
+    });
   }
 }
 

@@ -2,6 +2,7 @@
 import { ipcRenderer } from 'electron';
 
 export default {
+  name: 'keyDialog',
   props: {
     type: {
       type: String,

@@ -1,6 +1,6 @@
 import fs from 'fs';
 //  插件属性名称常量
-import { pluginConfigKey } from '@/main/config/browserWindow';
+import { pluginConfigKey } from '@/main/constants/plugin';
 
 /**
  * 校验json文件是否合法

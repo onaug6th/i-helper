@@ -6,7 +6,8 @@ import pluginManage from '@/main/modules/plugin/plugin.controller';
 //  开发者管理
 import devManage from '@/main/modules/dev/dev.controller';
 //  窗口配置，基础地址
-import { browserWindowOptions, apisdk, pluginConfigKey } from '@/main/config/browserWindow';
+import { browserWindowOptions } from '@/main/constants/config/browserWindow';
+import { apisdk, pluginConfigKey } from '@/main/constants/plugin';
 import { session, BrowserView } from 'electron';
 
 /**

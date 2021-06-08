@@ -14,7 +14,7 @@
     </el-form-item>
   </el-form>
 
-  <KeyDialog
+  <Key-Dialog
     v-model:visible="showDialog"
     :type="state.keyDialogType"
     :shortcutKey="getters.setting.shortcutKey"

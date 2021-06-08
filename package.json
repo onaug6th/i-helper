@@ -15,6 +15,7 @@
   "dependencies": {
     "@onaug6th/vue3-context-menu": "^0.0.2",
     "@types/nedb": "^1.8.11",
+    "axios": "^0.21.1",
     "compressing": "^1.5.1",
     "core-js": "^3.7.0",
     "dayjs": "^1.9.7",
@@ -23,6 +24,7 @@
     "fs-extra": "^9.0.1",
     "mitt": "^2.1.0",
     "nedb": "^1.8.0",
+    "request": "^2.88.2",
     "style-resources-loader": "^1.4.1",
     "vue": "3.0.4",
     "vue-class-component": "^8.0.0-0",

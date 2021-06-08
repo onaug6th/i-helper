@@ -6,7 +6,7 @@ import * as utils from '@/render/utils';
 import * as fsUtils from '@/render/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 //  插件属性名称常量
-import { pluginConfigKey } from '@/main/config/browserWindow';
+import { pluginConfigKey } from '@/main/constants/plugin';
 
 // const pluginList = [
 //   {
@@ -121,7 +121,7 @@ class PluginManage {
     //  解压缩
     const jsonPath = await this.uncompressZip(zipPath);
 
-    const { error, file } = pluginUtils.getPluginInfoByFile(jsonPath);
+    const { error, file } = await pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
       throw new Error(error);
