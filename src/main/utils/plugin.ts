@@ -42,6 +42,29 @@ function getJSONFileData(jsonPath: string): any {
 }
 
 /**
+ * 尝试获取readme内容
+ */
+function try2GetReadme(
+  folderPath
+): Promise<{
+  path: string;
+  content: string;
+}> {
+  return new Promise(resolve => {
+    const readmePath = `${folderPath}README.md`;
+
+    fs.access(readmePath, function(err) {
+      const content = err ? '' : fs.readFileSync(readmePath, 'utf8');
+
+      resolve({
+        path: readmePath,
+        content
+      });
+    });
+  });
+}
+
+/**
  * 补全对象的属性路径
  * @param obj
  * @param folderPath 文件目录路径
@@ -62,11 +85,11 @@ function pathCompletion(obj: any, folderPath: string): void {
 }
 
 /**
- * 根据文件路径获取插件信息
+ * 根据文件路径获取插件信息，并补全插件的某些属性
  * @param jsonPath
  * @returns
  */
-function getPluginInfoByFile(jsonPath: string): { error?: string; file?: any } {
+async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; file?: any }> {
   const file = getJSONFileData(jsonPath);
   const error = validPluginJSON(file);
 
@@ -80,8 +103,10 @@ function getPluginInfoByFile(jsonPath: string): { error?: string; file?: any } {
   const folderPath = jsonPath.replace('plugin.json', '');
   //  图标
   const logo = file[pluginConfigKey.LOGO];
-  //  补全插件图标路径
-  file[pluginConfigKey.LOGO] = `atom:///${folderPath}${logo}`;
+  //  插件图标路径
+  file[pluginConfigKey.LOGO_PATH] = `${folderPath}${logo}`;
+  //  补充协议
+  file[pluginConfigKey.LOGO] = `atom:///${file[pluginConfigKey.LOGO_PATH]}`;
 
   //  补全路径
   pathCompletion(file, folderPath);
@@ -95,7 +120,11 @@ function getPluginInfoByFile(jsonPath: string): { error?: string; file?: any } {
   file[pluginConfigKey.JSON_PATH] = jsonPath;
   //  文件夹路径（移除了最后的斜杠）
   file[pluginConfigKey.FOLDER_PATH] = folderPath.slice(0, -1);
-  file[pluginConfigKey.FOLDER_NAME] = file[pluginConfigKey.FOLDER_PATH].split('\\').pop();
+
+  //  补全插件说明路径
+  const readmeInfo = await try2GetReadme(folderPath);
+  file[pluginConfigKey.README_PATH] = readmeInfo.path;
+  file[pluginConfigKey.README_CONTENT] = readmeInfo.content;
 
   return { file };
 }
