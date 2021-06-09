@@ -1,5 +1,5 @@
 import { App } from 'electron';
-import './window.service';
+import './window.controller';
 
 export default {
   init(app: App): void {

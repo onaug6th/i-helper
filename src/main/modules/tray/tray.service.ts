@@ -1,6 +1,6 @@
 import { Menu, MenuItem, Tray } from 'electron';
 import path from 'path';
-import windowManage from '@/main/modules/window/window.controller';
+import windowService from '@/main/modules/window/window.service';
 
 let tray = null;
 
@@ -13,7 +13,7 @@ const menus: Array<MenuItem> = [
   }
 ];
 
-class TrayManage {
+class TrayService {
   /**
    * 应用初始化时执行
    */
@@ -27,10 +27,10 @@ class TrayManage {
     tray.setContextMenu(contextMenu);
     tray.setToolTip('i-helper');
     tray.on('click', () => {
-      const win = windowManage.mainWindow;
+      const win = windowService.mainWindow;
       win.show();
     });
   }
 }
 
-export default new TrayManage();
+export default new TrayService();

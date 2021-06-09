@@ -1,10 +1,10 @@
 import { ipcMain, WebPreferences, BrowserWindowConstructorOptions } from 'electron';
 //  窗体管理
-import windowManage from '@/main/modules/window/window.controller';
+import windowService from '@/main/modules/window/window.service';
 //  插件管理
-import pluginManage from '@/main/modules/plugin/plugin.controller';
+import pluginService from '@/main/modules/plugin/plugin.service';
 //  开发者管理
-import devManage from '@/main/modules/dev/dev.controller';
+import devService from '@/main/modules/dev/dev.service';
 //  窗口配置，基础地址
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { apisdk, pluginConfigKey } from '@/main/constants/plugin';
@@ -27,19 +27,19 @@ function openPluginWindow(
   browserViewUrl = ''
 ): any {
   //  获取插件信息
-  const plugin = isDev ? devManage.getPlugin(pluginId) : pluginManage.getPlugin(pluginId);
+  const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
   //  插件是否多开
   const multiple = plugin[pluginConfigKey.MULTIPLE];
   //  已打开的插件ID
-  const isOpenPlugin = windowManage.findPluginById(plugin[pluginConfigKey.ID]);
+  const isOpenPlugin = windowService.findPluginById(plugin[pluginConfigKey.ID]);
 
   //  已拥有插件 且 非设置多开
   if (isOpenPlugin && !multiple) {
-    windowManage.findWindowById(isOpenPlugin.id).show();
+    windowService.findWindowById(isOpenPlugin.id).show();
   }
 
   //  创建插件窗体
-  const pluginWindow = windowManage.createPluginBrowserWindow(pluginId, option, isDev, fatherId);
+  const pluginWindow = windowService.createPluginBrowserWindow(pluginId, option, isDev, fatherId);
   //  插件窗体ID
   let pluginWinId = pluginWindow.id;
   //  创建视图实例
@@ -50,11 +50,11 @@ function openPluginWindow(
   //  插件窗体关闭时，回收视图信息或回收子插件窗体
   pluginWindow.on('closed', () => {
     //  从视图窗体映射中移除
-    delete windowManage.viewWinMap[browserViewId];
+    delete windowService.viewWinMap[browserViewId];
 
     //  不存在fatherId，说明是主窗体，将全部子窗体关闭
     if (!fatherId) {
-      const pluginWin = windowManage.pluginWin;
+      const pluginWin = windowService.pluginWin;
 
       for (const winId in pluginWin) {
         const pluginWinItem = pluginWin[winId];
@@ -63,7 +63,7 @@ function openPluginWindow(
 
         if (isFatherWin) {
           //  在插件窗体关闭后，会进入该窗体的 'close' 回调，进行回收视图
-          windowManage.closeWindow(pluginWinItem.id);
+          windowService.closeWindow(pluginWinItem.id);
         }
       }
     }
@@ -79,7 +79,7 @@ function openPluginWindow(
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowManage.viewWinMap[browserViewId] = { pluginWinId, browserViewItem };
+  windowService.viewWinMap[browserViewId] = { pluginWinId, browserViewItem };
 
   return {
     pluginWinId,

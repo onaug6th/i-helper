@@ -1,9 +1,9 @@
 import { App } from 'electron';
-import pluginManage from './plugin.controller';
-import './plugin.service';
+import pluginService from './plugin.service';
+import './plugin.controller';
 
 export default {
   init(app: App): void {
-    pluginManage.appOnReady(app);
+    pluginService.appOnReady(app);
   }
 };

@@ -1,9 +1,9 @@
 import { App } from 'electron';
-import trayManage from './tray.controller';
+import trayService from './tray.service';
 
 export default {
   init(app: App): void {
     app;
-    trayManage.appOnReady();
+    trayService.appOnReady();
   }
 };

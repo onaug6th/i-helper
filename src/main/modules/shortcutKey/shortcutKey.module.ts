@@ -1,10 +1,10 @@
 import { App } from 'electron';
-import shortcutKeyManage from './shortcutKey.controller';
-import './shortcutKey.service';
+import shortcutKeyService from './shortcutKey.service';
+import './shortcutKey.controller';
 
 export default {
   init(app: App): void {
     app;
-    shortcutKeyManage.appOnReady();
+    shortcutKeyService.appOnReady();
   }
 };

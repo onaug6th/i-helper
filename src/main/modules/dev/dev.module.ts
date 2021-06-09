@@ -1,10 +1,10 @@
 import { App } from 'electron';
-import devManage from './dev.controller';
-import './dev.service';
+import devService from './dev.service';
+import './dev.controller';
 
 export default {
   init(app: App): void {
     app;
-    devManage.appOnReady();
+    devService.appOnReady();
   }
 };

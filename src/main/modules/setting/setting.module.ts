@@ -1,9 +1,9 @@
 import { App } from 'electron';
-import settingManage from './setting.controller';
-import './setting.service';
+import settingService from './setting.service';
+import './setting.controller';
 
 export default {
   init(app: App): void {
-    settingManage.appOnReady(app);
+    settingService.appOnReady(app);
   }
 };

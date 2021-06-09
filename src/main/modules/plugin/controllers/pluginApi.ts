@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 //  窗体管理
-import windowManage from '@/main/modules/window/window.controller';
+import windowService from '@/main/modules/window/window.service';
 //  窗口配置
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import {
@@ -16,9 +16,9 @@ import DB from '@/main/dataBase/DB';
  */
 function getPluginBySenderId(id: number) {
   //  视图所属的插件窗体ID
-  const { pluginWinId } = windowManage.viewWinMap[id];
+  const { pluginWinId } = windowService.viewWinMap[id];
   //  插件窗体信息
-  const pluginWinItem = windowManage.pluginWin[pluginWinId];
+  const pluginWinItem = windowService.pluginWin[pluginWinId];
   return pluginWinItem;
 }
 
@@ -47,7 +47,7 @@ const app = {
    * @param data
    */
   communication: (pluginWinItem, id, event, data) => {
-    const viewWinItem = windowManage.viewWinMap[id];
+    const viewWinItem = windowService.viewWinMap[id];
 
     if (viewWinItem) {
       const dataArg = typeof data === 'object' ? JSON.stringify(data) : data;

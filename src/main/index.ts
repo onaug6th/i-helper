@@ -7,7 +7,7 @@ import { app, protocol, BrowserWindow, session } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 
 //  窗体管理
-import windowController from './modules/window/window.controller';
+import windowController from './modules/window/window.service';
 import modules from './modules';
 
 let win: BrowserWindow | null;
