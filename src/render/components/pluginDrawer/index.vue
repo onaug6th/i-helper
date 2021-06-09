@@ -53,7 +53,6 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
 import PublishDialog from './components/publishDialog/index.vue';
 import { getCurrentInstance, defineComponent, computed, reactive } from 'vue';
 
@@ -69,7 +68,7 @@ export default defineComponent({
     },
     plugin: Object
   },
-  emits: ['update:visible', 'reload', 'remove'],
+  emits: ['update:visible', 'reload', 'remove', 'publish'],
   setup(props, { emit }) {
     const { proxy }: any = getCurrentInstance();
 
@@ -92,41 +91,30 @@ export default defineComponent({
      * 打开插件
      */
     function openPlugin() {
-      ipcRenderer.send('plugin-open', plugin.value.id, props.isDev);
+      proxy.$ipcClient('plugin-open', plugin.value.id, props.isDev);
       visibleModel.value = false;
     }
 
     /**
      * 重新加载插件
      */
-    function reload() {
-      ipcRenderer
-        .invoke('dev-plugin-update', plugin.value.id)
-        .then(plugin => {
-          emit('reload', plugin);
-
-          proxy.$notify({
-            type: 'success',
-            message: '更新成功'
-          });
-        })
-        .catch(error => {
-          proxy.$notify({
-            type: 'error',
-            message: `更新失败${error}`
-          });
-        });
+    async function reload() {
+      const result = await proxy.$ipcClient('dev-plugin-update', plugin.value.id);
+      emit('reload', result);
+      proxy.$notify({
+        type: 'success',
+        message: '更新成功'
+      });
     }
 
     /**
      * 打包插件
      */
-    function build() {
-      ipcRenderer.invoke('dev-plugin-build', plugin.value.id).then(() => {
-        proxy.$notify({
-          type: 'success',
-          message: '打包成功'
-        });
+    async function build() {
+      await proxy.$ipcClient('dev-plugin-build', plugin.value.id);
+      proxy.$notify({
+        type: 'success',
+        message: '打包成功'
       });
     }
 
@@ -146,7 +134,7 @@ export default defineComponent({
      * 删除插件
      */
     function delPlugin() {
-      ipcRenderer.invoke(props.isDev ? 'dev-plugin-del' : 'plugin-del', plugin.value.id);
+      proxy.$ipcClient(props.isDev ? 'dev-plugin-del' : 'plugin-del', plugin.value.id);
       emit('remove');
       visibleModel.value = false;
       proxy.$notify({
@@ -159,14 +147,22 @@ export default defineComponent({
      * 发布确认
      */
     function publishConfirm() {
+      if (plugin.value.version === plugin.value.publishVerson) {
+        return proxy.$alert('发布的版本与上次发布的版本一致，请将版本号升级后再试', '提醒');
+      }
       state.showDialog = true;
     }
 
     /**
      * 发布插件
      */
-    function publish(desc: string) {
-      ipcRenderer.invoke('dev-plugin-publish', plugin.value.id, desc);
+    async function publish(desc: string) {
+      const result = await proxy.$ipcClientLoading('dev-plugin-publish', plugin.value.id, desc);
+      emit('publish', result);
+      proxy.$notify({
+        type: 'success',
+        message: '发布成功'
+      });
     }
 
     return {

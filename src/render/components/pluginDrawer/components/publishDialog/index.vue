@@ -12,8 +12,8 @@
 </template>
 
 <script lang="ts">
-import KeyDialog from './index';
-export default KeyDialog;
+import PublishDialog from './index';
+export default PublishDialog;
 </script>
 
 <style lang="less" scoped>

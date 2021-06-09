@@ -32,11 +32,11 @@
     :isDev="true"
     @reload="reload"
     @remove="delPlugin"
+    @publish="publish"
   />
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
 import { getCurrentInstance, computed, defineComponent, onBeforeMount, reactive } from 'vue';
 import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
 
@@ -86,14 +86,12 @@ export default defineComponent({
       state.pluginList.splice(state.currentIndex, 1);
       state.openDrawer = false;
     }
-
     /**
      * 获取应用列表
      */
-    function getAppList() {
-      ipcRenderer.invoke('dev-list-get').then(result => {
-        state.pluginList = reactive(result);
-      });
+    async function getAppList() {
+      const result = await proxy.$ipcClient('dev-list-get');
+      state.pluginList = reactive(result);
     }
 
     //  开发者面板监听——更新列表
@@ -111,7 +109,8 @@ export default defineComponent({
       choosePlugin,
 
       reload,
-      delPlugin
+      delPlugin,
+      publish: reload
     };
   }
 });

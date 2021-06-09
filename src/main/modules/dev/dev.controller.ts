@@ -88,14 +88,14 @@ class DevManage {
    * 更新开发者插件
    * @param id
    */
-  async updatePlugin(id: string) {
+  async updatePluginByJson(id: string) {
     const plugin = this.getPlugin(id);
     const jsonPath = plugin[pluginConfigKey.JSON_PATH];
 
     const { error, file } = await pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
-      return Promise.reject(error);
+      throw new Error(error);
     }
 
     const updateContent = {
@@ -103,21 +103,68 @@ class DevManage {
       ...file
     };
 
+    this.updatePluginInDbOrMemory(id, updateContent);
+
+    return updateContent;
+  }
+
+  /**
+   * 更新插件在数据库/内存中的数据
+   * @param id
+   * @param data
+   */
+  async updatePluginInDbOrMemory(id, data) {
     await devPluginDB.update(
       {
         id
       },
-      updateContent
+      data
     );
 
     for (let i = 0; i < this.pluginList.length; i++) {
       if (this.pluginList[i].id === id) {
-        this.pluginList[i] = updateContent;
+        this.pluginList[i] = data;
         break;
       }
     }
+  }
 
-    return updateContent;
+  /**
+   * 表单数据提交
+   * @param formData
+   * @returns
+   */
+  formDataSubmit(formData) {
+    return new Promise((resolve, reject) => {
+      formData.submit(publishURL, (err, res) => {
+        if (err) {
+          reject('上传失败');
+        }
+
+        const bufferArr = [];
+        res
+          .on('data', e => {
+            bufferArr.push(e);
+          })
+          .on('end', () => {
+            let data = null;
+            try {
+              data = JSON.parse(Buffer.concat(bufferArr).toString());
+            } catch (e) {
+              reject('上传失败');
+            }
+
+            if (!data) {
+              reject('上传失败');
+            }
+            if (data.success) {
+              resolve(true);
+            } else {
+              reject(data.message);
+            }
+          });
+      });
+    });
   }
 
   /**
@@ -142,7 +189,7 @@ class DevManage {
     formData.append('logo', logo);
 
     const pluginInfo = JSON.stringify({
-      id: plugin.id,
+      id,
       name: plugin.name,
       desc: plugin.desc,
       createdAt: plugin.createdAt,
@@ -157,11 +204,16 @@ class DevManage {
       formData.append(i, body[i]);
     }
 
-    formData.submit(publishURL, err => {
-      if (err) {
-        throw new Error('上传失败');
-      }
-    });
+    await this.formDataSubmit(formData);
+
+    const updateContent = {
+      ...plugin,
+      publishVerson: plugin.version
+    };
+
+    this.updatePluginInDbOrMemory(id, updateContent);
+
+    return updateContent;
   }
 }
 

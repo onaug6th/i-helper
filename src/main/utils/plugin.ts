@@ -45,7 +45,7 @@ function getJSONFileData(jsonPath: string): any {
  * 尝试获取readme内容
  */
 function try2GetReadme(
-  folderPath
+  folderPath: string
 ): Promise<{
   path: string;
   content: string;

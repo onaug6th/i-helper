@@ -30,7 +30,6 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
 import { defineComponent, onBeforeMount, reactive, getCurrentInstance, computed } from 'vue';
 import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
 
@@ -67,10 +66,9 @@ export default defineComponent({
     /**
      * 获取插件列表
      */
-    function getPluginList() {
-      ipcRenderer.invoke('plugin-list-get').then(result => {
-        state.pluginList = reactive(result);
-      });
+    async function getPluginList() {
+      const result = await proxy.$ipcClient('plugin-list-get');
+      state.pluginList = reactive(result);
     }
 
     /**

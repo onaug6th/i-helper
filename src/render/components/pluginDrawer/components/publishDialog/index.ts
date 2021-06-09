@@ -31,6 +31,7 @@ export default {
     },
     confirm() {
       this.$emit('confirm', this.desc);
+      this.desc = '';
       this.visibleModel = false;
     }
   }

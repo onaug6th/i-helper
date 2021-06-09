@@ -153,7 +153,7 @@ function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserVi
 }
 
 //  打开指定插件窗体
-ipcMain.on('plugin-open', (event, pluginId, isDev, fatherId) => {
+ipcMain.handle('plugin-open', (event, pluginId, isDev, fatherId) => {
   const defaultOption = browserWindowOptions.plugin;
 
   //  打开插件窗体

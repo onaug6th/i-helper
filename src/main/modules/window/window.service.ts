@@ -3,27 +3,27 @@ import windowManage from '@/main/modules/window/window.controller';
 import settingManage from '@/main/modules/setting/setting.controller';
 
 //  关闭browserWindow
-ipcMain.on('browser-window-close', (event, windowId) => {
+ipcMain.handle('browser-window-close', (event, windowId) => {
   if (windowId) {
     windowManage.closeWindow(windowId);
   }
 });
 
 //  隐藏browserWindow
-ipcMain.on('browser-window-hide', (event, windowId) => {
+ipcMain.handle('browser-window-hide', (event, windowId) => {
   if (windowId) {
     windowManage.hideWindow(windowId);
   }
 });
 
 //  主界面置顶切换
-ipcMain.on('browser-main-window-onTop', (event, onTop) => {
+ipcMain.handle('browser-main-window-onTop', (event, onTop) => {
   windowManage.mainWindow.setAlwaysOnTop(onTop);
   settingManage.setSetting('common.isAlwaysOnTop', onTop);
 });
 
 //  渲染进程间通信
-ipcMain.on('browser-window-communication', (event, { windowId, params, eventName }) => {
+ipcMain.handle('browser-window-communication', (event, { windowId, params, eventName }) => {
   const win = windowManage.findWindowById(windowId);
   win.webContents.send(eventName, params);
 });

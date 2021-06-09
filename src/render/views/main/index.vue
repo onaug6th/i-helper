@@ -53,7 +53,6 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
 import { getCurrentInstance, defineComponent, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Header from '@render/components/header/index.vue';
@@ -193,31 +192,20 @@ export default defineComponent({
      * 添加开发者插件
      */
     async function addDev() {
-      ipcRenderer
-        .invoke('dev-plugin-add', state.currentFile.file.path)
-        .then(() => {
-          proxy.$notify({
-            type: 'success',
-            message: '添加开发者插件成功'
-          });
-          proxy.$eventBus.emit('dev-updateList');
-        })
-        .catch(message => {
-          proxy.$notify({
-            type: 'error',
-            message
-          });
-        })
-        .finally(() => {
-          closeShade();
-        });
+      await proxy.$ipcClient('dev-plugin-add', state.currentFile.file.path);
+      proxy.$notify({
+        type: 'success',
+        message: '添加开发者插件成功'
+      });
+      proxy.$eventBus.emit('dev-updateList');
+      closeShade();
     }
 
     /**
      * 安装插件
      */
     async function install() {
-      const plugin = await ipcRenderer.invoke('plugin-install', state.currentFile.file.path);
+      const plugin = await proxy.$ipcClient('plugin-install', state.currentFile.file.path);
       proxy.$notify({
         type: 'success',
         message: '安装插件成功'

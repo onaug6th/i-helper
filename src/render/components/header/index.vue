@@ -15,8 +15,7 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, getCurrentInstance } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -26,6 +25,7 @@ export default defineComponent({
   },
   emits: ['close'],
   setup(props, { emit }) {
+    const { proxy }: any = getCurrentInstance();
     const store = useStore();
     const { currentWindow, windowId, mainWindowId, setting } = store.getters;
 
@@ -51,7 +51,7 @@ export default defineComponent({
 
       if (isHome.value) {
         //  主界面置顶
-        ipcRenderer.send('browser-main-window-onTop', afterValue);
+        proxy.$ipcClient('browser-main-window-onTop', afterValue);
         //  更新vuex中的设置
         store.dispatch('app/setNewestSetting');
       } else {
@@ -70,7 +70,7 @@ export default defineComponent({
       }
       if (windowId) {
         const eventName = isHome.value ? 'browser-window-hide' : 'browser-window-close';
-        ipcRenderer.send(eventName, windowId);
+        proxy.$ipcClient(eventName, windowId);
       }
     }
 
