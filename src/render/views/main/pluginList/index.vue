@@ -12,7 +12,7 @@
         @click="choosePlugin(appIndex)"
       >
         <div class="plugin-list_item-left">
-          <img :src="plugin.logo" />
+          <img :src="plugin.logoUrl" />
         </div>
         <div class="plugin-list_item-right">
           <div class="plugin-list_item-right--title">
@@ -68,7 +68,12 @@ export default defineComponent({
      */
     async function getPluginList() {
       const result = await proxy.$ipcClient('plugin-list-get');
-      state.pluginList = reactive(result);
+      state.pluginList = reactive(
+        result.map(plugin => {
+          plugin.logoUrl = `//${plugin.logoUrl}`;
+          return plugin;
+        })
+      );
     }
 
     /**

@@ -42,7 +42,7 @@
           </template>
           <el-button type="danger" plain size="small" title="删除插件" @click="confirmDel">删除</el-button>
         </div>
-        <div>
+        <div v-if="isDev">
           <el-button type="success" size="small" title="发布插件到插件中心" @click="publishConfirm">发布</el-button>
         </div>
       </div>

@@ -160,7 +160,7 @@ class DevService {
             if (data.success) {
               resolve(true);
             } else {
-              reject(data.message);
+              reject(data.msg);
             }
           });
       });
@@ -182,29 +182,26 @@ class DevService {
 
     const file = fs.createReadStream(zipPath);
     const logo = fs.createReadStream(plugin[pluginConfigKey.LOGO_PATH]);
-
-    const formData = new FormData();
-
-    formData.append('file', file);
-    formData.append('logo', logo);
-
-    const pluginInfo = JSON.stringify({
+    const body = {
       id,
       name: plugin.name,
-      desc: plugin.desc,
-      createdAt: plugin.createdAt,
-      version: plugin.version
-    });
-    const body = {
+      version: plugin.version,
       desc,
-      pluginInfo,
       readme: plugin[pluginConfigKey.README_CONTENT]
     };
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('logo', logo);
     for (const i in body) {
       formData.append(i, body[i]);
     }
 
-    await this.formDataSubmit(formData);
+    try {
+      await this.formDataSubmit(formData);
+    } catch (error) {
+      throw new Error(error);
+    }
 
     const updateContent = {
       ...plugin,

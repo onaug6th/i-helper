@@ -7,53 +7,17 @@ import * as fsUtils from '@/render/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 //  插件属性名称常量
 import { pluginConfigKey } from '@/main/constants/plugin';
-
-// const pluginList = [
-//   {
-//     id: 'a2s14d1s3q5f1e121fs',
-//     name: '测试插件',
-//     avatar: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg',
-//     desc: '测试'
-//   },
-//   {
-//     id: 'x5a6a1ca6sd5asd1a6s',
-//     name: '便笺',
-//     avatar: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg',
-//     desc: '桌面纸条便笺'
-//   },
-//   {
-//     id: 'ca6sd5asx5a6a1d1a6s',
-//     name: '剪贴板',
-//     avatar: '//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/img/juejin-extension-icon.4b79fb4.png',
-//     desc: '记录每一个重要的数据'
-//   },
-//   {
-//     id: 'zxc1asde5awd1asd0',
-//     name: '提醒',
-//     avatar: 'https://github.githubassets.com/images/icons/emoji/octocat.png',
-//     desc: '设置提醒'
-//   },
-//   {
-//     id: 'x5aasdas6as1dasd5',
-//     name: '待办事项',
-//     avatar: '//sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/img/juejin-miner.b78347c.png',
-//     desc: '即将完成的内容和已完成的内容'
-//   }
-// ];
-
+import * as pluginAPI from '@/main/api/plugin';
 class PluginService {
   pluginList: Array<any> = [];
 
-  appOnReady(app) {
-    pluginDB.find().then(pluginList => {
-      this.pluginList = pluginList;
-    });
+  async appOnReady(app) {
+    this.pluginList = await pluginAPI.getPluginList();
 
     app.on('web-contents-created', (event, contents) => {
       contents.on('will-attach-webview', (event, webPreferences, params) => {
-        //  启用NodeJS集成。
-        webPreferences.nodeIntegration = true;
         params;
+        webPreferences;
         contents;
         debugger;
       });

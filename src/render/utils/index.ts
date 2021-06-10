@@ -78,7 +78,7 @@ export function safeSet(target: unknown, path: string, value: unknown): void {
  * @param {any} defaultValue - 默认值
  * @return {any} 目标属性
  */
-export function safeGet(target: unknown, path: string, defaultValue: unknown): any {
+export function safeGet(target: unknown, path: string, defaultValue: unknown = ''): any {
   //  判断是否为无值，即 undefined 或者 null
   const isNil = value => value === null || value === undefined;
   const value = path
