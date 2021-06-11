@@ -11,11 +11,15 @@ import pluginModule from './plugin/plugin.module';
 import devModule from './dev/dev.module';
 //  窗体模块
 import windowModule from './window/window.module';
+//  商店模块
+import storeModule from './store/store.module';
 
 export default {
   init(app: App): void {
-    [settingModule, shortcutKeyModule, trayModule, pluginModule, devModule, windowModule].forEach(module => {
-      module.init(app);
-    });
+    [settingModule, shortcutKeyModule, trayModule, pluginModule, devModule, windowModule, storeModule].forEach(
+      module => {
+        module.init(app);
+      }
+    );
   }
 };

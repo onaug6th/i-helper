@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import devService from './dev.service';
 
 //  获取开发者插件窗口
-ipcMain.handle('dev-list-get', () => {
+ipcMain.handle('dev-list', () => {
   return devService.getPluginList();
 });
 

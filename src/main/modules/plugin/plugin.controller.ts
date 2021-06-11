@@ -5,7 +5,7 @@ import './controllers/pluginApi';
 import './controllers/pluginWin';
 
 //  获取插件列表
-ipcMain.handle('plugin-list-get', () => {
+ipcMain.handle('plugin-list', () => {
   return pluginService.getPluginList();
 });
 
@@ -19,6 +19,7 @@ ipcMain.handle('plugin-install', (event, path) => {
   return pluginService.installPlugin(path);
 });
 
+//  插件删除
 ipcMain.handle('plugin-del', (event, id) => {
   return pluginService.delPlugin(id);
 });

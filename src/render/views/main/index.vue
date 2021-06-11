@@ -88,7 +88,7 @@ export default defineComponent({
     }> = [
       {
         label: '插件',
-        path: '/pluginList',
+        path: '/store',
         icon: 'potato-strips'
       },
       {
@@ -210,7 +210,7 @@ export default defineComponent({
         type: 'success',
         message: '安装插件成功'
       });
-      proxy.$eventBus.emit('pluginList-add', plugin);
+      proxy.$eventBus.emit('store-add', plugin);
       closeShade();
     }
 

@@ -100,6 +100,15 @@ class PluginService {
 
     return result;
   }
+
+  /**
+   * 插件下载
+   * @param id
+   */
+  download(id: string) {
+    id;
+    debugger;
+  }
 }
 
 export default new PluginService();

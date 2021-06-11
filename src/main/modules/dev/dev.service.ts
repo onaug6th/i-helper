@@ -180,7 +180,7 @@ class DevService {
     const rootFolderPath = `${global.rootPath}\\pluginZips\\${plugin.name}`;
     const zipPath = await fsUtils.buildDirTo(folderPath, rootFolderPath, false);
 
-    const file = fs.createReadStream(zipPath);
+    const zip = fs.createReadStream(zipPath);
     const logo = fs.createReadStream(plugin[pluginConfigKey.LOGO_PATH]);
     const body = {
       id,
@@ -191,7 +191,7 @@ class DevService {
     };
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('zip', zip);
     formData.append('logo', logo);
     for (const i in body) {
       formData.append(i, body[i]);

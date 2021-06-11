@@ -90,7 +90,7 @@ export default defineComponent({
      * 获取应用列表
      */
     async function getAppList() {
-      const result = await proxy.$ipcClient('dev-list-get');
+      const result = await proxy.$ipcClient('dev-list');
       state.pluginList = reactive(result);
     }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="plugin">
     <h1 class="plugin-title">
-      插件
+      插件商店
     </h1>
 
     <div class="plugin-list">
@@ -14,13 +14,23 @@
         <div class="plugin-list_item-left">
           <img :src="plugin.logoUrl" />
         </div>
-        <div class="plugin-list_item-right">
-          <div class="plugin-list_item-right--title">
+        <div class="plugin-list_item-center">
+          <div class="plugin-list_item-center--title">
             <span>{{ plugin.name }}</span>
           </div>
-          <div class="plugin-list_item-right--desc">
+          <div class="plugin-list_item-center--desc">
             {{ plugin.desc }}
           </div>
+        </div>
+        <div class="plugin-list_item-right">
+          <el-button
+            type="primary"
+            icon="el-icon-download"
+            circle
+            size="mini"
+            title="下载"
+            @click.stop="download(plugin)"
+          ></el-button>
         </div>
       </div>
     </div>
@@ -67,7 +77,7 @@ export default defineComponent({
      * 获取插件列表
      */
     async function getPluginList() {
-      const result = await proxy.$ipcClient('plugin-list-get');
+      const result = await proxy.$ipcClient('store-list');
       state.pluginList = reactive(
         result.map(plugin => {
           plugin.logoUrl = `//${plugin.logoUrl}`;
@@ -84,8 +94,15 @@ export default defineComponent({
       state.openDrawer = false;
     }
 
+    /**
+     * 下载插件
+     */
+    async function download() {
+      await proxy.$ipcClient('store-download', currentPlugin.value.id);
+    }
+
     //  开发者面板监听——更新列表
-    proxy.$eventBus.on('pluginList-add', plugin => {
+    proxy.$eventBus.on('store-add', plugin => {
       state.pluginList.push(plugin);
     });
 
@@ -97,7 +114,8 @@ export default defineComponent({
       state,
       currentPlugin,
       choosePlugin,
-      delPlugin
+      delPlugin,
+      download
     };
   }
 });

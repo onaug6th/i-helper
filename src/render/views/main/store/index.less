@@ -5,6 +5,7 @@
 
 .plugin-list_item {
   display: flex;
+  align-items: center;
   padding: 10px;
   cursor: pointer;
   transition: all 0.5s ease;
@@ -29,7 +30,9 @@
     }
   }
 
-  &-right {
+  &-center {
+    flex: 1;
+
     &--title {
       span {
         font-weight: bold;
@@ -40,7 +43,12 @@
     &--desc {
       color: #ccc;
       font-size: 12px;
-      margin-top: 12px;
+      margin-top: 5px;
     }
+  }
+
+  &-right {
+    width: 76px;
+    text-align: center;
   }
 }

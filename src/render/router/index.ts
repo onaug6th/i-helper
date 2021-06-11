@@ -6,32 +6,23 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'main',
-    redirect: 'pluginList',
+    redirect: 'store',
     component: main,
     children: [
       {
-        path: '/pluginList',
-        name: 'pluginList',
-        component: () => import('../views/main/pluginList/index.vue'),
-        meta: {
-          title: '插件列表'
-        }
+        path: '/store',
+        name: 'store',
+        component: () => import('../views/main/store/index.vue')
       },
       {
         path: '/dev',
         name: 'dev',
-        component: () => import('../views/main/dev/index.vue'),
-        meta: {
-          title: '开发者模式'
-        }
+        component: () => import('../views/main/dev/index.vue')
       },
       {
         path: '/setting',
         name: 'setting',
         component: () => import('../views/main/setting/index.vue'),
-        meta: {
-          title: '设置'
-        },
         children: [
           {
             path: 'common',
@@ -49,10 +40,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/plugin',
     name: 'plugin',
-    component: () => import('../views/plugin/index.vue'),
-    meta: {
-      title: '插件'
-    }
+    component: () => import('../views/plugin/index.vue')
   }
 ];
 
