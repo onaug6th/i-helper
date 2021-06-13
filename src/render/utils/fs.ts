@@ -19,7 +19,7 @@ async function buildDirTo(from: string, to: string, explorer = true): Promise<st
     await compressing.zip.compressDir(to, zipPath);
 
     if (explorer) {
-      exec(`explorer.exe /select,${zipPath}`);
+      showInFolder(zipPath);
     }
 
     delDir(to);
@@ -27,6 +27,14 @@ async function buildDirTo(from: string, to: string, explorer = true): Promise<st
     throw new Error('打包失败');
   }
   return zipPath;
+}
+
+/**
+ * 在文件夹中查看
+ * @param path
+ */
+function showInFolder(path: string): void {
+  exec(`explorer.exe /select,${path}`);
 }
 
 /**
@@ -39,6 +47,18 @@ function copyFile(from: string, to: string) {
 }
 
 /**
+ * 安全的创建文件夹
+ * @param path
+ */
+function safeCreatedir(path: string): void {
+  fs.access(path, function(err) {
+    if (err) {
+      fs.mkdirSync(path, { recursive: true });
+    }
+  });
+}
+
+/**
  * 复制文件夹
  * @param fromPath
  * @param toPath
@@ -46,11 +66,8 @@ function copyFile(from: string, to: string) {
  */
 async function copy(fromPath: string, toPath: string): Promise<any> {
   return new Promise(resolve => {
-    fs.access(toPath, function(err) {
-      if (err) {
-        fs.mkdirSync(toPath, { recursive: true });
-      }
-    });
+    //  安全的创建文件夹
+    safeCreatedir(toPath);
 
     fs.readdir(fromPath, function(err, paths) {
       if (err) {
@@ -100,4 +117,4 @@ function delDir(path: string): void {
   }
 }
 
-export { buildDirTo, copy, delDir };
+export { buildDirTo, copy, delDir, showInFolder, safeCreatedir };

@@ -7,12 +7,20 @@ import * as fsUtils from '@/render/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 //  插件属性名称常量
 import { pluginConfigKey } from '@/main/constants/plugin';
-import * as pluginAPI from '@/main/api/plugin';
+
+/**
+ * publishZips 发布时，插件的压缩包文件夹
+ * pluginPackages 安装后插件的文件夹
+ * pluginZips 安装的插件压缩包文件夹
+ */
+
 class PluginService {
   pluginList: Array<any> = [];
 
   async appOnReady(app) {
-    this.pluginList = await pluginAPI.getPluginList();
+    pluginDB.find().then(pluginList => {
+      this.pluginList = pluginList;
+    });
 
     app.on('web-contents-created', (event, contents) => {
       contents.on('will-attach-webview', (event, webPreferences, params) => {
@@ -99,15 +107,6 @@ class PluginService {
     this.pluginList.push(result);
 
     return result;
-  }
-
-  /**
-   * 插件下载
-   * @param id
-   */
-  download(id: string) {
-    id;
-    debugger;
   }
 }
 

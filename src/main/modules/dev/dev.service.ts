@@ -8,6 +8,7 @@ import * as pluginUtils from '@/main/utils/plugin';
 import { publishURL } from '@/main/constants/url';
 import FormData from 'form-data';
 import fs from 'fs';
+
 class DevService {
   pluginList: Array<any> = [];
 
@@ -177,7 +178,7 @@ class DevService {
     //  需要打包的文件夹
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     //  打包后的路径
-    const rootFolderPath = `${global.rootPath}\\pluginZips\\${plugin.name}`;
+    const rootFolderPath = `${global.rootPath}\\publishZips\\${plugin.name}`;
     const zipPath = await fsUtils.buildDirTo(folderPath, rootFolderPath, false);
 
     const zip = fs.createReadStream(zipPath);
@@ -211,6 +212,15 @@ class DevService {
     this.updatePluginInDbOrMemory(id, updateContent);
 
     return updateContent;
+  }
+
+  /**
+   * 在文件夹中查看
+   * @param id
+   */
+  showInFolder(id) {
+    const plugin = this.getPlugin(id);
+    fsUtils.showInFolder(plugin[pluginConfigKey.JSON_PATH]);
   }
 }
 

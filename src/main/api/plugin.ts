@@ -17,8 +17,7 @@ function getPluginList(): Promise<any> {
  * @returns
  */
 function downloadPlugin(url: string): Promise<any> {
-  return httpClient.get({
-    url,
+  return httpClient.get(url, {
     responseType: 'stream'
   });
 }

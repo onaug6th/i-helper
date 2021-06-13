@@ -35,7 +35,7 @@
         <div class="drawer-row__content">
           <el-button type="primary" size="small" title="启动开发者插件" @click="openPlugin">启动</el-button>
           <template v-if="isDev">
-            <el-button type="primary" plain size="small" title="打包插件" @click="build">打包</el-button>
+            <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
             <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
               重新加载
             </el-button>
@@ -43,7 +43,12 @@
           <el-button type="danger" plain size="small" title="删除插件" @click="confirmDel">删除</el-button>
         </div>
         <div v-if="isDev">
-          <el-button type="success" size="small" title="发布插件到插件中心" @click="publishConfirm">发布</el-button>
+          <el-button plain type="primary" size="small" title="发布插件到插件中心" @click="publishConfirm">
+            发布
+          </el-button>
+          <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
+            目录
+          </el-button>
         </div>
       </div>
     </div>
@@ -165,6 +170,13 @@ export default defineComponent({
       });
     }
 
+    /**
+     * 在文件夹中查看
+     */
+    async function showInFolder() {
+      await proxy.$ipcClient('dev-plugin-showInFolder', plugin.value.id);
+    }
+
     return {
       state,
       visibleModel,
@@ -173,7 +185,8 @@ export default defineComponent({
       build,
       reload,
       publish,
-      publishConfirm
+      publishConfirm,
+      showInFolder
     };
   }
 });

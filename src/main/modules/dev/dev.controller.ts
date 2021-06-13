@@ -35,3 +35,8 @@ ipcMain.handle('dev-plugin-del', (event, id) => {
 ipcMain.handle('dev-plugin-publish', (event, id, desc) => {
   return devService.publish(id, desc);
 });
+
+//  资源文件夹中显示
+ipcMain.handle('dev-plugin-showInFolder', (event, id) => {
+  return devService.showInFolder(id);
+});

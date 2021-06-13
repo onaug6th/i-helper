@@ -1,4 +1,8 @@
 import * as pluginAPI from '@/main/api/plugin';
+import path from 'path';
+import fs from 'fs';
+import pluginService from '../plugin/plugin.service';
+import * as fsUtils from '@/render/utils/fs';
 
 class Store {
   pluginList: Array<any> = [];
@@ -28,9 +32,18 @@ class Store {
    * 插件下载
    * @param id
    */
-  download(id: string) {
-    id;
-    debugger;
+  async download(id: string) {
+    const plugin = this.getPlugin(id);
+    const pluginZipsPath = `${global.rootPath}\\pluginZips`;
+    fsUtils.safeCreatedir(pluginZipsPath);
+    const zipPath = path.resolve(pluginZipsPath, `${plugin.name}.zip`);
+    const writer = fs.createWriteStream(zipPath);
+
+    const data = await pluginAPI.downloadPlugin('https://' + plugin.fileUrl);
+    data.pipe(writer);
+    writer.on('finish', () => {
+      pluginService.installPlugin(zipPath);
+    });
   }
 }
 

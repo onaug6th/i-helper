@@ -24,6 +24,9 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   response => {
+    if (response.headers.server === 'tencent-cos') {
+      return response.data;
+    }
     const {
       data: { success, msg, data }
     } = response;
