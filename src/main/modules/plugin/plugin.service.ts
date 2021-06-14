@@ -7,6 +7,7 @@ import * as fsUtils from '@/render/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 //  插件属性名称常量
 import { pluginConfigKey } from '@/main/constants/plugin';
+import storeService from '../store/store.service';
 
 /**
  * publishZips 发布时，插件的压缩包文件夹
@@ -18,9 +19,7 @@ class PluginService {
   pluginList: Array<any> = [];
 
   async appOnReady(app) {
-    pluginDB.find().then(pluginList => {
-      this.pluginList = pluginList;
-    });
+    await this.getPluginList();
 
     app.on('web-contents-created', (event, contents) => {
       contents.on('will-attach-webview', (event, webPreferences, params) => {
@@ -36,7 +35,9 @@ class PluginService {
    * 获取插件列表
    * @returns
    */
-  getPluginList() {
+  async getPluginList() {
+    const pluginList = await pluginDB.find();
+    this.pluginList = pluginList;
     return this.pluginList;
   }
 
@@ -51,6 +52,10 @@ class PluginService {
 
   /**
    * 删除插件
+   * 1. 数据库中移除
+   * 2. 内存中移除
+   * 3. 删除插件目录
+   * 4. 从商店中更新此插件的已下载标记
    * @param id
    */
   delPlugin(id: string) {
@@ -61,6 +66,12 @@ class PluginService {
 
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     fsUtils.delDir(folderPath);
+
+    storeService.pluginList.find(plugin => {
+      if (plugin.id === id) {
+        plugin.isDownload = false;
+      }
+    });
   }
 
   /**
@@ -99,10 +110,7 @@ class PluginService {
       throw new Error(error);
     }
 
-    const result = await pluginDB.insert({
-      id: utils.uuid(),
-      ...file
-    });
+    const result = await pluginDB.insert(file);
 
     this.pluginList.push(result);
 

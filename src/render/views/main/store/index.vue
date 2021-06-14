@@ -2,6 +2,7 @@
   <div class="plugin">
     <h1 class="plugin-title">
       插件商店
+      <el-button class="plugin-title_refresh" size="mini" @click="refresh">刷新插件商店</el-button>
     </h1>
 
     <div class="plugin-list">
@@ -24,19 +25,21 @@
         </div>
         <div class="plugin-list_item-right">
           <el-button
+            v-if="!plugin.isDownload"
             type="primary"
             icon="el-icon-download"
             circle
             size="mini"
             title="下载"
             @click.stop="download(plugin)"
-          ></el-button>
+          >
+          </el-button>
         </div>
       </div>
     </div>
   </div>
 
-  <Plugin-drawer v-model:visible="state.openDrawer" :plugin="currentPlugin" @remove="delPlugin" />
+  <Plugin-drawer v-model:visible="state.openDrawer" type="store" :plugin="currentPlugin" @remove="delPlugin" />
 </template>
 
 <script lang="ts">
@@ -44,6 +47,7 @@ import { defineComponent, onBeforeMount, reactive, getCurrentInstance, computed 
 import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
 
 export default defineComponent({
+  name: 'store',
   components: {
     PluginDrawer
   },
@@ -77,7 +81,7 @@ export default defineComponent({
      * 获取插件列表
      */
     async function getPluginList() {
-      const result = await proxy.$ipcClient('store-list');
+      const result = await proxy.$ipcClientLoading('store-list');
       state.pluginList = reactive(
         result.map(plugin => {
           plugin.logoUrl = `//${plugin.logoUrl}`;
@@ -98,12 +102,37 @@ export default defineComponent({
      * 下载插件
      */
     async function download() {
-      await proxy.$ipcClient('store-download', currentPlugin.value.id);
+      await proxy.$ipcClientLoading('store-download', currentPlugin.value.id);
+
+      //  通知我的插件面板更新列表
+      proxy.$eventBus.emit('installed-update');
+      currentPlugin.value.isDownload = true;
+
+      proxy.$notify({
+        type: 'success',
+        message: '下载成功'
+      });
     }
 
-    //  开发者面板监听——更新列表
+    /**
+     * 刷新插件列表
+     */
+    async function refresh() {
+      getPluginList();
+    }
+
+    //  商店面板监听——更新列表
     proxy.$eventBus.on('store-add', plugin => {
       state.pluginList.push(plugin);
+    });
+
+    //  商店面板监听——插件删除
+    proxy.$eventBus.on('store-plugin-del', pluginId => {
+      state.pluginList.find(plugin => {
+        if (plugin.id === pluginId) {
+          plugin.isDownload = false;
+        }
+      });
     });
 
     onBeforeMount(() => {
@@ -115,7 +144,8 @@ export default defineComponent({
       currentPlugin,
       choosePlugin,
       delPlugin,
-      download
+      download,
+      refresh
     };
   }
 });

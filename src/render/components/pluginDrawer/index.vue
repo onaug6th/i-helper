@@ -33,15 +33,28 @@
           操作
         </div>
         <div class="drawer-row__content">
-          <el-button type="primary" size="small" title="启动开发者插件" @click="openPlugin">启动</el-button>
+          <el-button
+            v-if="isDev || isInstalled || plugin.isDownload"
+            type="primary"
+            size="small"
+            title="启动开发者插件"
+            @click="openPlugin"
+          >
+            启动
+          </el-button>
+
           <template v-if="isDev">
             <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
             <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
               重新加载
             </el-button>
           </template>
-          <el-button type="danger" plain size="small" title="删除插件" @click="confirmDel">删除</el-button>
+
+          <el-button v-if="isDev || isInstalled" type="danger" plain size="small" title="删除插件" @click="confirmDel">
+            删除
+          </el-button>
         </div>
+
         <div v-if="isDev">
           <el-button plain type="primary" size="small" title="发布插件到插件中心" @click="publishConfirm">
             发布
@@ -66,7 +79,7 @@ export default defineComponent({
     PublishDialog
   },
   props: {
-    isDev: Boolean,
+    type: String,
     visible: {
       type: Boolean,
       default: false
@@ -92,11 +105,23 @@ export default defineComponent({
       showDialog: false
     });
 
+    const isStore = computed(() => {
+      return props.type === 'store';
+    });
+
+    const isDev = computed(() => {
+      return props.type === 'dev';
+    });
+
+    const isInstalled = computed(() => {
+      return props.type === 'installed';
+    });
+
     /**
      * 打开插件
      */
     function openPlugin() {
-      proxy.$ipcClient('plugin-open', plugin.value.id, props.isDev);
+      proxy.$ipcClient('plugin-open', plugin.value.id, isDev.value);
       visibleModel.value = false;
     }
 
@@ -138,14 +163,22 @@ export default defineComponent({
     /**
      * 删除插件
      */
-    function delPlugin() {
-      proxy.$ipcClient(props.isDev ? 'dev-plugin-del' : 'plugin-del', plugin.value.id);
-      emit('remove');
+    async function delPlugin() {
+      const event = isDev.value ? 'dev-plugin-del' : 'plugin-del';
+      await proxy.$ipcClient(event, plugin.value.id);
       visibleModel.value = false;
+
+      //  商店面板把此插件的下载按钮放开
+      if (isInstalled.value) {
+        proxy.$eventBus.emit('store-plugin-del', plugin.value.id);
+      }
+
       proxy.$notify({
         type: 'success',
         message: '删除成功'
       });
+
+      emit('remove');
     }
 
     /**
@@ -179,6 +212,9 @@ export default defineComponent({
 
     return {
       state,
+      isDev,
+      isInstalled,
+      isStore,
       visibleModel,
       openPlugin,
       confirmDel,

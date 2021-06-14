@@ -82,7 +82,10 @@ class DevService {
     //  需要打包的文件夹
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
 
-    await fsUtils.buildDirTo(folderPath, `${global.downloadPath}\\${plugin.name}`);
+    await fsUtils.buildDirTo({
+      from: folderPath,
+      to: `${global.downloadPath}\\${plugin.name}`
+    });
   }
 
   /**
@@ -175,11 +178,38 @@ class DevService {
    */
   async publish(id: string, desc: string) {
     const plugin = this.getPlugin(id);
-    //  需要打包的文件夹
+
+    //  json文件路径
+    const jsonPath = plugin[pluginConfigKey.JSON_PATH];
+    //  需要打包的文件夹路径
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     //  打包后的路径
     const rootFolderPath = `${global.rootPath}\\publishZips\\${plugin.name}`;
-    const zipPath = await fsUtils.buildDirTo(folderPath, rootFolderPath, false);
+    //  文件复制后回调
+    const afterCopy = () => {
+      return new Promise(resolve => {
+        const afterJsonPath = `${rootFolderPath}\\plugin.json`;
+        fs.readFile(jsonPath, 'utf8', function(err, text) {
+          const config = JSON.parse(text);
+          config.id = id;
+          fs.writeFile(afterJsonPath, JSON.stringify(config), 'utf8', function(err) {
+            if (err) {
+              throw new Error(err.message);
+            } else {
+              resolve(true);
+            }
+          });
+        });
+      });
+    };
+
+    //  打完包后的压缩包路径
+    const zipPath = await fsUtils.buildDirTo({
+      from: folderPath,
+      to: rootFolderPath,
+      explorer: false,
+      afterCopy
+    });
 
     const zip = fs.createReadStream(zipPath);
     const logo = fs.createReadStream(plugin[pluginConfigKey.LOGO_PATH]);

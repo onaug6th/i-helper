@@ -58,6 +58,7 @@ import { useRouter } from 'vue-router';
 import Header from '@render/components/header/index.vue';
 
 export default defineComponent({
+  name: 'main',
   components: {
     Header
   },
@@ -86,6 +87,11 @@ export default defineComponent({
       path: string;
       icon: string;
     }> = [
+      {
+        label: '我的插件',
+        path: '/installed',
+        icon: 'potato-strips'
+      },
       {
         label: '插件',
         path: '/store',

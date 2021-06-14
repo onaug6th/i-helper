@@ -9,12 +9,26 @@ import compressing from 'compressing';
  * @param to 想去哪
  * @param explorer 是否在资源管理目录中查看
  */
-async function buildDirTo(from: string, to: string, explorer = true): Promise<string> {
+async function buildDirTo({
+  from,
+  to,
+  explorer = true,
+  afterCopy
+}: {
+  from: string;
+  to: string;
+  explorer?: boolean;
+  afterCopy?: any;
+}): Promise<string> {
   //  打包后的压缩包路径
   const zipPath = `${to}.zip`;
   try {
     //  将插件文件拷到根目录压缩包文件夹
     await copy(from, to);
+
+    if (afterCopy) {
+      await afterCopy();
+    }
 
     await compressing.zip.compressDir(to, zipPath);
 
