@@ -24,6 +24,20 @@ function getPluginBySenderId(id: number) {
 
 const app = {
   /**
+   * 获取窗体信息
+   * @param pluginWinItem
+   * @returns
+   */
+  winInfo: pluginWinItem => {
+    const { id, pluginId, isDev, fatherId } = pluginWinItem;
+    return {
+      id,
+      pluginId,
+      isDev,
+      fatherId
+    };
+  },
+  /**
    * 打开插件中创建的插件窗体
    * @param pluginWinItem
    * @param browserViewUrl
@@ -70,6 +84,7 @@ ipcMain.on('plugin-app', (event, method, ...args) => {
 const dbAPI = {
   //  插件数据库储存对象
   pluginDb: {},
+  //  分页查找
   paging(db: DB, query) {
     return db.paging(query);
   },
@@ -77,24 +92,30 @@ const dbAPI = {
   insert(db: DB, doc) {
     return db.insert(doc);
   },
+  //  寻找多个
   find(db: DB, query) {
     return db.find(query);
   },
+  //  寻找单个
   findOne(db: DB, query) {
     return db.findOne(query);
+  },
+  //  寻找并排序
+  findAndSort(db: DB, query, sort) {
+    return db.findAndSort(query, sort);
   },
   //  移除数据
   remove(db: DB, query, options) {
     return db.remove(query, options);
   },
-  //  移除数据
+  //  更新数据
   update(db: DB, query, updateQuery, options) {
     return db.update(query, updateQuery, options);
   }
 };
 
 //  插件——数据库
-ipcMain.handle('plugin-db', (event, method, ...args) => {
+ipcMain.on('plugin-db', async (event, method, ...args) => {
   //  插件窗体信息
   const pluginWinItem = getPluginBySenderId(event.sender.id);
 
@@ -107,6 +128,6 @@ ipcMain.handle('plugin-db', (event, method, ...args) => {
     }
     const db = dbAPI.pluginDb[pluginId];
 
-    return dbAPI[method](db, ...args);
+    event.returnValue = await dbAPI[method](db, ...args);
   }
 });

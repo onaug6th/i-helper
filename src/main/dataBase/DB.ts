@@ -104,6 +104,23 @@ class DB<T = any> {
   }
 
   /**
+   * 寻找某项并排序
+   * @param query
+   * @param sort
+   * @returns
+   */
+  findAndSort(query: QueryDB<T>, sort = { updatedAt: -1 }): any {
+    return new Promise(resolve => {
+      this.$db
+        .find(query)
+        .sort(sort)
+        .exec((e, d) => {
+          resolve(d);
+        });
+    });
+  }
+
+  /**
    * 寻找某一个项
    * https://github.com/louischatriot/nedb#finding-documents
    * @param query
