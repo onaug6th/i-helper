@@ -25,7 +25,10 @@ function openPluginWindow(
   isDev = false,
   fatherId = null,
   browserViewUrl = ''
-): any {
+): {
+  pluginWinId: number;
+  browserViewId: number;
+} {
   //  获取插件信息
   const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
   //  插件是否多开

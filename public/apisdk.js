@@ -10,6 +10,7 @@ window.iHelper = {
   getWinInfo: () => ipcRenderer.sendSync('plugin-app', 'winInfo'),
   createBrowserWindow: (url, options) => ipcRenderer.sendSync('plugin-app', 'createBrowserWindow', url, options),
   send: (id, event, data) => ipcRenderer.send('plugin-app', 'communication', id, event, data),
+  close: () => ipcRenderer.sendSync('plugin-app', 'close'),
   on(event, cb) {
     iHelper.__cb__[event] = cb;
   },

@@ -22,45 +22,46 @@ function getPluginBySenderId(id: number) {
   return pluginWinItem;
 }
 
-const app = {
+const appApi = {
   /**
    * 获取窗体信息
-   * @param pluginWinItem
+   * @param allInfo
    * @returns
    */
-  winInfo: pluginWinItem => {
-    const { id, pluginId, isDev, fatherId } = pluginWinItem;
+  winInfo: allInfo => {
+    const { pluginId, viewId, fatherViewId, isDev } = allInfo;
+
     return {
-      id,
       pluginId,
-      isDev,
-      fatherId
+      viewId,
+      fatherViewId,
+      isDev
     };
   },
   /**
    * 打开插件中创建的插件窗体
-   * @param pluginWinItem
+   * @param allInfo
    * @param browserViewUrl
    * @param option
    * @returns
    */
-  createBrowserWindow: (pluginWinItem, browserViewUrl, option = {}) => {
-    const { pluginId, isDev, id } = pluginWinItem;
+  createBrowserWindow: (allInfo, browserViewUrl, option = {}): number => {
+    const { pluginId, isDev, id } = allInfo;
     //  默认窗体配置
     const defaultOption = browserWindowOptions.plugin;
 
     //  打开插件中创建的插件窗体
-    return openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl);
+    return openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl).browserViewId;
   },
 
   /**
    * 插件窗体间通信
-   * @param pluginWinItem
+   * @param allInfo
    * @param id
    * @param event
    * @param data
    */
-  communication: (pluginWinItem, id, event, data) => {
+  communication: (allInfo, id, event, data) => {
     const viewWinItem = windowService.viewWinMap[id];
 
     if (viewWinItem) {
@@ -68,15 +69,38 @@ const app = {
 
       viewWinItem.browserViewItem.webContents.executeJavaScript(`window.iHelper.trigger('${event}', ${dataArg})`);
     }
+  },
+
+  /**
+   * 关闭窗体
+   * @param allInfo
+   */
+  close: allInfo => {
+    windowService.closeWindow(allInfo.id);
   }
 };
 
 ipcMain.on('plugin-app', (event, method, ...args) => {
   //  插件窗体信息
   const pluginWinItem = getPluginBySenderId(event.sender.id);
+  let fatherViewId = null;
 
-  if (app[method]) {
-    const result = app[method](pluginWinItem, ...args);
+  for (const viewId in windowService.viewWinMap) {
+    const viewWinItem = windowService.viewWinMap[viewId];
+    if (viewWinItem.pluginWinId === pluginWinItem.fatherId) {
+      fatherViewId = Number(viewId);
+      break;
+    }
+  }
+
+  const allInfo = {
+    ...pluginWinItem,
+    viewId: event.sender.id,
+    fatherViewId
+  };
+
+  if (appApi[method]) {
+    const result = appApi[method](allInfo, ...args);
     event.returnValue = result;
   }
 });

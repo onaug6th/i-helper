@@ -60,9 +60,9 @@ class WindowService {
 
     win.loadURL(url);
 
-    if (global.isDev) {
-      win.webContents.openDevTools();
-    }
+    // if (global.isDev) {
+    //   win.webContents.openDevTools();
+    // }
 
     return win;
   }
