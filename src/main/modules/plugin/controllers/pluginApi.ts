@@ -1,20 +1,20 @@
 import { ipcMain } from 'electron';
 //  窗体管理
 import windowService from '@/main/modules/window/window.service';
-//  窗口配置
-import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import {
   //  打开插件窗体
   openPluginWindow
 } from './pluginWin';
+
 import DB from '@/main/dataBase/DB';
+import { PluginItem } from '../../window/types';
 
 /**
  * 根据发送窗体id获取插件信息
  * @param id
  * @returns
  */
-function getPluginBySenderId(id: number) {
+function getPluginBySenderId(id: number): PluginItem {
   //  视图所属的插件窗体ID
   const { pluginWinId } = windowService.viewWinMap[id];
   //  插件窗体信息
@@ -47,11 +47,9 @@ const appApi = {
    */
   createBrowserWindow: (allInfo, browserViewUrl, option = {}): number => {
     const { pluginId, isDev, id } = allInfo;
-    //  默认窗体配置
-    const defaultOption = browserWindowOptions.plugin;
 
     //  打开插件中创建的插件窗体
-    return openPluginWindow(pluginId, Object.assign(defaultOption, option), isDev, id, browserViewUrl).browserViewId;
+    return openPluginWindow(pluginId, option, isDev, id, browserViewUrl).browserViewId;
   },
 
   /**
@@ -61,7 +59,7 @@ const appApi = {
    * @param event
    * @param data
    */
-  communication: (allInfo, id, event, data) => {
+  communication: (allInfo, id: number, event: string, data: any): void => {
     const viewWinItem = windowService.viewWinMap[id];
 
     if (viewWinItem) {

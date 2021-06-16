@@ -25,7 +25,9 @@ const pluginConfigKey = {
   //  说明书路径
   README_PATH: 'readmePath',
   //  说明书内容
-  README_CONTENT: 'readmeContent'
+  README_CONTENT: 'readmeContent',
+  //  自定义窗体配置
+  WIN_OPTIONS: 'winOptions'
 };
 
 export { apisdk, pluginConfigKey };

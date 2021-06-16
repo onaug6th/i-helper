@@ -42,7 +42,12 @@ function openPluginWindow(
   }
 
   //  创建插件窗体
-  const pluginWindow = windowService.createPluginBrowserWindow(pluginId, option, isDev, fatherId);
+  const pluginWindow = windowService.createPluginBrowserWindow(
+    pluginId,
+    Object.assign(browserWindowOptions.plugin, option),
+    isDev,
+    fatherId
+  );
   //  插件窗体ID
   let pluginWinId = pluginWindow.id;
   //  创建视图实例
@@ -155,12 +160,14 @@ function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserVi
   return browserViewItem;
 }
 
-//  打开指定插件窗体
+//  打开插件窗体
 ipcMain.handle('plugin-open', (event, pluginId, isDev, fatherId) => {
-  const defaultOption = browserWindowOptions.plugin;
-
+  //  获取插件信息
+  const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
+  //  自定义窗体配置
+  const winOptions = plugin[pluginConfigKey.WIN_OPTIONS];
   //  打开插件窗体
-  openPluginWindow(pluginId, defaultOption, isDev, fatherId);
+  openPluginWindow(pluginId, winOptions, isDev, fatherId);
 });
 
 export { openPluginWindow };

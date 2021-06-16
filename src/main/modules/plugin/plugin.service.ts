@@ -67,11 +67,7 @@ class PluginService {
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     fsUtils.delDir(folderPath);
 
-    storeService.pluginList.find(plugin => {
-      if (plugin.id === id) {
-        plugin.isDownload = false;
-      }
-    });
+    storeService.clearIsDownload(id);
   }
 
   /**

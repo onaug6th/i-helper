@@ -38,6 +38,18 @@ class Store {
   }
 
   /**
+   * 清除插件下载标记
+   * @param id
+   */
+  clearIsDownload(id: string) {
+    this.pluginList.find(plugin => {
+      if (plugin.id === id) {
+        plugin.isDownload = false;
+      }
+    });
+  }
+
+  /**
    * 插件下载
    * 1. 创建文件夹
    * 2. 下载压缩包
