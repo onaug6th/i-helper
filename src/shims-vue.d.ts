@@ -19,15 +19,3 @@ interface DBClipboard {
   readonly updatedAt: Date;
   readonly _id: string;
 }
-/**
- * 便笺项
- */
-interface DBNotes {
-  className: string;
-  content: string;
-  readonly createdAt: Date;
-  readonly uid: string;
-  readonly id: string;
-  readonly updatedAt: Date;
-  readonly _id: string;
-}
