@@ -4,10 +4,14 @@ const apisdk = global.isDev ? path.join(process.cwd(), 'public', 'apisdk.js') : 
 const pluginConfigKey = {
   //  插件ID
   ID: 'id',
+  //  插件版本
+  VERSION: 'version',
   //  插件名称
   NAME: 'name',
   //  插件LOGO
   LOGO: 'logo',
+  //  插件描述
+  DESC: 'desc',
   //  插件logo文件路径
   LOGO_PATH: 'logoPath',
   //  插件主入口文件

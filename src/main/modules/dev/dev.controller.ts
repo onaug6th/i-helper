@@ -32,8 +32,8 @@ ipcMain.handle('dev-plugin-del', (event, id) => {
 });
 
 //  发布开发者插件
-ipcMain.handle('dev-plugin-publish', (event, id, desc) => {
-  return devService.publish(id, desc);
+ipcMain.handle('dev-plugin-publish', (event, id, auditDesc) => {
+  return devService.publish(id, auditDesc);
 });
 
 //  资源文件夹中显示

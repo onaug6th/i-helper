@@ -174,9 +174,9 @@ class DevService {
   /**
    * 插件发布
    * @param id
-   * @param desc
+   * @param auditDesc
    */
-  async publish(id: string, desc: string) {
+  async publish(id: string, auditDesc: string) {
     const plugin = this.getPlugin(id);
 
     //  json文件路径
@@ -192,6 +192,8 @@ class DevService {
         fs.readFile(jsonPath, 'utf8', function(err, text) {
           const config = JSON.parse(text);
           config.id = id;
+
+          //  为发布的插件写入插件ID
           fs.writeFile(afterJsonPath, JSON.stringify(config), 'utf8', function(err) {
             if (err) {
               throw new Error(err.message);
@@ -215,9 +217,10 @@ class DevService {
     const logo = fs.createReadStream(plugin[pluginConfigKey.LOGO_PATH]);
     const body = {
       id,
-      name: plugin.name,
-      version: plugin.version,
-      desc,
+      name: plugin[pluginConfigKey.NAME],
+      version: plugin[pluginConfigKey.VERSION],
+      desc: plugin[pluginConfigKey.DESC],
+      auditDesc,
       readme: plugin[pluginConfigKey.README_CONTENT]
     };
 
@@ -248,7 +251,7 @@ class DevService {
    * 在文件夹中查看
    * @param id
    */
-  showInFolder(id) {
+  showInFolder(id: string) {
     const plugin = this.getPlugin(id);
     fsUtils.showInFolder(plugin[pluginConfigKey.JSON_PATH]);
   }

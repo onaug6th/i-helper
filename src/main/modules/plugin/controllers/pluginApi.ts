@@ -45,8 +45,12 @@ const appApi = {
    * @param option
    * @returns
    */
-  createBrowserWindow: (allInfo, browserViewUrl, option = {}): number => {
+  createBrowserWindow: (allInfo, browserViewUrl: string, option: any): number => {
     const { pluginId, isDev, id } = allInfo;
+
+    //  无配置新开实例，会复用同样地址的window
+    // if (!option.newInstance) {
+    // }
 
     //  打开插件中创建的插件窗体
     return openPluginWindow(pluginId, option, isDev, id, browserViewUrl).browserViewId;
