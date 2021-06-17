@@ -110,6 +110,8 @@ class PluginService {
 
     this.pluginList.push(result);
 
+    storeService.clearIsDownload(file.id);
+
     return result;
   }
 }

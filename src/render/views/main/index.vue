@@ -7,8 +7,8 @@
         <div v-if="state.currentFile.name" class="file-name">{{ state.currentFile.name }} {{ state.shadeText }}</div>
 
         <div class="operate">
-          <el-button v-if="isJson" type="primary" size="small" @click="addDev">添加到开发者插件</el-button>
-          <el-button v-if="isZip" type="primary" size="small" @click="install">安装插件</el-button>
+          <el-button v-if="fileType.isJson" type="primary" size="small" @click="addDev">添加到开发者插件</el-button>
+          <el-button v-if="fileType.isZip" type="primary" size="small" @click="install">安装插件</el-button>
         </div>
       </div>
     </div>
@@ -26,7 +26,8 @@
             :key="menuIndex"
             @click="menuTo(menuItem.path)"
           >
-            <i :class="`el-icon-${menuItem.icon}`"></i>
+            <img v-if="menuItem.link" class="sidebar-img" :src="menuItem.link" />
+            <i v-else :class="`el-icon-${menuItem.icon}`"></i>
             <template #title>{{ menuItem.label }}</template>
           </el-menu-item>
         </el-menu>
@@ -85,36 +86,37 @@ export default defineComponent({
     const menuList: Array<{
       label: string;
       path: string;
-      icon: string;
+      icon?: string;
+      link?: string;
     }> = [
       {
         label: '我的插件',
         path: '/installed',
-        icon: 'potato-strips'
+        link: 'https://github.githubassets.com/images/icons/emoji/package.png'
       },
       {
-        label: '插件',
+        label: '插件商店',
         path: '/store',
-        icon: 'potato-strips'
+        link: 'http://sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/img/juejin-extension-icon.4b79fb4.png'
       },
       {
         label: '开发者',
         path: '/dev',
-        icon: 'potato-strips'
+        link: 'https://github.githubassets.com/images/icons/emoji/octocat.png'
       },
       {
         label: '设置',
         path: '/setting/common',
-        icon: 'setting'
+        link: 'https://github.githubassets.com/images/icons/emoji/wrench.png'
       }
     ];
 
-    const isJson = computed(() => {
-      return state.currentFile.type === 'json';
-    });
-
-    const isZip = computed(() => {
-      return state.currentFile.type === 'zip';
+    const fileType = computed(() => {
+      const type = state.currentFile.type;
+      return {
+        isJson: type === 'json',
+        isZip: type === 'zip'
+      };
     });
 
     /**
@@ -211,21 +213,19 @@ export default defineComponent({
      * 安装插件
      */
     async function install() {
-      const plugin = await proxy.$ipcClient('plugin-install', state.currentFile.file.path);
+      await proxy.$ipcClient('plugin-install', state.currentFile.file.path);
       proxy.$notify({
         type: 'success',
         message: '安装插件成功'
       });
-      proxy.$eventBus.emit('store-add', plugin);
-      closeShade();
+      proxy.$eventBus.emit('installed-update');
     }
 
     return {
       menuList,
       menuTo,
       state,
-      isJson,
-      isZip,
+      fileType,
       drop,
       drapOver,
       drapLeave,

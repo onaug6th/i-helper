@@ -79,12 +79,22 @@ class DevService {
   async buildPlugin(id: string) {
     const plugin = this.getPlugin(id);
 
+    //  json文件路径
+    const jsonPath = plugin[pluginConfigKey.JSON_PATH];
     //  需要打包的文件夹
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
+    //  打包后的路径
+    const afterFolderPath = `${global.downloadPath}\\${plugin.id}`;
 
     await fsUtils.buildDirTo({
       from: folderPath,
-      to: `${global.downloadPath}\\${plugin.name}`
+      to: afterFolderPath,
+      updateConfig: {
+        jsonPath,
+        data: {
+          id
+        }
+      }
     });
   }
 
@@ -117,7 +127,7 @@ class DevService {
    * @param id
    * @param data
    */
-  async updatePluginInDbOrMemory(id, data) {
+  async updatePluginInDbOrMemory(id: string, data: any) {
     await devPluginDB.update(
       {
         id
@@ -184,33 +194,19 @@ class DevService {
     //  需要打包的文件夹路径
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     //  打包后的路径
-    const rootFolderPath = `${global.rootPath}\\publishZips\\${plugin.name}`;
-    //  文件复制后回调
-    const afterCopy = () => {
-      return new Promise(resolve => {
-        const afterJsonPath = `${rootFolderPath}\\plugin.json`;
-        fs.readFile(jsonPath, 'utf8', function(err, text) {
-          const config = JSON.parse(text);
-          config.id = id;
-
-          //  为发布的插件写入插件ID
-          fs.writeFile(afterJsonPath, JSON.stringify(config), 'utf8', function(err) {
-            if (err) {
-              throw new Error(err.message);
-            } else {
-              resolve(true);
-            }
-          });
-        });
-      });
-    };
+    const afterFolderPath = `${global.rootPath}\\publishZips\\${id}`;
 
     //  打完包后的压缩包路径
     const zipPath = await fsUtils.buildDirTo({
       from: folderPath,
-      to: rootFolderPath,
+      to: afterFolderPath,
       explorer: false,
-      afterCopy
+      updateConfig: {
+        jsonPath,
+        data: {
+          id
+        }
+      }
     });
 
     const zip = fs.createReadStream(zipPath);

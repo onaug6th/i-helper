@@ -61,9 +61,9 @@ class Store {
     const plugin = this.getPlugin(id);
     const pluginZipsPath = `${global.rootPath}\\pluginZips`;
     //  安全的创建文件夹
-    fsUtils.safeCreatedir(pluginZipsPath);
+    await fsUtils.safeCreatedir(pluginZipsPath);
 
-    const zipPath = path.resolve(pluginZipsPath, `${plugin.name}.zip`);
+    const zipPath = path.resolve(pluginZipsPath, `${id}.zip`);
     const writer = fs.createWriteStream(zipPath);
 
     const data = await pluginAPI.downloadPlugin('https://' + plugin.fileUrl);

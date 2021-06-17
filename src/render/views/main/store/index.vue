@@ -84,7 +84,7 @@ export default defineComponent({
       const result = await proxy.$ipcClientLoading('store-list');
       state.pluginList = reactive(
         result.map(plugin => {
-          plugin.logoUrl = `//${plugin.logoUrl}`;
+          plugin.logoUrl = `http://${plugin.logoUrl}`;
           return plugin;
         })
       );
@@ -120,11 +120,6 @@ export default defineComponent({
     async function refresh() {
       getPluginList();
     }
-
-    //  商店面板监听——更新列表
-    proxy.$eventBus.on('store-add', plugin => {
-      state.pluginList.push(plugin);
-    });
 
     //  商店面板监听——插件删除
     proxy.$eventBus.on('store-plugin-del', pluginId => {

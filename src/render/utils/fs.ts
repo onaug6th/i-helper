@@ -4,21 +4,50 @@ import { exec } from 'child_process';
 import compressing from 'compressing';
 
 /**
- * 亚索文件夹到指定目录（没错，就是亚索）
+ * 更新插件json
+ * @param to
+ * @param param0
+ * @returns
+ */
+function updatePluginJson(to: string, { jsonPath, data }: { jsonPath: string; data: any }) {
+  return new Promise(resolve => {
+    const afterJsonPath = `${to}\\plugin.json`;
+    fs.readFile(jsonPath, 'utf8', function(err, text) {
+      const config = JSON.parse(text);
+      config.id = data.id;
+
+      //  为打包的插件信息写入插件ID
+      fs.writeFile(afterJsonPath, JSON.stringify(config), 'utf8', function(err) {
+        if (err) {
+          throw new Error(err.message);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  });
+}
+
+/**
+ * 亚索插件文件夹到指定目录（没错，就是亚索）
  * @param from 从哪来
  * @param to 想去哪
  * @param explorer 是否在资源管理目录中查看
+ * @param updateConfig 内容更新配置
  */
 async function buildDirTo({
   from,
   to,
   explorer = true,
-  afterCopy
+  updateConfig
 }: {
   from: string;
   to: string;
   explorer?: boolean;
-  afterCopy?: any;
+  updateConfig?: {
+    jsonPath: string;
+    data: any;
+  };
 }): Promise<string> {
   //  打包后的压缩包路径
   const zipPath = `${to}.zip`;
@@ -26,8 +55,9 @@ async function buildDirTo({
     //  将插件文件拷到根目录压缩包文件夹
     await copy(from, to);
 
-    if (afterCopy) {
-      await afterCopy();
+    //  存在内容复制后需要更新的配置
+    if (updateConfig) {
+      await updatePluginJson(to, updateConfig);
     }
 
     await compressing.zip.compressDir(to, zipPath);
@@ -64,11 +94,14 @@ function copyFile(from: string, to: string) {
  * 安全的创建文件夹
  * @param path
  */
-function safeCreatedir(path: string): void {
-  fs.access(path, function(err) {
-    if (err) {
-      fs.mkdirSync(path, { recursive: true });
-    }
+function safeCreatedir(path: string): Promise<void> {
+  return new Promise(resolve => {
+    fs.access(path, function(err) {
+      if (err) {
+        fs.mkdirSync(path, { recursive: true });
+      }
+      resolve();
+    });
   });
 }
 
@@ -79,10 +112,10 @@ function safeCreatedir(path: string): void {
  * @returns
  */
 async function copy(fromPath: string, toPath: string): Promise<any> {
-  return new Promise(resolve => {
-    //  安全的创建文件夹
-    safeCreatedir(toPath);
+  //  安全的创建文件夹
+  await safeCreatedir(toPath);
 
+  return new Promise(resolve => {
     fs.readdir(fromPath, function(err, paths) {
       if (err) {
         console.log(err);
