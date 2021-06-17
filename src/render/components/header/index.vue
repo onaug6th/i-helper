@@ -3,12 +3,20 @@
     <div class="header-left"></div>
     <div class="header-center"></div>
     <div class="header-right">
-      <button class="icon flex-center" :title="isAlwaysOnTop ? '取消置顶' : '窗口置顶'" @click="toggleOnTop">
-        <i class="iconfont flex-center" :class="isAlwaysOnTop ? 'icon-thepin-active' : 'icon-thepin'"></i>
+      <button class="icon" :title="isAlwaysOnTop ? '取消置顶' : '窗口置顶'" @click="toggleOnTop">
+        <i class="iconfont" :class="isAlwaysOnTop ? 'icon-pin-fill' : 'icon-pin'"></i>
       </button>
 
-      <button class="icon flex-center close-window" @click="close" title="关闭">
-        <i class="iconfont flex-center icon-close"></i>
+      <button class="icon" title="最小化" @click="minimize">
+        <i class="iconfont icon-minus"></i>
+      </button>
+
+      <button class="icon" :title="isFullScreen ? '向下还原' : '最大化'" @click="toggleFullScreen">
+        <i class="iconfont" :class="isFullScreen ? 'icon-fullscreen-shrink' : 'icon-fullscreen-expand'"></i>
+      </button>
+
+      <button class="icon close-window" @click="close" title="关闭">
+        <i class="iconfont icon-close"></i>
       </button>
     </div>
   </header>
@@ -32,6 +40,8 @@ export default defineComponent({
     const currentRouteName = ref(useRoute().name);
     //  是否置顶
     const isAlwaysOnTop = ref(setting.common.isAlwaysOnTop);
+    //  是否最大化
+    const isFullScreen = ref(false);
 
     onBeforeRouteUpdate((to, from, next) => {
       currentRouteName.value = to.name;
@@ -60,6 +70,25 @@ export default defineComponent({
     }
 
     /**
+     * @desc 最小化
+     */
+    function minimize() {
+      currentWindow.minimize();
+    }
+
+    /**
+     * @desc 切换全屏
+     */
+    function toggleFullScreen() {
+      if (isFullScreen.value) {
+        currentWindow.unmaximize();
+      } else {
+        currentWindow.maximize();
+      }
+      isFullScreen.value = !isFullScreen.value;
+    }
+
+    /**
      * 点击关闭
      */
     async function close() {
@@ -78,7 +107,10 @@ export default defineComponent({
       currentRouteName,
       close,
       toggleOnTop,
-      isAlwaysOnTop
+      minimize,
+      toggleFullScreen,
+      isAlwaysOnTop,
+      isFullScreen
     };
   }
 });

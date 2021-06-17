@@ -2,7 +2,7 @@
   <div class="home" @dragover.prevent="drapOver">
     <!-- 操作遮罩层 -->
     <div v-show="state.showShade" class="shade" @drop.prevent="drop" @dragleave.prevent="drapLeave">
-      <i class="iconfont flex-center icon-close" @click="drapLeave"></i>
+      <i class="iconfont icon-close" @click="drapLeave"></i>
       <div class="shade-content">
         <div v-if="state.currentFile.name" class="file-name">{{ state.currentFile.name }} {{ state.shadeText }}</div>
 
@@ -92,7 +92,7 @@ export default defineComponent({
       {
         label: '我的插件',
         path: '/installed',
-        link: 'https://github.githubassets.com/images/icons/emoji/package.png'
+        link: 'https://github.githubassets.com/images/icons/emoji/round_pushpin.png'
       },
       {
         label: '插件商店',
