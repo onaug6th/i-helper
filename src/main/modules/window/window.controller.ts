@@ -19,7 +19,7 @@ ipcMain.handle('browser-window-hide', (event, windowId) => {
 //  主界面置顶切换
 ipcMain.handle('browser-main-window-onTop', (event, onTop) => {
   windowService.mainWindow.setAlwaysOnTop(onTop);
-  settingService.setSetting('common.isAlwaysOnTop', onTop);
+  settingService.update('isAlwaysOnTop', onTop);
 });
 
 //  渲染进程间通信

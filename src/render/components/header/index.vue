@@ -39,7 +39,7 @@ export default defineComponent({
 
     const currentRouteName = ref(useRoute().name);
     //  是否置顶
-    const isAlwaysOnTop = ref(setting.common.isAlwaysOnTop);
+    const isAlwaysOnTop = ref(setting.isAlwaysOnTop);
     //  是否最大化
     const isFullScreen = ref(false);
 
@@ -48,7 +48,7 @@ export default defineComponent({
       next();
     });
 
-    const isHome = computed(() => {
+    const isMain = computed(() => {
       return windowId === mainWindowId;
     });
 
@@ -59,11 +59,11 @@ export default defineComponent({
       const afterValue = !isAlwaysOnTop.value;
       isAlwaysOnTop.value = afterValue;
 
-      if (isHome.value) {
+      if (isMain.value) {
         //  主界面置顶
         proxy.$ipcClient('browser-main-window-onTop', afterValue);
         //  更新vuex中的设置
-        store.dispatch('app/setNewestSetting');
+        store.dispatch('app/setSetting');
       } else {
         currentWindow.setAlwaysOnTop(afterValue);
       }
@@ -98,7 +98,7 @@ export default defineComponent({
         await beforeClose();
       }
       if (windowId) {
-        const eventName = isHome.value ? 'browser-window-hide' : 'browser-window-close';
+        const eventName = isMain.value ? 'browser-window-hide' : 'browser-window-close';
         proxy.$ipcClient(eventName, windowId);
       }
     }

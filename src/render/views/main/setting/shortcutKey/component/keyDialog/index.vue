@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="请按下新的快捷键" v-model="visibleModel" width="50%">
-    <span>{{ keyStr }}</span>
+    <span>{{ showText }}</span>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="close">取 消</el-button>

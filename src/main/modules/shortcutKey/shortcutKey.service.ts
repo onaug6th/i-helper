@@ -1,6 +1,6 @@
 import { globalShortcut } from 'electron';
 import windowService from '@/main/modules/window/window.service';
-import settingService from '@/main/modules/setting/setting.service';
+import appStorageService from '@/main/modules/appStorage/appStorage.service';
 
 /**
  * 快捷键回调
@@ -17,22 +17,30 @@ const shortcutCallBack = {
 };
 
 class ShortcutKeyService {
-  shortcutKey = settingService.settingData.shortcutKey;
+  storageName = 'shortcutKey';
+
+  shortcutKey = {};
 
   /**
    * 应用初始化时执行
    */
   appOnReady() {
+    this.shortcutKey = appStorageService.getData(this.storageName);
+
     for (const i in this.shortcutKey) {
       globalShortcut.register(this.shortcutKey[i], shortcutCallBack[i]);
     }
   }
 
   /**
-   * 获取快捷键数据
+   * 注册应用储存初始化的数据
    */
-  shortcutKeyGet() {
-    return this.shortcutKey;
+  register() {
+    return {
+      [this.storageName]: {
+        open: 'Ctrl+Space'
+      }
+    };
   }
 
   /**
@@ -46,11 +54,12 @@ class ShortcutKeyService {
     //  注册最新的快捷键
     globalShortcut.register(key, shortcutCallBack[type]);
 
+    //  注册成功
     if (globalShortcut.isRegistered(key)) {
       //  更新内存中的快捷键设置
       this.shortcutKey[type] = key;
       //  更新全局设置数据
-      settingService.setSetting(`shortcutKey.${type}`, key);
+      appStorageService.setData(`${this.storageName}.${type}`, key);
       return true;
     } else {
       return false;

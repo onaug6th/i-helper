@@ -92,7 +92,7 @@ export default defineComponent({
       {
         label: '我的插件',
         path: '/installed',
-        link: 'https://github.githubassets.com/images/icons/emoji/round_pushpin.png'
+        link: 'http://sf3-scmcdn2-tos.pstatp.com/xitu_juejin_web/img/juejin-miner.b78347c.png'
       },
       {
         label: '插件商店',

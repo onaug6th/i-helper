@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { ipcRenderer } from 'electron';
+import { specialKeyCode } from './keyCode';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'keyDialog',
@@ -19,13 +20,19 @@ export default {
   },
   data() {
     return {
+      //  弹窗的展示控制
       dialogVisible: false,
-      keyStr: ''
+      //  实际提交的按钮文本
+      key: '',
+      //  展示的按键文本
+      showText: '',
+      //  用于记录按下的按键对象
+      keys: {}
     };
   },
   watch: {
     visible() {
-      this.keyStr = this.key = this.shortcutKey[this.type];
+      this.showText = this.key = this.shortcutKey[this.type];
     }
   },
   computed: {
@@ -40,60 +47,75 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', this.watchingKeyDown);
+    document.addEventListener('keyup', this.clearKeys);
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.watchingKeyDown);
+    document.removeEventListener('keyup', this.clearKeys);
   },
   methods: {
+    ...mapActions({ setShortcutKey: 'app/setShortcutKey' }),
+    /**
+     * 清除缓存的按键对象
+     * @param event
+     */
+    clearKeys(event) {
+      delete this.keys[event.keyCode];
+    },
+
     /**
      * 监听键盘按下
      * @param { Event } event
      */
     watchingKeyDown(event) {
-      let key = event.key.toUpperCase();
+      const key = event.key.toUpperCase();
 
-      const ctrlKey = event.ctrlKey ? 'Ctrl' : '';
-      const shiftKey = event.shiftKey ? 'Shift' : '';
-      const altKey = event.altKey ? 'Alt' : '';
-      const combKey = [ctrlKey, shiftKey, altKey].filter(Boolean);
+      this.keys[event.keyCode] = key;
 
-      switch (event.keyCode) {
-        case 32: {
-          key = 'Space';
-          break;
-        }
-      }
+      const keysDetail = Object.keys(this.keys).reduce((prev, code) => {
+        const text = specialKeyCode[code] || this.keys[code];
 
-      if ([16, 17, 18].includes(event.keyCode)) {
-        this.key = '';
-        this.keyStr = '请继续键入';
-        return;
-      }
+        const keyDetail = {
+          code,
+          text
+        };
+        prev.push(keyDetail);
+        return prev;
+      }, []);
 
-      //  如没有ctrl shift alt其中之一
-      if (combKey.length) {
-        this.key = this.keyStr = `${combKey.join(' + ')} + ${key}`;
-      }
+      this.key = this.showText = keysDetail.map(({ text }) => text).join('+');
     },
+
+    /**
+     * 关闭弹窗
+     */
     close() {
       this.$emit('close');
       this.visibleModel = false;
     },
-    confirm() {
-      ipcRenderer
-        .invoke('shortcutKey-update', {
-          type: this.type,
-          key: this.key
-        })
-        .then(success => {
-          if (success) {
-            this.$emit('confirm', { type: this.type, value: this.key });
-            this.visibleModel = false;
-          } else {
-            this.key = '';
-            this.keyStr = '请重新键入';
-          }
+
+    /**
+     * 确认
+     */
+    async confirm() {
+      const success = await this.$ipcClient('shortcutKey-update', {
+        type: this.type,
+        key: this.key
+      });
+
+      if (success) {
+        this.$notify({
+          type: 'success',
+          message: '设置成功'
         });
+
+        this.setShortcutKey();
+        this.$emit('close');
+        this.visibleModel = false;
+      } else {
+        this.key = '';
+        this.showText = '请重新键入';
+      }
     }
   }
 };

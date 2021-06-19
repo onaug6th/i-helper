@@ -6,7 +6,9 @@ const state = {
   //  当前窗体实例
   currentWindow: {},
   //  应用设置
-  setting: {}
+  setting: {},
+  //  快捷键设置
+  shortcutKey: {}
 };
 
 const mutations = {
@@ -15,6 +17,9 @@ const mutations = {
   },
   setSetting: (state: { setting: any }, setting: any) => {
     state.setting = setting;
+  },
+  setShortcutKey: (state: { shortcutKey: any }, shortcutKey: any) => {
+    state.shortcutKey = shortcutKey;
   }
 };
 
@@ -24,10 +29,16 @@ const actions = {
 
     commit('setWindow', currentWindow);
   },
-  setNewestSetting({ commit }: any) {
+  setSetting({ commit }: any) {
     //  获取应用设置
-    ipcRenderer.invoke('get-setting').then(setting => {
+    ipcRenderer.invoke('setting-get').then(setting => {
       commit('setSetting', setting);
+    });
+  },
+  setShortcutKey({ commit }: any) {
+    //  获取快捷键设置
+    ipcRenderer.invoke('shortcutKey-get').then(shortcutKey => {
+      commit('setShortcutKey', shortcutKey);
     });
   }
 };

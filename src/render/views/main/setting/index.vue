@@ -32,7 +32,7 @@ export default defineComponent({
               },
               {
                 path: '/shortcutKey',
-                title: '按键设置'
+                title: '快捷键'
               }
             ]
           }

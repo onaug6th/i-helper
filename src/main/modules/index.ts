@@ -1,4 +1,6 @@
 import { App } from 'electron';
+//  应用储存模块
+import appStorageModule from './appStorage/appStorage.module';
 //  设置模块
 import settingModule from './setting/setting.module';
 //  快捷键模块
@@ -16,10 +18,17 @@ import storeModule from './store/store.module';
 
 export default {
   init(app: App): void {
-    [settingModule, shortcutKeyModule, trayModule, pluginModule, devModule, windowModule, storeModule].forEach(
-      module => {
-        module.init(app);
-      }
-    );
+    [
+      appStorageModule,
+      settingModule,
+      shortcutKeyModule,
+      trayModule,
+      pluginModule,
+      devModule,
+      windowModule,
+      storeModule
+    ].forEach(module => {
+      module.init(app);
+    });
   }
 };

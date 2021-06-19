@@ -1,78 +1,51 @@
-import settings from 'electron-settings';
-
+import appStorageService from '@/main/modules/appStorage/appStorage.service';
 class SettingService {
+  storageName = 'setting';
+
   /**
-   * 私有的设置数据
-   *
+   * 默认设置
    * @private
    * @type {*}
    * @memberof settingService
    */
-  settingData: any = {
-    common: {
-      openAtLogin: true,
-      isAlwaysOnTop: false
-    },
-    shortcutKey: {
-      open: 'Ctrl+Space'
-    }
-  };
+  settingData: any = {};
 
   /**
    * 应用初始化时执行
    * @param app
    */
   async appOnReady(app) {
-    await this.getNewestAllSetting();
+    this.settingData = appStorageService.getData(this.storageName);
 
     app.setLoginItemSettings({
-      openAtLogin: this.settingData.common.openAtLogin,
+      //  开机启动
+      openAtLogin: this.settingData.openAtLogin,
+      //  开机启动时为隐藏启动
       openAsHidden: true
     });
   }
 
   /**
-   * 设置默认设置
-   * @returns
+   * 注册应用储存初始化的数据
    */
-  async setDefaultSetting() {
-    settings.setSync(this.settingData);
-    return this.settingData;
+  register() {
+    return {
+      [this.storageName]: {
+        openAtLogin: false,
+        isAlwaysOnTop: false
+      }
+    };
   }
 
   /**
-   * 获取配置
+   * 更新设置内容
    * @param type
-   * @returns { Promise }
+   * @param val
    */
-  getSetting(type: string): Promise<any> {
-    return this.settingData[type];
-  }
-
-  /**
-   * 设置配置
-   * @param path
-   * @param value
-   */
-  setSetting(path: string, value: any): void {
-    settings.setSync(path, value);
-    this.getNewestAllSetting();
-  }
-
-  /**
-   * 获取最新的全部设置
-   */
-  async getNewestAllSetting(): Promise<void> {
-    const allSetting = settings.getSync();
-
-    //  存在配置数据
-    if (Object.keys(allSetting).length) {
-      this.settingData = allSetting;
-    }
-    //  不存在，说明首次初始化
-    else {
-      this.settingData = await this.setDefaultSetting();
-    }
+  update(type: string, val: any) {
+    //  更新内存中的设置值
+    this.settingData[type] = val;
+    appStorageService.setData(`${this.storageName}.${type}`, val);
   }
 }
 
