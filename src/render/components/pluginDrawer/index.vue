@@ -1,69 +1,114 @@
 <template>
-  <el-drawer v-model="visibleModel" size="40%" direction="rtl" :title="plugin.name">
+  <el-drawer v-model="visibleModel" size="500px" direction="rtl">
     <div class="drawer">
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          插件ID
-        </div>
-        <div class="drawer-row__value">
-          {{ plugin.id }}
-        </div>
-      </div>
+      <!-- 插件基本信息 -->
+      <div class="drawer-row base">
+        <img :src="logoUrl" />
 
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          版本号
-        </div>
-        <div class="drawer-row__value">
-          {{ plugin.version }}
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          插件路径
-        </div>
-        <div class="drawer-row__value">
-          {{ plugin.main }}
-        </div>
-      </div>
-
-      <div class="drawer-row">
-        <div class="drawer-row__title">
-          操作
-        </div>
-        <div class="drawer-row__content">
-          <el-button
-            v-if="isDev || isInstalled || plugin.isDownload"
-            type="primary"
-            size="small"
-            title="启动开发者插件"
-            @click="openPlugin"
-          >
-            启动
-          </el-button>
-
-          <template v-if="isDev">
-            <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
-            <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
-              重新加载
+        <div class="base-info">
+          <div class="base-info__name">
+            {{ plugin.name }}
+            <span class="base-info__version" title="版本号">{{ plugin.version }}</span>
+          </div>
+          <div class="base-info__desc">{{ plugin.desc }}</div>
+          <div class="base-info__operate">
+            <el-button
+              v-if="isStore && !plugin.isDownload"
+              type="primary"
+              icon="el-icon-download"
+              circle
+              size="mini"
+              title="下载插件"
+            >
             </el-button>
-          </template>
 
-          <el-button v-if="isDev || isInstalled" type="danger" plain size="small" title="删除插件" @click="confirmDel">
-            删除
-          </el-button>
-        </div>
+            <el-button
+              v-if="(isStore && plugin.isDownload) || isInstalled || isDev"
+              type="primary"
+              size="mini"
+              title="启动插件"
+              @click="openPlugin"
+            >
+              启动
+            </el-button>
 
-        <div v-if="isDev">
-          <el-button plain type="primary" size="small" title="发布插件到插件中心" @click="publishConfirm">
-            发布
-          </el-button>
-          <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
-            目录
-          </el-button>
+            <el-button v-if="isDev || isInstalled" type="danger" size="mini" title="删除插件" @click="confirmDel">
+              删除
+            </el-button>
+          </div>
         </div>
       </div>
+      <!-- 插件基本信息 -->
+
+      <!-- 列表信息 -->
+      <div v-if="isStore || isInstalled" class="drawer-row info-list">
+        <div class="info-list__item">
+          <div class="info-list__item-top">
+            开发者
+          </div>
+          <div class="info-list__item-mid">
+            官方
+          </div>
+        </div>
+
+        <div class="info-list__item">
+          <div class="info-list__item-top">
+            大小
+          </div>
+          <div class="info-list__item-mid">
+            {{ plugin.size }}
+          </div>
+          <div class="info-list__item-bottom">
+            kb
+          </div>
+        </div>
+      </div>
+      <!-- 列表信息 -->
+
+      <template v-if="isDev">
+        <div class="drawer-row">
+          <div class="drawer-row__title">
+            插件ID
+          </div>
+          <div class="drawer-row__value">
+            {{ plugin.id }}
+          </div>
+        </div>
+
+        <div class="drawer-row">
+          <div class="drawer-row__title">
+            插件路径
+          </div>
+          <div class="drawer-row__value">
+            {{ plugin.main }}
+          </div>
+        </div>
+
+        <div class="drawer-row">
+          <div class="drawer-row__title">
+            操作
+          </div>
+          <div class="drawer-row__content">
+            <template v-if="isDev">
+              <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
+              <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
+                重新加载
+              </el-button>
+            </template>
+          </div>
+
+          <div v-if="isDev">
+            <el-button plain type="primary" size="small" title="发布插件到插件中心" @click="publishConfirm">
+              发布
+            </el-button>
+            <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
+              目录
+            </el-button>
+          </div>
+        </div>
+      </template>
+
+      {{ plugin.readmeContent }}
     </div>
   </el-drawer>
 
@@ -115,6 +160,10 @@ export default defineComponent({
 
     const isInstalled = computed(() => {
       return props.type === 'installed';
+    });
+
+    const logoUrl = computed(() => {
+      return isStore.value ? plugin.value.logoUrl : plugin.value.logo;
     });
 
     /**
@@ -215,6 +264,7 @@ export default defineComponent({
       isDev,
       isInstalled,
       isStore,
+      logoUrl,
       visibleModel,
       openPlugin,
       confirmDel,

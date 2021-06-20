@@ -30,16 +30,17 @@
             icon="el-icon-download"
             circle
             size="mini"
-            title="下载"
+            title="下载插件"
             @click.stop="download(plugin)"
           >
           </el-button>
+          <!-- 更新 -->
         </div>
       </div>
     </div>
   </div>
 
-  <Plugin-drawer v-model:visible="state.openDrawer" type="store" :plugin="currentPlugin" @remove="delPlugin" />
+  <Plugin-drawer v-model:visible="state.openDrawer" type="store" :plugin="currentPlugin" />
 </template>
 
 <script lang="ts">
@@ -81,21 +82,13 @@ export default defineComponent({
      * 获取插件列表
      */
     async function getPluginList() {
-      const result = await proxy.$ipcClientLoading('store-list');
+      const result = await proxy.$ipcClient('store-list');
       state.pluginList = reactive(
         result.map(plugin => {
           plugin.logoUrl = `http://${plugin.logoUrl}`;
           return plugin;
         })
       );
-    }
-
-    /**
-     * 删除插件
-     */
-    function delPlugin() {
-      state.pluginList.splice(state.currentIndex, 1);
-      state.openDrawer = false;
     }
 
     /**
@@ -138,7 +131,6 @@ export default defineComponent({
       state,
       currentPlugin,
       choosePlugin,
-      delPlugin,
       download,
       refresh
     };

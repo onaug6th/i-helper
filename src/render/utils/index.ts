@@ -97,3 +97,26 @@ export function getLastPath(path: string): string {
   const pathArr = path.split('\\');
   return pathArr[pathArr.length - 1];
 }
+
+/**
+ * 字节转换
+ * @param bytes
+ * @returns
+ */
+export function byteConvert(bytes: number): string {
+  if (isNaN(bytes)) {
+    return '';
+  }
+  const symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  let exp = Math.floor(Math.log(bytes) / Math.log(2));
+  const biteIndex = Math.floor(exp / 10);
+  if (exp < 1) {
+    exp = 0;
+  }
+  bytes = bytes / Math.pow(2, 10 * biteIndex);
+  let r;
+  if (bytes.toString().length > bytes.toFixed(2).toString().length) {
+    r = bytes.toFixed(1);
+  }
+  return r + symbols[biteIndex];
+}

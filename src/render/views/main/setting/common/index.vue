@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ state.setting }}
     <el-form label-width="100px">
       <el-form-item label="开机启动">
         <el-switch v-model="state.setting.openAtLogin" @change="updateSetting($event, 'openAtLogin')"></el-switch>
