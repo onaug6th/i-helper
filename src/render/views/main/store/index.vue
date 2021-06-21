@@ -81,8 +81,9 @@ export default defineComponent({
     /**
      * 获取插件列表
      */
-    async function getPluginList() {
-      const result = await proxy.$ipcClient('store-list');
+    async function getPluginList(loading = false) {
+      const fn = loading ? proxy.$ipcClientLoading : proxy.$ipcClient;
+      const result = await fn('store-list');
       state.pluginList = reactive(
         result.map(plugin => {
           plugin.logoUrl = `http://${plugin.logoUrl}`;
@@ -111,7 +112,7 @@ export default defineComponent({
      * 刷新插件列表
      */
     async function refresh() {
-      getPluginList();
+      getPluginList(true);
     }
 
     //  商店面板监听——插件删除

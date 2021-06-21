@@ -219,6 +219,7 @@ export default defineComponent({
         message: '安装插件成功'
       });
       proxy.$eventBus.emit('installed-update');
+      closeShade();
     }
 
     return {

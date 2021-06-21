@@ -97,6 +97,7 @@ class PluginService {
    * @param zipPath
    */
   async installPlugin(zipPath: string) {
+    const size = await fsUtils.getFileSize(zipPath);
     //  解压缩
     const jsonPath = await this.uncompressZip(zipPath);
 
@@ -106,7 +107,12 @@ class PluginService {
       throw new Error(error);
     }
 
-    const result = await pluginDB.insert(file);
+    const saveData = {
+      ...file,
+      sizeFormat: utils.byteConvert(size)
+    };
+
+    const result = await pluginDB.insert(saveData);
 
     this.pluginList.push(result);
 

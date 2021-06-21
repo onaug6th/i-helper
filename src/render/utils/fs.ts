@@ -4,6 +4,26 @@ import { exec } from 'child_process';
 import compressing from 'compressing';
 
 /**
+ * 获取文件大小
+ * @param filePath
+ * @returns
+ */
+function getFileSize(filePath: string): Promise<number> {
+  const reader = fs.createReadStream(filePath);
+
+  return new Promise(resolve => {
+    let len = 0;
+    reader.on('data', function(chunk) {
+      len += chunk.length;
+    });
+
+    reader.on('end', function() {
+      resolve(len);
+    });
+  });
+}
+
+/**
  * 更新插件json
  * @param to
  * @param param0
@@ -164,4 +184,4 @@ function delDir(path: string): void {
   }
 }
 
-export { buildDirTo, copy, delDir, showInFolder, safeCreatedir };
+export { buildDirTo, copy, delDir, showInFolder, safeCreatedir, getFileSize };

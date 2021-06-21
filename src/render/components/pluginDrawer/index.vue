@@ -56,7 +56,7 @@
             大小
           </div>
           <div class="info-list__item-mid">
-            {{ plugin.size }}
+            {{ plugin.sizeFormat }}
           </div>
           <div class="info-list__item-bottom">
             kb
