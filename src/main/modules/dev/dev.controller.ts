@@ -12,7 +12,7 @@ ipcMain.handle('dev-plugin-add', (event, path) => {
 });
 
 //  获取开发者插件详情
-ipcMain.handle('dev-plugin-detail-get', (event, id) => {
+ipcMain.handle('dev-plugin-detail', (event, id) => {
   return devService.getPlugin(id);
 });
 

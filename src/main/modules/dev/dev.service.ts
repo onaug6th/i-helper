@@ -15,10 +15,9 @@ class DevService {
   /**
    * 在应用启动后执行的回调
    */
-  appOnReady() {
-    devPluginDB.find().then(pluginList => {
-      this.pluginList = pluginList;
-    });
+  async appOnReady() {
+    const data = await devPluginDB.find();
+    this.pluginList = data;
   }
 
   /**
@@ -217,7 +216,7 @@ class DevService {
       version: plugin[pluginConfigKey.VERSION],
       desc: plugin[pluginConfigKey.DESC],
       auditDesc,
-      readme: plugin[pluginConfigKey.README_CONTENT]
+      readmeContent: plugin[pluginConfigKey.README_CONTENT]
     };
 
     const formData = new FormData();

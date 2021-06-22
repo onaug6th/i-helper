@@ -10,9 +10,14 @@ import { pluginConfigKey } from '@/main/constants/plugin';
 import storeService from '../store/store.service';
 
 /**
- * publishZips 发布时，插件的压缩包文件夹
- * pluginPackages 安装后插件的文件夹
- * pluginZips 安装的插件压缩包文件夹
+ * 项目内创建文件夹说明：
+ * publishZips 发布时，插件的压缩包存放的文件夹
+ * pluginPackages 插件安装后，插件文件夹存放的文件夹
+ * pluginZips 插件安装后，插件压缩包存放的文件夹
+ *
+ * 插件部分自定义字段说明：
+ * isDownload 是否已下载
+ * isDownloadVersion 已下载的插件版本号
  */
 
 class PluginService {
@@ -42,6 +47,36 @@ class PluginService {
   }
 
   /**
+   * 对我的插件/插件商店的插件安装情况进行初始化
+   */
+  setPluginInstallInfo() {
+    /**
+     * {
+     *  [id]: 版本号
+     * }
+     */
+    const storeKeyMap = storeService.pluginList.reduce((prev, plugin) => {
+      prev[plugin.id] = plugin.version;
+      return prev;
+    }, {});
+
+    this.pluginList.forEach(plugin => {
+      const storePluginVersion = storeKeyMap[plugin.id];
+
+      //  此插件存在于商店 且 商店插件的版本号大于已经安装过的插件版本号
+      if (storePluginVersion) {
+        const storePlugin = storeService.getPlugin(plugin.id);
+        storePlugin.isDownload = true;
+
+        if (storePluginVersion > plugin.version) {
+          plugin.canUpdate = true;
+          storePlugin.canUpdate = true;
+        }
+      }
+    });
+  }
+
+  /**
    * 获取插件信息
    * @param id
    * @returns
@@ -58,8 +93,8 @@ class PluginService {
    * 4. 从商店中更新此插件的已下载标记
    * @param id
    */
-  delPlugin(id: string) {
-    pluginDB.remove({ id });
+  async delPlugin(id: string) {
+    await pluginDB.remove({ id });
     const plugin = this.getPlugin(id);
     const index = this.pluginList.findIndex(plugin => plugin.id === id);
     this.pluginList.splice(index, 1);
@@ -93,6 +128,15 @@ class PluginService {
   }
 
   /**
+   * 插件更新
+   * @param id
+   */
+  async updatePlugin(id: string) {
+    await this.delPlugin(id);
+    storeService.download(id);
+  }
+
+  /**
    * 安装插件
    * @param zipPath
    */
@@ -107,6 +151,12 @@ class PluginService {
       throw new Error(error);
     }
 
+    const id = file.id;
+
+    if (this.pluginList.some(plugin => plugin.id === id)) {
+      throw new Error('这个插件已经安装过咯');
+    }
+
     const saveData = {
       ...file,
       sizeFormat: utils.byteConvert(size)
@@ -116,7 +166,7 @@ class PluginService {
 
     this.pluginList.push(result);
 
-    storeService.clearIsDownload(file.id);
+    storeService.clearIsDownload(id);
 
     return result;
   }

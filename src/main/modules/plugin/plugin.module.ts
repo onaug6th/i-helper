@@ -3,7 +3,7 @@ import pluginService from './plugin.service';
 import './plugin.controller';
 
 export default {
-  init(app: App): void {
-    pluginService.appOnReady(app);
+  async init(app: App): Promise<void> {
+    await pluginService.appOnReady(app);
   }
 };

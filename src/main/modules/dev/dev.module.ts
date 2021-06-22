@@ -3,8 +3,8 @@ import devService from './dev.service';
 import './dev.controller';
 
 export default {
-  init(app: App): void {
+  async init(app: App): Promise<void> {
     app;
-    devService.appOnReady();
+    await devService.appOnReady();
   }
 };

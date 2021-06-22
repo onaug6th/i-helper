@@ -11,7 +11,7 @@ class AppStorageService {
   /**
    * 应用初始化时执行
    */
-  async appOnReady() {
+  appOnReady() {
     this.setAppStorage();
   }
 

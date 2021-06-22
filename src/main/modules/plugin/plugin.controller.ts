@@ -10,8 +10,13 @@ ipcMain.handle('plugin-list', () => {
 });
 
 //  获取插件详情
-ipcMain.handle('plugin-detail-get', (event, id) => {
+ipcMain.handle('plugin-detail', (event, id) => {
   return pluginService.getPlugin(id);
+});
+
+//  插件更新
+ipcMain.handle('plugin-update', (event, id) => {
+  return pluginService.updatePlugin(id);
 });
 
 //  安装插件
