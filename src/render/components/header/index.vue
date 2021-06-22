@@ -70,14 +70,14 @@ export default defineComponent({
     }
 
     /**
-     * @desc 最小化
+     * 最小化
      */
     function minimize() {
       currentWindow.minimize();
     }
 
     /**
-     * @desc 切换全屏
+     * 切换全屏
      */
     function toggleFullScreen() {
       if (isFullScreen.value) {

@@ -13,7 +13,7 @@
         @click="choosePlugin(appIndex)"
       >
         <div class="plugin-list_item-left">
-          <img :src="plugin.logoUrl" />
+          <img :src="plugin.logo" />
         </div>
         <div class="plugin-list_item-center">
           <div class="plugin-list_item-center--title">
@@ -86,7 +86,7 @@ export default defineComponent({
       const result = await fn('store-list');
       state.pluginList = reactive(
         result.map(plugin => {
-          plugin.logoUrl = `http://${plugin.logoUrl}`;
+          plugin.logo = `http://${plugin.logo}`;
           return plugin;
         })
       );
@@ -100,7 +100,7 @@ export default defineComponent({
 
       //  通知我的插件面板更新列表
       proxy.$eventBus.emit('installed-update');
-      currentPlugin.value.isDownload = true;
+      getPluginList();
 
       proxy.$notify({
         type: 'success',
@@ -116,12 +116,8 @@ export default defineComponent({
     }
 
     //  商店面板监听——插件删除
-    proxy.$eventBus.on('store-plugin-del', pluginId => {
-      state.pluginList.find(plugin => {
-        if (plugin.id === pluginId) {
-          plugin.isDownload = false;
-        }
-      });
+    proxy.$eventBus.on('store-plugin-update', () => {
+      getPluginList();
     });
 
     onBeforeMount(() => {

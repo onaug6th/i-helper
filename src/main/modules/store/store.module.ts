@@ -3,8 +3,8 @@ import storeService from './store.service';
 import './store.controller';
 
 export default {
-  init(app: App): void {
+  async init(app: App): Promise<void> {
     app;
-    storeService.appOnReady();
+    await storeService.appOnReady();
   }
 };

@@ -3,6 +3,27 @@ import fs from 'fs';
 import { pluginConfigKey } from '@/main/constants/plugin';
 
 /**
+ * 设置插件的下载标记信息
+ * @param plugin 插件
+ * @param param1
+ */
+function setDownloadMark(
+  plugin: {
+    [propName: string]: any;
+  },
+  isDownload: boolean,
+  isDownloadVersion: boolean
+): void {
+  if (isDownload) {
+    plugin.isDownload = true;
+    plugin.isDownloadVersion = isDownloadVersion;
+  } else {
+    delete plugin.isDownload;
+    delete plugin.isDownloadVersion;
+  }
+}
+
+/**
  * 校验json文件是否合法
  */
 function validPluginJSON(jsonPath: string | any): string | undefined {
@@ -129,4 +150,4 @@ async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; 
   return { file };
 }
 
-export { getPluginInfoByFile };
+export { setDownloadMark, getPluginInfoByFile };

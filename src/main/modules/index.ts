@@ -15,20 +15,21 @@ import devModule from './dev/dev.module';
 import windowModule from './window/window.module';
 //  商店模块
 import storeModule from './store/store.module';
+import pluginService from './plugin/plugin.service';
 
 export default {
-  init(app: App): void {
-    [
-      appStorageModule,
-      settingModule,
-      shortcutKeyModule,
-      trayModule,
-      pluginModule,
-      devModule,
-      windowModule,
-      storeModule
-    ].forEach(module => {
-      module.init(app);
-    });
+  async init(app: App): Promise<void> {
+    await Promise.all([
+      appStorageModule.init(app),
+      settingModule.init(app),
+      shortcutKeyModule.init(app),
+      trayModule.init(app),
+      pluginModule.init(app),
+      storeModule.init(app),
+      devModule.init(app),
+      windowModule.init(app)
+    ]);
+
+    pluginService.setPluginInstallInfo();
   }
 };

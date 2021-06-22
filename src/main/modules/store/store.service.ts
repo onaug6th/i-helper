@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import pluginService from '../plugin/plugin.service';
 import * as fsUtils from '@/render/utils/fs';
-import { pluginConfigKey } from '@/main/constants/plugin';
+import * as pluginUtils from '@/main/utils/plugin';
 
 class Store {
   pluginList: Array<any> = [];
@@ -17,14 +17,7 @@ class Store {
    * @returns
    */
   async getPluginList() {
-    const data = await pluginAPI.getPluginList();
-    data.forEach(plugin => {
-      //  如存在已下载的插件中，需要标记为已下载
-      if (pluginService.getPlugin(plugin[pluginConfigKey.ID])) {
-        plugin.isDownload = true;
-      }
-    });
-    this.pluginList = data;
+    this.pluginList = await pluginAPI.getPluginList();
     return this.pluginList;
   }
 
@@ -44,7 +37,8 @@ class Store {
   clearIsDownload(id: string) {
     this.pluginList.find(plugin => {
       if (plugin.id === id) {
-        plugin.isDownload = false;
+        delete plugin.isDownload;
+        delete plugin.isDownloadVersion;
       }
     });
   }
@@ -70,8 +64,10 @@ class Store {
 
     const finish = new Promise(resolve => {
       writer.on('finish', async () => {
-        await pluginService.installPlugin(zipPath);
-        plugin.isDownload = true;
+        const result = await pluginService.installPlugin(zipPath);
+        //  设置插件的下载标记
+        pluginUtils.setDownloadMark(plugin, true, result.version);
+
         resolve(true);
       });
     });

@@ -81,7 +81,11 @@ export default defineComponent({
       state.openDrawer = false;
     }
 
-    //  已安装面板监听——更新列表
+    /**
+     * 已安装面板监听——更新列表
+     * 1. 下载插件完成安装时
+     * 2. 自行拖拽完成安装时
+     */
     proxy.$eventBus.on('installed-update', () => {
       getPluginList();
     });

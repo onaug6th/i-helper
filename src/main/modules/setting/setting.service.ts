@@ -14,7 +14,7 @@ class SettingService {
    * 应用初始化时执行
    * @param app
    */
-  async appOnReady(app) {
+  appOnReady(app) {
     this.settingData = appStorageService.getData(this.storageName);
 
     app.setLoginItemSettings({
