@@ -3,36 +3,26 @@
     <div class="drawer">
       <!-- 插件基本信息 -->
       <div class="drawer-row base">
-        <img :src="logoUrl" />
+        <img :src="plugin.logo" />
 
         <div class="base-info">
           <div class="base-info__name">
             {{ plugin.name }}
-            <span class="base-info__version" title="版本号">{{ plugin.version }}</span>
+            <span class="base-info__version" title="版本号">
+              {{ plugin.version }}
+            </span>
           </div>
           <div class="base-info__desc">{{ plugin.desc }}</div>
           <div class="base-info__operate">
-            <el-button
-              v-if="isStore && !plugin.isDownload"
-              type="primary"
-              icon="el-icon-download"
-              circle
-              size="mini"
-              title="下载插件"
-            >
+            <el-button v-if="showUpdate" type="success" size="mini" title="更新插件" @click="updatePlugin">
+              更新
             </el-button>
 
-            <el-button
-              v-if="(isStore && plugin.isDownload) || isInstalled || isDev"
-              type="primary"
-              size="mini"
-              title="启动插件"
-              @click="openPlugin"
-            >
+            <el-button v-if="showOpen" type="primary" size="mini" title="启动插件" @click="openPlugin">
               启动
             </el-button>
 
-            <el-button v-if="isDev || isInstalled" type="danger" size="mini" title="删除插件" @click="confirmDel">
+            <el-button v-if="showDelete" type="danger" size="mini" title="删除插件" @click="confirmDel">
               删除
             </el-button>
           </div>
@@ -40,8 +30,54 @@
       </div>
       <!-- 插件基本信息 -->
 
+      <!-- 开发模式下独有信息 -->
+      <template v-if="isDev">
+        <div class="drawer-row">
+          <div class="drawer-row__title">
+            插件ID
+          </div>
+          <div class="drawer-row__value" title="插件的唯一id">
+            {{ plugin.id }}
+          </div>
+        </div>
+
+        <div class="drawer-row">
+          <div class="drawer-row__title">
+            插件路径
+          </div>
+          <div class="drawer-row__value" title="插件的文件路径">
+            {{ plugin.main }}
+          </div>
+        </div>
+
+        <div class="drawer-row">
+          <div class="drawer-row__title">
+            操作
+          </div>
+          <div class="drawer-row__content">
+            <el-button plain type="primary" size="small" title="发布插件到插件商店" @click="publishConfirm">
+              发布
+            </el-button>
+            <el-button
+              type="success"
+              size="small"
+              title="将插件打包为插件压缩包，压缩包能拖拽进入到面板中安装"
+              @click="build"
+              >打包</el-button
+            >
+            <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
+              重载插件
+            </el-button>
+            <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
+              文件夹中查看
+            </el-button>
+          </div>
+        </div>
+      </template>
+      <!-- 开发模式下独有信息 -->
+
       <!-- 列表信息 -->
-      <div v-if="isStore || isInstalled" class="drawer-row info-list">
+      <div v-else class="drawer-row info-list">
         <div class="info-list__item">
           <div class="info-list__item-top">
             开发者
@@ -65,49 +101,6 @@
       </div>
       <!-- 列表信息 -->
 
-      <template v-if="isDev">
-        <div class="drawer-row">
-          <div class="drawer-row__title">
-            插件ID
-          </div>
-          <div class="drawer-row__value">
-            {{ plugin.id }}
-          </div>
-        </div>
-
-        <div class="drawer-row">
-          <div class="drawer-row__title">
-            插件路径
-          </div>
-          <div class="drawer-row__value">
-            {{ plugin.main }}
-          </div>
-        </div>
-
-        <div class="drawer-row">
-          <div class="drawer-row__title">
-            操作
-          </div>
-          <div class="drawer-row__content">
-            <template v-if="isDev">
-              <el-button type="success" size="small" title="打包插件" @click="build">打包</el-button>
-              <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
-                重新加载
-              </el-button>
-            </template>
-          </div>
-
-          <div v-if="isDev">
-            <el-button plain type="primary" size="small" title="发布插件到插件中心" @click="publishConfirm">
-              发布
-            </el-button>
-            <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
-              目录
-            </el-button>
-          </div>
-        </div>
-      </template>
-
       {{ plugin.readmeContent }}
     </div>
   </el-drawer>
@@ -116,8 +109,10 @@
 </template>
 
 <script lang="ts">
-import PublishDialog from './components/publishDialog/index.vue';
 import { getCurrentInstance, defineComponent, computed, reactive } from 'vue';
+import useButton from './composables/useButton';
+import usePlugin from './composables/usePlugin';
+import PublishDialog from './components/publishDialog/index.vue';
 
 export default defineComponent({
   components: {
@@ -162,116 +157,43 @@ export default defineComponent({
       return props.type === 'installed';
     });
 
-    const logoUrl = computed(() => {
-      return isStore.value ? plugin.value.logoUrl : plugin.value.logo;
+    const { showUpdate, showOpen, showDelete } = useButton(
+      {
+        isStore: isStore.value,
+        isDev: isDev.value,
+        isInstalled: isInstalled.value
+      },
+      plugin
+    );
+
+    const { updatePlugin, openPlugin, reload, build, confirmDel, publishConfirm, publish, showInFolder } = usePlugin({
+      plugin,
+      proxy,
+      visibleModel,
+      isDev,
+      isInstalled,
+      emit,
+      state
     });
-
-    /**
-     * 打开插件
-     */
-    function openPlugin() {
-      proxy.$ipcClient('plugin-open', plugin.value.id, isDev.value);
-      visibleModel.value = false;
-    }
-
-    /**
-     * 重新加载插件
-     */
-    async function reload() {
-      const result = await proxy.$ipcClient('dev-plugin-update', plugin.value.id);
-      emit('reload', result);
-      proxy.$notify({
-        type: 'success',
-        message: '更新成功'
-      });
-    }
-
-    /**
-     * 打包插件
-     */
-    async function build() {
-      await proxy.$ipcClient('dev-plugin-build', plugin.value.id);
-      proxy.$notify({
-        type: 'success',
-        message: '打包成功'
-      });
-    }
-
-    /**
-     * 确认删除
-     */
-    async function confirmDel() {
-      await proxy.$confirm('此操作将永久删除该插件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      });
-      delPlugin();
-    }
-
-    /**
-     * 删除插件
-     */
-    async function delPlugin() {
-      const event = isDev.value ? 'dev-plugin-del' : 'plugin-del';
-      await proxy.$ipcClient(event, plugin.value.id);
-      visibleModel.value = false;
-
-      //  商店面板把此插件的下载按钮放开
-      if (isInstalled.value) {
-        proxy.$eventBus.emit('store-plugin-del', plugin.value.id);
-      }
-
-      proxy.$notify({
-        type: 'success',
-        message: '删除成功'
-      });
-
-      emit('remove');
-    }
-
-    /**
-     * 发布确认
-     */
-    function publishConfirm() {
-      if (plugin.value.version === plugin.value.publishVerson) {
-        return proxy.$alert('发布的版本与上次发布的版本一致，请将版本号升级后再试', '提醒');
-      }
-      state.showDialog = true;
-    }
-
-    /**
-     * 发布插件
-     */
-    async function publish(desc: string) {
-      const result = await proxy.$ipcClientLoading('dev-plugin-publish', plugin.value.id, desc);
-      emit('publish', result);
-      proxy.$notify({
-        type: 'success',
-        message: '发布成功'
-      });
-    }
-
-    /**
-     * 在文件夹中查看
-     */
-    async function showInFolder() {
-      await proxy.$ipcClient('dev-plugin-showInFolder', plugin.value.id);
-    }
 
     return {
       state,
       isDev,
       isInstalled,
       isStore,
-      logoUrl,
       visibleModel,
+
+      showUpdate,
+      showOpen,
+      showDelete,
+
+      updatePlugin,
       openPlugin,
-      confirmDel,
-      build,
       reload,
-      publish,
+      build,
+      confirmDel,
       publishConfirm,
+      publish,
       showInFolder
     };
   }
