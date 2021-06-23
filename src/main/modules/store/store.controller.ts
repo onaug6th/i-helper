@@ -3,7 +3,7 @@ import storeService from './store.service';
 
 //  获取插件列表
 ipcMain.handle('store-list', () => {
-  return storeService.getPluginList();
+  return storeService.pluginList;
 });
 
 //  插件下载

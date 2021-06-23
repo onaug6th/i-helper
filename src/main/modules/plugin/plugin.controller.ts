@@ -6,7 +6,7 @@ import './controllers/pluginWin';
 
 //  获取插件列表
 ipcMain.handle('plugin-list', () => {
-  return pluginService.getPluginList();
+  return pluginService.pluginList;
 });
 
 //  获取插件详情

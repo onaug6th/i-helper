@@ -4,12 +4,8 @@ export default function useButton(
   { isStore, isInstalled, isDev }: { [propName: string]: boolean },
   plugin: ComputedRef<any>
 ): { [propName: string]: ComputedRef } {
-  const canUpdate = computed(() => {
-    return plugin.value.isDownload && plugin.value.version > plugin.value.isDownloadVersion;
-  });
-
   const showUpdate = computed(() => {
-    return ((isStore && plugin.value.isDownload) || isInstalled) && canUpdate.value;
+    return ((isStore && plugin.value.isDownload) || isInstalled) && plugin.value.canUpdate;
   });
 
   const showOpen = computed(() => {

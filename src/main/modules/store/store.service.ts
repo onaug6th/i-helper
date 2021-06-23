@@ -5,20 +5,32 @@ import pluginService from '../plugin/plugin.service';
 import * as fsUtils from '@/render/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 
-class Store {
+class StoreService {
   pluginList: Array<any> = [];
+  //  插件ID/插件信息的映射对象
+  storeKeyMap: { [propName: string]: any } = {};
 
   async appOnReady() {
     await this.getPluginList();
   }
 
   /**
-   * 获取插件列表
+   * 请求获取商店插件列表
    * @returns
    */
   async getPluginList() {
     this.pluginList = await pluginAPI.getPluginList();
-    return this.pluginList;
+
+    /**
+     * 设置插件ID/插件信息的映射对象
+     * {
+     *  [插件id]: 插件对象
+     * }
+     */
+    this.storeKeyMap = this.pluginList.reduce((prev, plugin) => {
+      prev[plugin.id] = plugin;
+      return prev;
+    }, {});
   }
 
   /**
@@ -28,19 +40,6 @@ class Store {
    */
   getPlugin(id: string) {
     return this.pluginList.find(app => app.id === id);
-  }
-
-  /**
-   * 清除插件下载标记
-   * @param id
-   */
-  clearIsDownload(id: string) {
-    this.pluginList.find(plugin => {
-      if (plugin.id === id) {
-        delete plugin.isDownload;
-        delete plugin.isDownloadVersion;
-      }
-    });
   }
 
   /**
@@ -64,9 +63,9 @@ class Store {
 
     const finish = new Promise(resolve => {
       writer.on('finish', async () => {
-        const result = await pluginService.installPlugin(zipPath);
-        //  设置插件的下载标记
-        pluginUtils.setDownloadMark(plugin, true, result.version);
+        await pluginService.installPlugin(zipPath);
+        //  再跑一遍初始化流程，但不需要重新拉取插件商店列表
+        pluginService.setPluginInstallInfo();
 
         resolve(true);
       });
@@ -77,4 +76,4 @@ class Store {
   }
 }
 
-export default new Store();
+export default new StoreService();

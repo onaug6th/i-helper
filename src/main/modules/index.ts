@@ -30,6 +30,6 @@ export default {
       windowModule.init(app)
     ]);
 
-    pluginService.setPluginInstallInfo();
+    pluginService.initPluginInstallInfo();
   }
 };

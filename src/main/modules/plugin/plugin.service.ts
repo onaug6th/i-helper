@@ -17,7 +17,7 @@ import storeService from '../store/store.service';
  *
  * 插件部分自定义字段说明：
  * isDownload 是否已下载
- * isDownloadVersion 已下载的插件版本号
+ * canUpdate 允许更新
  */
 
 class PluginService {
@@ -49,29 +49,30 @@ class PluginService {
   /**
    * 对我的插件/插件商店的插件安装情况进行初始化
    */
+  async initPluginInstallInfo() {
+    await storeService.getPluginList();
+
+    this.setPluginInstallInfo();
+  }
+
+  /**
+   * 根据商店的插件信息，来设置本地插件的下载标记信息
+   */
   setPluginInstallInfo() {
-    /**
-     * {
-     *  [id]: 版本号
-     * }
-     */
-    const storeKeyMap = storeService.pluginList.reduce((prev, plugin) => {
-      prev[plugin.id] = plugin.version;
-      return prev;
-    }, {});
-
+    const storeKeyMap = storeService.storeKeyMap;
     this.pluginList.forEach(plugin => {
-      const storePluginVersion = storeKeyMap[plugin.id];
+      const storePlugin = storeKeyMap[plugin.id];
 
-      //  此插件存在于商店 且 商店插件的版本号大于已经安装过的插件版本号
-      if (storePluginVersion) {
-        const storePlugin = storeService.getPlugin(plugin.id);
+      //  本地安装的插件存在于商店
+      if (storePlugin) {
         storePlugin.isDownload = true;
 
-        if (storePluginVersion > plugin.version) {
+        if (storePlugin.version > plugin.version) {
           plugin.canUpdate = true;
           storePlugin.canUpdate = true;
         }
+      } else {
+        storePlugin.isDownload = false;
       }
     });
   }
@@ -102,7 +103,7 @@ class PluginService {
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     fsUtils.delDir(folderPath);
 
-    storeService.clearIsDownload(id);
+    this.setPluginInstallInfo();
   }
 
   /**
@@ -166,7 +167,7 @@ class PluginService {
 
     this.pluginList.push(result);
 
-    storeService.clearIsDownload(id);
+    this.setPluginInstallInfo();
 
     return result;
   }
