@@ -8,6 +8,7 @@ import * as pluginUtils from '@/main/utils/plugin';
 import { publishURL } from '@/main/constants/url';
 import FormData from 'form-data';
 import fs from 'fs';
+import pluginService from '../plugin/plugin.service';
 
 class DevService {
   pluginList: Array<any> = [];
@@ -98,10 +99,10 @@ class DevService {
   }
 
   /**
-   * 更新开发者插件
+   * 重新加载开发者插件
    * @param id
    */
-  async updatePluginByJson(id: string) {
+  async reloadPluginByJson(id: string) {
     const plugin = this.getPlugin(id);
     const jsonPath = plugin[pluginConfigKey.JSON_PATH];
 
@@ -238,6 +239,9 @@ class DevService {
     };
 
     this.updatePluginInDbOrMemory(id, updateContent);
+
+    //  因为发布了插件，需要刷新插件的安装信息
+    pluginService.initPluginInstallInfo();
 
     return updateContent;
   }

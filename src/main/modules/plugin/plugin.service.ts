@@ -18,6 +18,7 @@ import storeService from '../store/store.service';
  * 插件部分自定义字段说明：
  * isDownload 是否已下载
  * canUpdate 允许更新
+ * publishVerson dev中独有，已发布的版本号
  */
 
 class PluginService {
@@ -47,7 +48,7 @@ class PluginService {
   }
 
   /**
-   * 对我的插件/插件商店的插件安装情况进行初始化
+   * 应用启动时，对我的插件/插件商店的插件安装情况进行初始化
    */
   async initPluginInstallInfo() {
     await storeService.getPluginList();
@@ -59,9 +60,10 @@ class PluginService {
    * 根据商店的插件信息，来设置本地插件的下载标记信息
    */
   setPluginInstallInfo() {
-    const storeKeyMap = storeService.storeKeyMap;
+    const storePluginKeyMap = storeService.storePluginKeyMap;
+
     this.pluginList.forEach(plugin => {
-      const storePlugin = storeKeyMap[plugin.id];
+      const storePlugin = storePluginKeyMap[plugin.id];
 
       //  本地安装的插件存在于商店
       if (storePlugin) {
@@ -71,8 +73,6 @@ class PluginService {
           plugin.canUpdate = true;
           storePlugin.canUpdate = true;
         }
-      } else {
-        storePlugin.isDownload = false;
       }
     });
   }
@@ -103,6 +103,7 @@ class PluginService {
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     fsUtils.delDir(folderPath);
 
+    //  因为删除了插件，需要刷新插件的安装信息
     this.setPluginInstallInfo();
   }
 
@@ -167,6 +168,7 @@ class PluginService {
 
     this.pluginList.push(result);
 
+    //  因为安装了插件，需要刷新插件的安装信息
     this.setPluginInstallInfo();
 
     return result;

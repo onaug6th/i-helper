@@ -30,6 +30,7 @@ export default {
       windowModule.init(app)
     ]);
 
+    //  应用启动时，对我的插件/插件商店的插件安装情况进行初始化
     pluginService.initPluginInstallInfo();
   }
 };

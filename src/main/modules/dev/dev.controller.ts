@@ -17,8 +17,8 @@ ipcMain.handle('dev-plugin-detail', (event, id) => {
 });
 
 //  更新开发者插件
-ipcMain.handle('dev-plugin-update', (event, id) => {
-  return devService.updatePluginByJson(id);
+ipcMain.handle('dev-plugin-reload', (event, id) => {
+  return devService.reloadPluginByJson(id);
 });
 
 //  打包开发者插件

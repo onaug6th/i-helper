@@ -3,12 +3,11 @@ import path from 'path';
 import fs from 'fs';
 import pluginService from '../plugin/plugin.service';
 import * as fsUtils from '@/render/utils/fs';
-import * as pluginUtils from '@/main/utils/plugin';
 
 class StoreService {
   pluginList: Array<any> = [];
   //  插件ID/插件信息的映射对象
-  storeKeyMap: { [propName: string]: any } = {};
+  storePluginKeyMap: { [propName: string]: any } = {};
 
   async appOnReady() {
     await this.getPluginList();
@@ -27,7 +26,7 @@ class StoreService {
      *  [插件id]: 插件对象
      * }
      */
-    this.storeKeyMap = this.pluginList.reduce((prev, plugin) => {
+    this.storePluginKeyMap = this.pluginList.reduce((prev, plugin) => {
       prev[plugin.id] = plugin;
       return prev;
     }, {});
@@ -39,7 +38,7 @@ class StoreService {
    * @returns
    */
   getPlugin(id: string) {
-    return this.pluginList.find(app => app.id === id);
+    return this.storePluginKeyMap[id];
   }
 
   /**
@@ -64,8 +63,6 @@ class StoreService {
     const finish = new Promise(resolve => {
       writer.on('finish', async () => {
         await pluginService.installPlugin(zipPath);
-        //  再跑一遍初始化流程，但不需要重新拉取插件商店列表
-        pluginService.setPluginInstallInfo();
 
         resolve(true);
       });

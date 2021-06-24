@@ -22,6 +22,10 @@ export default function usePlugin({
    */
   async function updatePlugin() {
     await proxy.$ipcClient('plugin-update', plugin.value.id);
+    proxy.$notify({
+      type: 'success',
+      message: '更新成功'
+    });
   }
 
   /**
@@ -36,10 +40,10 @@ export default function usePlugin({
    * 重新加载插件
    */
   async function reload() {
-    const result = await proxy.$ipcClient('dev-plugin-update', plugin.value.id);
+    const result = await proxy.$ipcClient('dev-plugin-reload', plugin.value.id);
     proxy.$notify({
       type: 'success',
-      message: '更新成功'
+      message: '重新加载成功'
     });
 
     emit('reload', result);
@@ -101,6 +105,7 @@ export default function usePlugin({
 
   /**
    * 发布插件
+   * @param desc
    */
   async function publish(desc: string) {
     const result = await proxy.$ipcClientLoading('dev-plugin-publish', plugin.value.id, desc);
