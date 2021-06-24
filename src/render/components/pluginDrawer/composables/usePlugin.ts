@@ -26,6 +26,8 @@ export default function usePlugin({
       type: 'success',
       message: '更新成功'
     });
+    proxy.$eventBus.emit('installed-update');
+    proxy.$eventBus.emit('store-plugin-update');
   }
 
   /**
@@ -114,6 +116,7 @@ export default function usePlugin({
       message: '发布成功'
     });
 
+    proxy.$eventBus.emit('installed-update');
     proxy.$eventBus.emit('store-plugin-update');
 
     emit('publish', result);

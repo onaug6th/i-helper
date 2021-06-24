@@ -4,72 +4,26 @@
       开发者模式
     </h1>
 
-    <div class="plugin-list">
-      <div
-        v-for="(plugin, appIndex) in state.pluginList"
-        class="plugin-list_item"
-        :key="appIndex"
-        @click="choosePlugin(appIndex)"
-      >
-        <div class="plugin-list_item-left">
-          <img :src="plugin.logo" />
-        </div>
-        <div class="plugin-list_item-right">
-          <div class="plugin-list_item-right--title">
-            <span>{{ plugin.name }}</span>
-          </div>
-          <div class="plugin-list_item-right--desc">
-            {{ plugin.desc }}
-          </div>
-        </div>
-      </div>
-    </div>
+    <Plugin-list type="dev" :pluginList="state.pluginList" @reload="reload" @remove="delPlugin" @publish="publish" />
   </div>
-
-  <Plugin-drawer
-    v-model:visible="state.openDrawer"
-    type="dev"
-    :plugin="currentPlugin"
-    @reload="reload"
-    @remove="delPlugin"
-    @publish="publish"
-  />
 </template>
 
 <script lang="ts">
-import { getCurrentInstance, computed, defineComponent, onBeforeMount, reactive } from 'vue';
-import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
+import { getCurrentInstance, defineComponent, onBeforeMount, reactive } from 'vue';
+import PluginList from '@/render/components/pluginList/index.vue';
 
 export default defineComponent({
   name: 'dev',
   components: {
-    PluginDrawer
+    PluginList
   },
   setup() {
     const { proxy }: any = getCurrentInstance();
 
     const state: any = reactive({
       //  插件列表
-      pluginList: [],
-      //  打开抽屉
-      openDrawer: false,
-      //  当前插件
-      currentIndex: 0
+      pluginList: []
     });
-
-    //  当前插件
-    const currentPlugin = computed(() => {
-      return state.pluginList[state.currentIndex] || {};
-    });
-
-    /**
-     * 选择插件
-     * @param index
-     */
-    function choosePlugin(index: number) {
-      state.openDrawer = true;
-      state.currentIndex = index;
-    }
 
     /**
      * 重新加载插件
@@ -106,8 +60,6 @@ export default defineComponent({
 
     return {
       state,
-      currentPlugin,
-      choosePlugin,
 
       reload,
       delPlugin,

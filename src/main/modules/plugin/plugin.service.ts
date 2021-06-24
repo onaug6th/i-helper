@@ -135,7 +135,7 @@ class PluginService {
    */
   async updatePlugin(id: string) {
     await this.delPlugin(id);
-    storeService.download(id);
+    await storeService.download(id);
   }
 
   /**

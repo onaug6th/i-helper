@@ -5,85 +5,55 @@
       <el-button class="plugin-title_refresh" size="mini" @click="refresh">刷新插件商店</el-button>
     </h1>
 
-    <div class="plugin-list">
-      <div
-        v-for="(plugin, appIndex) in state.pluginList"
-        class="plugin-list_item"
-        :key="appIndex"
-        @click="choosePlugin(appIndex)"
-      >
-        <div class="plugin-list_item-left">
-          <img :src="plugin.logo" />
-        </div>
-        <div class="plugin-list_item-center">
-          <div class="plugin-list_item-center--title">
-            <span>{{ plugin.name }}</span>
-          </div>
-          <div class="plugin-list_item-center--desc">
-            {{ plugin.desc }}
-          </div>
-        </div>
-        <div class="plugin-list_item-right">
-          <el-button
-            v-if="!plugin.isDownload"
-            type="primary"
-            icon="el-icon-download"
-            circle
-            size="mini"
-            title="下载插件"
-            @click.stop="download(plugin)"
-          >
-          </el-button>
-          <!-- 更新 -->
-        </div>
-      </div>
-    </div>
+    <Plugin-list type="store" :pluginList="state.pluginList" />
   </div>
-
-  <Plugin-drawer v-model:visible="state.openDrawer" type="store" :plugin="currentPlugin" />
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, reactive, getCurrentInstance, computed } from 'vue';
-import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
+import { defineComponent, onBeforeMount, reactive, getCurrentInstance } from 'vue';
+import PluginList from '@/render/components/pluginList/index.vue';
 
 export default defineComponent({
   name: 'store',
   components: {
-    PluginDrawer
+    PluginList
   },
   setup() {
     const { proxy }: any = getCurrentInstance();
     //  插件列表
     let state = reactive({
-      //  打开抽屉
-      openDrawer: false,
       //  插件列表
-      pluginList: [],
-      //  当前插件
-      currentIndex: 0
+      pluginList: []
     });
-
-    //  当前插件
-    const currentPlugin = computed(() => {
-      return state.pluginList[state.currentIndex] || {};
-    });
-
-    /**
-     * 打开插件
-     * @param index
-     */
-    function choosePlugin(index: number) {
-      state.openDrawer = true;
-      state.currentIndex = index;
-    }
 
     /**
      * 获取插件列表
+     *
+     * 调用此函数的行为：
+     * 1. 下载插件
+     * 2. 手动点击刷新
+     * 3. 插件删除
+     * 4. 默认调用
+     *
+     * 其中1，3，4。主线程预先完成，根据商店/已安装的插件信息的插件初始化
+     * （拉取商店的数据，插件service对比商店的数据信息，商店service更新已安装插件的标记，获取插件列表）
+     * 所以调用 'store-list' 会直接获得已经更新完的商店列表数据
+     *
+     * 2则会重新完成整个初始化的过程，才获取到数据
+     * @param forceUpdate 强制更新
      */
-    async function getPluginList(loading = false) {
-      const fn = loading ? proxy.$ipcClientLoading : proxy.$ipcClient;
-      const result = await fn('store-list');
+    async function getPluginList(forceUpdate = false) {
+      const fn = forceUpdate ? proxy.$ipcClientLoading : proxy.$ipcClient;
+
+      const result = await fn('store-list', forceUpdate);
+
+      if (forceUpdate) {
+        proxy.$notify({
+          type: 'success',
+          message: '刷新成功'
+        });
+      }
+
       state.pluginList = reactive(
         result.map(plugin => {
           plugin.logo = `http://${plugin.logo}`;
@@ -93,29 +63,19 @@ export default defineComponent({
     }
 
     /**
-     * 下载插件
-     */
-    async function download() {
-      await proxy.$ipcClientLoading('store-download', currentPlugin.value.id);
-
-      //  通知我的插件面板更新列表
-      proxy.$eventBus.emit('installed-update');
-      getPluginList();
-
-      proxy.$notify({
-        type: 'success',
-        message: '下载成功'
-      });
-    }
-
-    /**
      * 刷新插件列表
      */
     async function refresh() {
       getPluginList(true);
     }
 
-    //  商店面板监听——插件删除
+    /**
+     * 商店面板监听——列表更新
+     * 1. 插件删除后
+     * 2. 插件发布后
+     * 3. 插件完成更新时
+     * 4. 插件下载后
+     */
     proxy.$eventBus.on('store-plugin-update', () => {
       getPluginList();
     });
@@ -126,9 +86,6 @@ export default defineComponent({
 
     return {
       state,
-      currentPlugin,
-      choosePlugin,
-      download,
       refresh
     };
   }

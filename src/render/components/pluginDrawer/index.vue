@@ -63,8 +63,9 @@
               size="small"
               title="将插件打包为插件压缩包，压缩包能拖拽进入到面板中安装"
               @click="build"
-              >打包</el-button
             >
+              打包
+            </el-button>
             <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
               重载插件
             </el-button>

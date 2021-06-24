@@ -4,66 +4,26 @@
       我的插件
     </h1>
 
-    <div class="plugin-list">
-      <div
-        v-for="(plugin, appIndex) in state.pluginList"
-        class="plugin-list_item"
-        :key="appIndex"
-        @click="choosePlugin(appIndex)"
-      >
-        <div class="plugin-list_item-left">
-          <img :src="plugin.logo" />
-        </div>
-        <div class="plugin-list_item-center">
-          <div class="plugin-list_item-center--title">
-            <span>{{ plugin.name }}</span>
-          </div>
-          <div class="plugin-list_item-center--desc">
-            {{ plugin.desc }}
-          </div>
-        </div>
-        <div class="plugin-list_item-right"></div>
-      </div>
-    </div>
+    <Plugin-list type="installed" :pluginList="state.pluginList" />
   </div>
-
-  <Plugin-drawer v-model:visible="state.openDrawer" type="installed" :plugin="currentPlugin" @remove="delPlugin" />
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, reactive, getCurrentInstance, computed } from 'vue';
-import PluginDrawer from '@/render/components/pluginDrawer/index.vue';
+import { defineComponent, onBeforeMount, reactive, getCurrentInstance } from 'vue';
+import PluginList from '@/render/components/pluginList/index.vue';
 
 export default defineComponent({
   name: 'installed',
   components: {
-    PluginDrawer
+    PluginList
   },
   setup() {
     const { proxy }: any = getCurrentInstance();
     //  插件列表
     let state = reactive({
-      //  打开抽屉
-      openDrawer: false,
       //  插件列表
-      pluginList: [],
-      //  当前插件
-      currentIndex: 0
+      pluginList: []
     });
-
-    //  当前插件
-    const currentPlugin = computed(() => {
-      return state.pluginList[state.currentIndex] || {};
-    });
-
-    /**
-     * 打开插件
-     * @param index
-     */
-    function choosePlugin(index: number) {
-      state.openDrawer = true;
-      state.currentIndex = index;
-    }
 
     /**
      * 获取插件列表
@@ -74,17 +34,11 @@ export default defineComponent({
     }
 
     /**
-     * 删除插件
-     */
-    function delPlugin() {
-      state.pluginList.splice(state.currentIndex, 1);
-      state.openDrawer = false;
-    }
-
-    /**
      * 已安装面板监听——更新列表
      * 1. 下载插件完成安装时
      * 2. 自行拖拽完成安装时
+     * 3. 插件完成更新时
+     * 4. 插件完成发布时
      */
     proxy.$eventBus.on('installed-update', () => {
       getPluginList();
@@ -95,10 +49,7 @@ export default defineComponent({
     });
 
     return {
-      state,
-      currentPlugin,
-      choosePlugin,
-      delPlugin
+      state
     };
   }
 });
