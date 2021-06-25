@@ -25,20 +25,24 @@ export default defineComponent({
       pluginList: []
     });
 
+    const findPluginIndex = ({ id }) => state.pluginList.findIndex(plugin => plugin.id === id);
+
     /**
      * 重新加载插件
      * @param plugin
      */
     function reload(plugin) {
-      state.pluginList[state.currentIndex] = plugin;
+      const index = findPluginIndex(plugin);
+      state.pluginList[index] = plugin;
     }
 
     /**
      * 删除插件
      * @param index
      */
-    function delPlugin() {
-      state.pluginList.splice(state.currentIndex, 1);
+    function delPlugin(plugin) {
+      const index = findPluginIndex(plugin);
+      state.pluginList.splice(index, 1);
       state.openDrawer = false;
     }
     /**

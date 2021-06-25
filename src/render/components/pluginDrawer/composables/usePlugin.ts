@@ -92,7 +92,7 @@ export default function usePlugin({
       message: '删除成功'
     });
 
-    emit('remove');
+    emit('remove', plugin);
   }
 
   /**

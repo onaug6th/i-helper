@@ -238,10 +238,10 @@ class DevService {
       publishVerson: plugin.version
     };
 
-    this.updatePluginInDbOrMemory(id, updateContent);
+    await this.updatePluginInDbOrMemory(id, updateContent);
 
     //  因为发布了插件，需要刷新插件的安装信息
-    pluginService.initPluginInstallInfo();
+    await pluginService.initPluginInstallInfo();
 
     return updateContent;
   }

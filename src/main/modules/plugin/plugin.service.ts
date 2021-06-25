@@ -62,19 +62,25 @@ class PluginService {
   setPluginInstallInfo() {
     const storePluginKeyMap = storeService.storePluginKeyMap;
 
-    this.pluginList.forEach(plugin => {
-      const storePlugin = storePluginKeyMap[plugin.id];
+    for (const id in storePluginKeyMap) {
+      const storePlugin = storePluginKeyMap[id];
 
-      //  本地安装的插件存在于商店
-      if (storePlugin) {
+      const installed = this.pluginList.find(plugin => plugin.id === id);
+
+      if (installed) {
         storePlugin.isDownload = true;
 
-        if (storePlugin.version > plugin.version) {
-          plugin.canUpdate = true;
+        if (storePlugin.version > installed.version) {
+          installed.canUpdate = true;
           storePlugin.canUpdate = true;
+        } else {
+          installed.canUpdate = false;
+          storePlugin.canUpdate = false;
         }
+      } else {
+        storePlugin.isDownload = false;
       }
-    });
+    }
   }
 
   /**

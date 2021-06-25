@@ -21,6 +21,16 @@
 
       <div class="plugin-list_item-right">
         <el-button
+          v-if="type === 'installed' || plugin.isDownload"
+          type="primary"
+          size="mini"
+          title="启动插件"
+          @click.stop="openPlugin(plugin)"
+        >
+          启动
+        </el-button>
+
+        <el-button
           v-if="type === 'store' && !plugin.isDownload"
           type="primary"
           icon="el-icon-download"
@@ -34,7 +44,7 @@
     </div>
   </div>
 
-  <Plugin-drawer v-model:visible="state.openDrawer" v-bind="$attrs" :plugin="currentPlugin" />
+  <Plugin-drawer v-model:visible="state.openDrawer" v-bind="$attrs" :type="type" :plugin="currentPlugin" />
 </template>
 
 <script lang="ts">
@@ -46,7 +56,8 @@ export default defineComponent({
     PluginDrawer
   },
   props: {
-    pluginList: Array
+    pluginList: Array,
+    type: String
   },
   setup(props) {
     const { proxy }: any = getCurrentInstance();
@@ -75,6 +86,14 @@ export default defineComponent({
     }
 
     /**
+     * 打开插件
+     * @param plugin
+     */
+    function openPlugin(plugin) {
+      proxy.$ipcClient('plugin-open', plugin.id);
+    }
+
+    /**
      * 下载插件
      */
     async function download() {
@@ -94,6 +113,7 @@ export default defineComponent({
     return {
       state,
       currentPlugin,
+      openPlugin,
 
       choosePlugin,
       download
