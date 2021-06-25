@@ -1,2 +1,4 @@
 import './universal/types/global.ts';
-import './main/index';
+import launchApp from './main/index';
+
+launchApp();
