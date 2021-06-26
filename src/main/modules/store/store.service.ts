@@ -60,16 +60,21 @@ class StoreService {
 
     const data = await pluginAPI.downloadPlugin('https://' + plugin.fileUrl);
 
-    const finish = new Promise(resolve => {
-      writer.on('finish', async () => {
-        await pluginService.installPlugin(zipPath);
+    const finish = () =>
+      new Promise(resolve => {
+        writer.on('finish', async () => {
+          try {
+            await pluginService.installPlugin(zipPath);
+          } catch (error) {
+            throw new Error(error);
+          }
 
-        resolve(true);
+          resolve(true);
+        });
       });
-    });
 
     data.pipe(writer);
-    await finish;
+    await finish();
   }
 }
 

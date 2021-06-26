@@ -95,9 +95,10 @@ export default defineComponent({
 
     /**
      * 下载插件
+     * @param plugin
      */
-    async function download() {
-      await proxy.$ipcClientLoading('store-download', currentPlugin.value.id);
+    async function download(plugin) {
+      await proxy.$ipcClientLoading('store-download', plugin.id);
 
       //  通知我的插件面板更新列表
       proxy.$eventBus.emit('installed-update');

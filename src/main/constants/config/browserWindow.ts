@@ -1,8 +1,6 @@
 //  通用窗体配置
 const commonOptions = {
   frame: false,
-  minWidth: 750,
-  minHeight: 600,
   width: 750,
   height: 600,
   webPreferences: {
@@ -15,14 +13,9 @@ const commonOptions = {
 const browserWindowOptions = {
   //  基础窗口配置
   main: {
+    minWidth: 750,
+    minHeight: 600,
     ...commonOptions
-  },
-  //  便笺窗口配置
-  note: {
-    ...commonOptions,
-    width: 290,
-    height: 350,
-    minWidth: 250
   },
   plugin: {
     ...commonOptions
