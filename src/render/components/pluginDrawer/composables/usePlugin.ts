@@ -5,7 +5,6 @@ export default function usePlugin({
   proxy,
   visibleModel,
   isDev,
-  isInstalled,
   emit,
   state
 }: {
@@ -13,7 +12,6 @@ export default function usePlugin({
   proxy: any;
   visibleModel: any;
   isDev: ComputedRef<boolean>;
-  isInstalled: ComputedRef<boolean>;
   emit: any;
   state: any;
 }): any {
@@ -82,17 +80,18 @@ export default function usePlugin({
     await proxy.$ipcClient(event, plugin.value.id);
     visibleModel.value = false;
 
-    //  更新商店面板
-    if (isInstalled.value) {
-      proxy.$eventBus.emit('store-plugin-update');
-    }
+    proxy.$eventBus.emit('installed-update');
+    proxy.$eventBus.emit('store-plugin-update');
 
     proxy.$notify({
       type: 'success',
       message: '删除成功'
     });
 
-    emit('remove', plugin);
+    //  更新商店面板
+    if (isDev.value) {
+      emit('remove', plugin);
+    }
   }
 
   /**

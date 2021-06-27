@@ -4,6 +4,8 @@ import { BrowserWindow, BrowserView } from 'electron';
 export interface PluginItem {
   //  窗体ID
   id: number;
+  //  视图ID
+  viewId: number;
   //  插件ID
   pluginId: string;
   //  窗体实例

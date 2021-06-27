@@ -7,20 +7,6 @@ import {
 } from './pluginWin';
 
 import DB from '@/main/dataBase/DB';
-import { PluginItem } from '../../window/types';
-
-/**
- * 根据发送窗体id获取插件信息
- * @param id
- * @returns
- */
-function getPluginBySenderId(id: number): PluginItem {
-  //  视图所属的插件窗体ID
-  const { pluginWinId } = windowService.viewWinMap[id];
-  //  插件窗体信息
-  const pluginWinItem = windowService.pluginWin[pluginWinId];
-  return pluginWinItem;
-}
 
 const appApi = {
   /**
@@ -38,6 +24,7 @@ const appApi = {
       isDev
     };
   },
+
   /**
    * 打开插件中创建的插件窗体
    * @param allInfo
@@ -84,7 +71,7 @@ const appApi = {
 
 ipcMain.on('plugin-app', (event, method, ...args) => {
   //  插件窗体信息
-  const pluginWinItem = getPluginBySenderId(event.sender.id);
+  const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
   let fatherViewId = null;
 
   for (const viewId in windowService.viewWinMap) {
@@ -143,7 +130,7 @@ const dbAPI = {
 //  插件——数据库
 ipcMain.on('plugin-db', async (event, method, ...args) => {
   //  插件窗体信息
-  const pluginWinItem = getPluginBySenderId(event.sender.id);
+  const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
 
   if (dbAPI[method]) {
     const pluginId = pluginWinItem.pluginId;
@@ -156,4 +143,26 @@ ipcMain.on('plugin-db', async (event, method, ...args) => {
 
     event.returnValue = await dbAPI[method](db, ...args);
   }
+});
+
+//  剪贴板模块及类型
+import { clipboard, nativeImage } from 'electron';
+
+const clipboardAPI = {
+  writeText(pluginWinItem, value) {
+    clipboard.writeText(value);
+  },
+  writeImage(pluginWinItem, value) {
+    clipboard.writeImage(nativeImage.createFromDataURL(value));
+  },
+  off() {
+    debugger;
+  }
+};
+
+ipcMain.on('plugin-clipboard', async (event, method, ...args) => {
+  //  插件窗体信息
+  const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
+
+  event.returnValue = clipboardAPI[method](pluginWinItem, ...args);
 });

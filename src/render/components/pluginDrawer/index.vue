@@ -172,7 +172,6 @@ export default defineComponent({
       proxy,
       visibleModel,
       isDev,
-      isInstalled,
       emit,
       state
     });

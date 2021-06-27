@@ -5,7 +5,7 @@ import { reactive, computed } from 'vue';
 //  剪贴板模块及类型
 import { clipboard, nativeImage } from 'electron';
 //  剪贴板观察者
-import clipboardObserver from '@render/utils/clipboardObserver';
+import clipboardObserver from '@/main/utils/clipboardObserver';
 //  剪贴板数据库
 import clipboardDB from '@/main/dataBase/clipboard.db';
 //  接口

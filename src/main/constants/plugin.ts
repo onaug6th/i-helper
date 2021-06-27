@@ -31,7 +31,9 @@ const pluginConfigKey = {
   //  说明书内容
   README_CONTENT: 'readmeContent',
   //  自定义窗体配置
-  WIN_OPTIONS: 'winOptions'
+  WIN_OPTIONS: 'winOptions',
+  //  权限集合
+  PERMISSIONS: 'permissions'
 };
 
 export { apisdk, pluginConfigKey };

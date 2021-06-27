@@ -3,11 +3,13 @@ import pluginDB from '@/main/dataBase/plugin.db';
 import compressing from 'compressing';
 import path from 'path';
 import * as utils from '@/render/utils';
-import * as fsUtils from '@/render/utils/fs';
+import * as fsUtils from '@/main/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 //  插件属性名称常量
 import { pluginConfigKey } from '@/main/constants/plugin';
 import storeService from '../store/store.service';
+import clipboardObserver from '@/main/utils/clipboardObserver';
+import windowService from '../window/window.service';
 
 /**
  * 项目内创建文件夹说明：
@@ -22,7 +24,13 @@ import storeService from '../store/store.service';
  */
 
 class PluginService {
+  //  插件列表
   pluginList: Array<any> = [];
+
+  //  剪贴板观察者
+  clipboardObserver;
+  //
+  clipboardPluginMap = {};
 
   async appOnReady(app) {
     await this.getPluginList();
@@ -178,6 +186,57 @@ class PluginService {
     this.setPluginInstallInfo();
 
     return result;
+  }
+
+  /**
+   * 监听剪贴板变化
+   * @param id
+   * @returns
+   */
+  clipboardWatch(id: string): void {
+    this.clipboardPluginMap[id] = true;
+
+    if (this.clipboardObserver) {
+      return;
+    }
+
+    this.clipboardObserver = clipboardObserver({
+      textChange: (value: string) => {
+        this.sendClipboardChange('text', value);
+      },
+      imageChange: (value: string) => {
+        this.sendClipboardChange('image', value);
+      }
+    });
+  }
+
+  clipboardOff(id): void {
+    id;
+  }
+
+  /**
+   *
+   * @param type 类型
+   * @param value 内容
+   */
+  sendClipboardChange(type: string, value: any) {
+    const findPluginViewId = (pluginId: string): any => windowService.findPluginById(pluginId).viewId;
+
+    let result: string;
+    if (type === 'image') {
+      result = value.toDataURL();
+    } else {
+      result = String(value);
+    }
+
+    for (const pluginId in this.clipboardPluginMap) {
+      const viewId = findPluginViewId(pluginId);
+      const browserViewItem = windowService.viewWinMap[viewId].browserViewItem;
+
+      browserViewItem.webContents.executeJavaScript(
+        `window.iHelper.clipboard.__cb__ && window.iHelper.clipboard.__cb__('${type}', '${result}')`
+      );
+    }
   }
 }
 

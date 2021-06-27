@@ -17,6 +17,14 @@ window.iHelper = {
   trigger(event, data) {
     iHelper.__cb__[event] && iHelper.__cb__[event](data);
   },
+  clipboard: {
+    on: fn => {
+      window.iHelper.clipboard.__cb__ = fn;
+    },
+    writeText: value => ipcRenderer.sendSync('plugin-clipboard', 'writeText', value),
+    writeImage: value => ipcRenderer.sendSync('plugin-clipboard', 'writeImage', value),
+    off: () => ipcRenderer.sendSync('plugin-clipboard', 'off')
+  },
   db: {
     paging: query => ipcRenderer.sendSync('plugin-db', 'paging', query),
     insert: doc => ipcRenderer.sendSync('plugin-db', 'insert', doc),

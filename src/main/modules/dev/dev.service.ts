@@ -3,7 +3,7 @@ import devPluginDB from '@/main/dataBase/devPlugin.db';
 //  插件属性名称常量
 import { pluginConfigKey } from '@/main/constants/plugin';
 import * as utils from '@/render/utils';
-import * as fsUtils from '@/render/utils/fs';
+import * as fsUtils from '@/main/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 import { publishURL } from '@/main/constants/url';
 import FormData from 'form-data';

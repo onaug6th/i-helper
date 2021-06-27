@@ -9,6 +9,7 @@ import devService from '@/main/modules/dev/dev.service';
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { apisdk, pluginConfigKey } from '@/main/constants/plugin';
 import { session, BrowserView } from 'electron';
+import * as utils from '@/render/utils';
 
 /**
  * 打开插件窗体
@@ -34,26 +35,35 @@ function openPluginWindow(
   //  插件是否多开
   const multiple = plugin[pluginConfigKey.MULTIPLE];
   //  已打开的插件ID
-  const isOpenPlugin = windowService.findPluginById(plugin[pluginConfigKey.ID]);
+  const isOpenPluginItem = windowService.findPluginById(plugin[pluginConfigKey.ID]);
 
   //  已拥有插件 且 非设置多开
-  if (isOpenPlugin && !multiple) {
-    windowService.findWindowById(isOpenPlugin.id).show();
+  if (isOpenPluginItem && !multiple) {
+    isOpenPluginItem.win.show();
   }
+
+  //  创建视图实例
+  const initResult = initBrowserView(plugin, browserViewUrl, isDev);
+  //  视图对象
+  let view = initResult.view;
+  //  挂载方法
+  const mount = initResult.mount;
 
   //  创建插件窗体
   const pluginWindow = windowService.createPluginBrowserWindow(
     pluginId,
+    view.webContents.id,
     Object.assign(browserWindowOptions.plugin, option),
     isDev,
     fatherId
   );
+  //  视图挂载到插件窗体中
+  mount(pluginWindow);
+
   //  插件窗体ID
   let pluginWinId = pluginWindow.id;
-  //  创建视图实例
-  let browserViewItem = initBrowserView(plugin, pluginWindow, browserViewUrl, isDev);
   //  视图ID
-  let browserViewId = browserViewItem.webContents.id;
+  let browserViewId = view.webContents.id;
 
   //  插件窗体关闭时，回收视图信息或回收子插件窗体
   pluginWindow.on('closed', () => {
@@ -77,17 +87,17 @@ function openPluginWindow(
     }
 
     if (global.isDev) {
-      browserViewItem.webContents.closeDevTools();
+      view.webContents.closeDevTools();
     }
 
     //  手动gc
-    browserViewItem = null;
+    view = null;
     pluginWinId = null;
     browserViewId = null;
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowService.viewWinMap[browserViewId] = { pluginWinId, browserViewItem };
+  windowService.viewWinMap[browserViewId] = { pluginWinId, browserViewItem: view };
 
   return {
     pluginWinId,
@@ -98,12 +108,11 @@ function openPluginWindow(
 /**
  * 生成插件视图
  * @param plugin
- * @param pluginWindow
  * @param browserViewUrl
  * @param isDev
  * @returns
  */
-function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserView {
+function initBrowserView(plugin, browserViewUrl, isDev): { view: BrowserView; mount: any } {
   //  创建插件会话
   const sessionItem = session.fromPartition(plugin[pluginConfigKey.NAME]);
   //  设置会话预加载文件
@@ -130,34 +139,41 @@ function initBrowserView(plugin, pluginWindow, browserViewUrl, isDev): BrowserVi
   const browserViewItem = new BrowserView({
     webPreferences
   });
-  //  获取插件窗体的大小
-  const { width: pluginWidth, height: pluginHeight } = pluginWindow.getBounds();
-  //  BrowserView挂载到插件窗口中
-  pluginWindow.setBrowserView(browserViewItem);
 
-  //  以下代码需在挂载后执行
+  /**
+   * 视图挂载
+   * @param pluginWindow
+   */
+  function mount(pluginWindow) {
+    //  获取插件窗体的大小
+    const { width: pluginWidth, height: pluginHeight } = pluginWindow.getBounds();
+    //  BrowserView挂载到插件窗口中
+    pluginWindow.setBrowserView(browserViewItem);
 
-  //  设置嵌入视图的位置
-  browserViewItem.setBounds({
-    x: 0,
-    //  头部栏高度固定为40
-    y: 40,
-    width: pluginWidth,
-    height: pluginHeight
-  });
-  //  设置视图自适应尺寸
-  browserViewItem.setAutoResize({ width: true, height: true });
-  //  加载页面资源
-  browserViewItem.webContents.loadURL(url);
+    //  以下代码需在挂载后执行
 
-  //  监听生命周期，打开开发者控制台
-  browserViewItem.webContents.on('dom-ready', () => {
-    if (global.isDev) {
-      browserViewItem.webContents.openDevTools();
-    }
-  });
+    //  设置嵌入视图的位置?
+    browserViewItem.setBounds({
+      x: 0,
+      //  头部栏高度固定为40
+      y: 40,
+      width: pluginWidth,
+      height: pluginHeight
+    });
+    //  设置视图自适应尺寸
+    browserViewItem.setAutoResize({ width: true, height: true });
+    //  加载页面资源
+    browserViewItem.webContents.loadURL(url);
 
-  return browserViewItem;
+    //  监听生命周期，打开开发者控制台
+    browserViewItem.webContents.on('dom-ready', () => {
+      if (global.isDev) {
+        browserViewItem.webContents.openDevTools();
+      }
+    });
+  }
+
+  return { view: browserViewItem, mount };
 }
 
 //  打开插件窗体
@@ -166,6 +182,11 @@ ipcMain.handle('plugin-open', (event, pluginId, isDev, fatherId) => {
   const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
   //  自定义窗体配置
   const winOptions = plugin[pluginConfigKey.WIN_OPTIONS];
+
+  if (utils.safeGet(plugin, `${pluginConfigKey.PERMISSIONS}.clipboard`)) {
+    pluginService.clipboardWatch(pluginId);
+  }
+
   //  打开插件窗体
   openPluginWindow(pluginId, winOptions, isDev, fatherId);
 });

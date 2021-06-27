@@ -99,6 +99,7 @@ class WindowService {
   /**
    * 创建插件窗口
    * @param pluginId
+   * @param viewId
    * @param option
    * @param isDev
    * @param fatherId
@@ -106,6 +107,7 @@ class WindowService {
    */
   createPluginBrowserWindow(
     pluginId: string,
+    viewId: number,
     option: BrowserWindowConstructorOptions,
     isDev = false,
     fatherId = null
@@ -116,6 +118,7 @@ class WindowService {
     this.addPluginWin(win.id, {
       id: win.id,
       pluginId,
+      viewId,
       win,
       isDev,
       fatherId
@@ -143,7 +146,7 @@ class WindowService {
    * @returns
    */
   findPluginById(pluginId: string): PluginItem {
-    return Object.values(this.pluginWin).find(plugin => plugin.pulginId === pluginId);
+    return Object.values(this.pluginWin).find(plugin => plugin.pluginId === pluginId);
   }
 
   /**
@@ -175,6 +178,19 @@ class WindowService {
   hideWindow(windowId: number): void {
     const win = this.findWindowById(windowId);
     win.hide();
+  }
+
+  /**
+   * 根据视图id获取插件信息
+   * @param id
+   * @returns
+   */
+  getPluginByViewId(id: number): PluginItem {
+    //  视图所属的插件窗体ID
+    const { pluginWinId } = this.viewWinMap[id];
+    //  插件窗体信息
+    const pluginWinItem = this.pluginWin[pluginWinId];
+    return pluginWinItem;
   }
 }
 

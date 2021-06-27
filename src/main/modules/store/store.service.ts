@@ -2,7 +2,7 @@ import * as pluginAPI from '@/main/api/plugin';
 import path from 'path';
 import fs from 'fs';
 import pluginService from '../plugin/plugin.service';
-import * as fsUtils from '@/render/utils/fs';
+import * as fsUtils from '@/main/utils/fs';
 
 class StoreService {
   pluginList: Array<any> = [];
