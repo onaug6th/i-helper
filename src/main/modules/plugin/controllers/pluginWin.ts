@@ -35,7 +35,7 @@ function openPluginWindow(
   //  插件是否多开
   const multiple = plugin[pluginConfigKey.MULTIPLE];
   //  已打开的插件ID
-  const isOpenPluginItem = windowService.findPluginById(plugin[pluginConfigKey.ID]);
+  const isOpenPluginItem = windowService.findPluginItemByPluginId(plugin[pluginConfigKey.ID]);
 
   //  已拥有插件 且 非设置多开
   if (isOpenPluginItem && !multiple) {
@@ -45,14 +45,14 @@ function openPluginWindow(
   //  创建视图实例
   const initResult = initBrowserView(plugin, browserViewUrl, isDev);
   //  视图对象
-  let view = initResult.view;
+  let viewItem = initResult.viewItem;
   //  挂载方法
   const mount = initResult.mount;
 
   //  创建插件窗体
   const pluginWindow = windowService.createPluginBrowserWindow(
     pluginId,
-    view.webContents.id,
+    viewItem.webContents.id,
     Object.assign(browserWindowOptions.plugin, option),
     isDev,
     fatherId
@@ -63,7 +63,7 @@ function openPluginWindow(
   //  插件窗体ID
   let pluginWinId = pluginWindow.id;
   //  视图ID
-  let browserViewId = view.webContents.id;
+  let browserViewId = viewItem.webContents.id;
 
   //  插件窗体关闭时，回收视图信息或回收子插件窗体
   pluginWindow.on('closed', () => {
@@ -87,17 +87,17 @@ function openPluginWindow(
     }
 
     if (global.isDev) {
-      view.webContents.closeDevTools();
+      viewItem.webContents.closeDevTools();
     }
 
     //  手动gc
-    view = null;
+    viewItem = null;
     pluginWinId = null;
     browserViewId = null;
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowService.viewWinMap[browserViewId] = { pluginWinId, browserViewItem: view };
+  windowService.viewWinMap[browserViewId] = { pluginWinId, viewItem };
 
   return {
     pluginWinId,
@@ -112,7 +112,7 @@ function openPluginWindow(
  * @param isDev
  * @returns
  */
-function initBrowserView(plugin, browserViewUrl, isDev): { view: BrowserView; mount: any } {
+function initBrowserView(plugin, browserViewUrl, isDev): { viewItem: BrowserView; mount: any } {
   //  创建插件会话
   const sessionItem = session.fromPartition(plugin[pluginConfigKey.NAME]);
   //  设置会话预加载文件
@@ -136,7 +136,7 @@ function initBrowserView(plugin, browserViewUrl, isDev): { view: BrowserView; mo
   }
 
   //  实例化 BrowserView
-  const browserViewItem = new BrowserView({
+  const viewItem = new BrowserView({
     webPreferences
   });
 
@@ -148,12 +148,12 @@ function initBrowserView(plugin, browserViewUrl, isDev): { view: BrowserView; mo
     //  获取插件窗体的大小
     const { width: pluginWidth, height: pluginHeight } = pluginWindow.getBounds();
     //  BrowserView挂载到插件窗口中
-    pluginWindow.setBrowserView(browserViewItem);
+    pluginWindow.setBrowserView(viewItem);
 
     //  以下代码需在挂载后执行
 
-    //  设置嵌入视图的位置?
-    browserViewItem.setBounds({
+    //  设置嵌入视图的位置
+    viewItem.setBounds({
       x: 0,
       //  头部栏高度固定为40
       y: 40,
@@ -161,19 +161,19 @@ function initBrowserView(plugin, browserViewUrl, isDev): { view: BrowserView; mo
       height: pluginHeight
     });
     //  设置视图自适应尺寸
-    browserViewItem.setAutoResize({ width: true, height: true });
+    viewItem.setAutoResize({ width: true, height: true });
     //  加载页面资源
-    browserViewItem.webContents.loadURL(url);
+    viewItem.webContents.loadURL(url);
 
     //  监听生命周期，打开开发者控制台
-    browserViewItem.webContents.on('dom-ready', () => {
+    viewItem.webContents.on('dom-ready', () => {
       if (global.isDev) {
-        browserViewItem.webContents.openDevTools();
+        viewItem.webContents.openDevTools();
       }
     });
   }
 
-  return { view: browserViewItem, mount };
+  return { viewItem, mount };
 }
 
 //  打开插件窗体

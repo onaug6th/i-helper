@@ -21,6 +21,8 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 //  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/main/constants/config/browserWindow';
 import { PluginItem, PluginWin, ViewWinMap } from './types';
+import * as utils from '@/render/utils';
+import pluginService from '../plugin/plugin.service';
 
 class WindowService {
   /**
@@ -81,7 +83,7 @@ class WindowService {
    * @param winId
    * @param data
    */
-  addPluginWin(winId: number, data: PluginItem) {
+  addPluginWin(winId: number, data: PluginItem): void {
     this.pluginWin[winId] = data;
   }
 
@@ -121,7 +123,8 @@ class WindowService {
       viewId,
       win,
       isDev,
-      fatherId
+      fatherId,
+      fatherViewId: utils.safeGet(this.findPluginItemByWindowId(fatherId), 'viewId', null)
     });
 
     return win;
@@ -136,8 +139,17 @@ class WindowService {
     if (windowId === 1) {
       return this.mainWindow;
     } else {
-      return this.pluginWin[windowId].win;
+      return this.findPluginItemByWindowId(windowId).win;
     }
+  }
+
+  /**
+   * 根据窗体ID获取插件窗体对象
+   * @param windowId
+   * @returns
+   */
+  findPluginItemByWindowId(windowId: number): PluginItem {
+    return this.pluginWin[windowId];
   }
 
   /**
@@ -145,7 +157,7 @@ class WindowService {
    * @param pluginId
    * @returns
    */
-  findPluginById(pluginId: string): PluginItem {
+  findPluginItemByPluginId(pluginId: string): PluginItem {
     return Object.values(this.pluginWin).find(plugin => plugin.pluginId === pluginId);
   }
 
@@ -153,10 +165,8 @@ class WindowService {
    * 从窗口对象中删除窗口
    * @param id
    */
-  deleteWindow(id: number) {
-    if (this.pluginWin[id]) {
-      delete this.pluginWin[id];
-    }
+  deleteWindow(id: number): void {
+    delete this.pluginWin[id];
   }
 
   /**
@@ -164,10 +174,26 @@ class WindowService {
    * @param windowId 窗体ID
    */
   closeWindow(windowId: number): void {
-    const win = this.findWindowById(windowId);
+    let win: BrowserWindow;
+
+    //  关闭的为主面板
+    if (windowId === 1) {
+      win = this.mainWindow;
+    }
+    //  关闭的窗体为插件窗体
+    else {
+      const pluginItem = this.findPluginItemByWindowId(windowId);
+      win = pluginItem.win;
+
+      //  执行窗体关闭后的某些回调
+      pluginService.clipboardOff(pluginItem.pluginId);
+    }
+
+    //  摧毁窗体（塔塔开，塔塔开！）
     if (!win.isDestroyed()) {
       win.destroy();
     }
+    //  移除内存中的窗体对象
     this.deleteWindow(windowId);
   }
 
@@ -181,7 +207,7 @@ class WindowService {
   }
 
   /**
-   * 根据视图id获取插件信息
+   * 根据视图id获取插件窗体信息
    * @param id
    * @returns
    */
@@ -189,8 +215,7 @@ class WindowService {
     //  视图所属的插件窗体ID
     const { pluginWinId } = this.viewWinMap[id];
     //  插件窗体信息
-    const pluginWinItem = this.pluginWin[pluginWinId];
-    return pluginWinItem;
+    return this.findPluginItemByWindowId(pluginWinId);
   }
 }
 

@@ -13,6 +13,8 @@ export interface PluginItem {
   isDev?: boolean;
   //  窗体的父窗体id
   fatherId?: number | null;
+  //  父窗体的视图ID
+  fatherViewId?: number | null;
 }
 
 export interface PluginWin {
@@ -25,6 +27,6 @@ export interface ViewWinMap {
   //  视图ID：窗体ID
   [propName: number]: {
     pluginWinId: number;
-    browserViewItem: BrowserView;
+    viewItem: BrowserView;
   };
 }

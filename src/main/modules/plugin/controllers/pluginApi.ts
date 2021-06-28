@@ -56,7 +56,7 @@ const appApi = {
     if (viewWinItem) {
       const dataArg = typeof data === 'object' ? JSON.stringify(data) : data;
 
-      viewWinItem.browserViewItem.webContents.executeJavaScript(`window.iHelper.trigger('${event}', ${dataArg})`);
+      viewWinItem.viewItem.webContents.executeJavaScript(`window.iHelper.trigger('${event}', ${dataArg})`);
     }
   },
 
@@ -72,24 +72,9 @@ const appApi = {
 ipcMain.on('plugin-app', (event, method, ...args) => {
   //  插件窗体信息
   const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
-  let fatherViewId = null;
-
-  for (const viewId in windowService.viewWinMap) {
-    const viewWinItem = windowService.viewWinMap[viewId];
-    if (viewWinItem.pluginWinId === pluginWinItem.fatherId) {
-      fatherViewId = Number(viewId);
-      break;
-    }
-  }
-
-  const allInfo = {
-    ...pluginWinItem,
-    viewId: event.sender.id,
-    fatherViewId
-  };
 
   if (appApi[method]) {
-    const result = appApi[method](allInfo, ...args);
+    const result = appApi[method](pluginWinItem, ...args);
     event.returnValue = result;
   }
 });

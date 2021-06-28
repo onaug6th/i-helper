@@ -10,6 +10,7 @@ import { pluginConfigKey } from '@/main/constants/plugin';
 import storeService from '../store/store.service';
 import clipboardObserver from '@/main/utils/clipboardObserver';
 import windowService from '../window/window.service';
+import { PluginItem } from '../window/types';
 
 /**
  * 项目内创建文件夹说明：
@@ -210,17 +211,26 @@ class PluginService {
     });
   }
 
-  clipboardOff(id): void {
-    id;
+  /**
+   * 移除剪贴板监听
+   * @param id
+   */
+  clipboardOff(id: string): void {
+    delete this.clipboardPluginMap[id];
+
+    if (!Object.keys(this.clipboardObserver).length) {
+      this.clipboardObserver.destroy();
+      this.clipboardObserver = null;
+    }
   }
 
   /**
-   *
+   * 发送剪贴板变化回调
    * @param type 类型
    * @param value 内容
    */
-  sendClipboardChange(type: string, value: any) {
-    const findPluginViewId = (pluginId: string): any => windowService.findPluginById(pluginId).viewId;
+  sendClipboardChange(type: string, value: any): void {
+    const findPluginItem = (pluginId: string): PluginItem => windowService.findPluginItemByPluginId(pluginId);
 
     let result: string;
     if (type === 'image') {
@@ -230,10 +240,13 @@ class PluginService {
     }
 
     for (const pluginId in this.clipboardPluginMap) {
-      const viewId = findPluginViewId(pluginId);
-      const browserViewItem = windowService.viewWinMap[viewId].browserViewItem;
+      const pluginItem = findPluginItem(pluginId);
+      if (!pluginItem) {
+        continue;
+      }
+      const viewItem = windowService.viewWinMap[pluginItem.viewId].viewItem;
 
-      browserViewItem.webContents.executeJavaScript(
+      viewItem.webContents.executeJavaScript(
         `window.iHelper.clipboard.__cb__ && window.iHelper.clipboard.__cb__('${type}', '${result}')`
       );
     }

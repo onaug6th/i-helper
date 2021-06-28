@@ -35,7 +35,7 @@ class AppStorageService {
     const allSetting = settings.getSync();
 
     //  存在配置数据
-    if (Object.keys(allSetting).length) {
+    if (Object.keys(allSetting).length && allSetting.setting) {
       this.data = allSetting;
     }
     //  不存在，设置默认应用数据
