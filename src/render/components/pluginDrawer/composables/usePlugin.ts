@@ -128,6 +128,21 @@ export default function usePlugin({
     await proxy.$ipcClient('dev-plugin-showInFolder', plugin.value.id);
   }
 
+  /**
+   * 更新json读取文件路径
+   */
+  async function updateJsonPath() {
+    const result = await proxy.$ipcClient('dev-plugin-updateJsonPath', plugin.value.id);
+    if (result) {
+      proxy.$notify({
+        type: 'success',
+        message: '修改json读取路径成功'
+      });
+    }
+
+    emit('reload', result);
+  }
+
   return {
     updatePlugin,
     openPlugin,
@@ -136,6 +151,7 @@ export default function usePlugin({
     confirmDel,
     publishConfirm,
     publish,
-    showInFolder
+    showInFolder,
+    updateJsonPath
   };
 }

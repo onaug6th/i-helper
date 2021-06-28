@@ -16,9 +16,9 @@ ipcMain.handle('dev-plugin-detail', (event, id) => {
   return devService.getPlugin(id);
 });
 
-//  更新开发者插件
+//  重载开发者插件
 ipcMain.handle('dev-plugin-reload', (event, id) => {
-  return devService.reloadPluginByJson(id);
+  return devService.reload(id);
 });
 
 //  打包开发者插件
@@ -39,4 +39,8 @@ ipcMain.handle('dev-plugin-publish', (event, id, auditDesc) => {
 //  资源文件夹中显示
 ipcMain.handle('dev-plugin-showInFolder', (event, id) => {
   return devService.showInFolder(id);
+});
+//  更新json读取文件路径
+ipcMain.handle('dev-plugin-updateJsonPath', (event, id) => {
+  return devService.updateJsonPath(id);
 });

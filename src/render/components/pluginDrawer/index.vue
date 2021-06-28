@@ -58,6 +58,7 @@
             <el-button plain type="primary" size="small" title="发布插件到插件商店" @click="publishConfirm">
               发布
             </el-button>
+
             <el-button
               type="success"
               size="small"
@@ -66,9 +67,15 @@
             >
               打包
             </el-button>
-            <el-button type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
+
+            <el-button plain type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
               重载插件
             </el-button>
+
+            <el-button type="warning" size="small" title="修改插件读取的json路径" @click="updateJsonPath">
+              修改插件路径
+            </el-button>
+
             <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
               文件夹中查看
             </el-button>
@@ -167,7 +174,17 @@ export default defineComponent({
       plugin
     );
 
-    const { updatePlugin, openPlugin, reload, build, confirmDel, publishConfirm, publish, showInFolder } = usePlugin({
+    const {
+      updatePlugin,
+      openPlugin,
+      reload,
+      build,
+      confirmDel,
+      publishConfirm,
+      publish,
+      showInFolder,
+      updateJsonPath
+    } = usePlugin({
       plugin,
       proxy,
       visibleModel,
@@ -194,7 +211,8 @@ export default defineComponent({
       confirmDel,
       publishConfirm,
       publish,
-      showInFolder
+      showInFolder,
+      updateJsonPath
     };
   }
 });

@@ -8,6 +8,7 @@ import * as pluginUtils from '@/main/utils/plugin';
 import { publishURL } from '@/main/constants/url';
 import FormData from 'form-data';
 import fs from 'fs';
+import { dialog } from 'electron';
 import pluginService from '../plugin/plugin.service';
 
 class DevService {
@@ -102,10 +103,20 @@ class DevService {
    * 重新加载开发者插件
    * @param id
    */
-  async reloadPluginByJson(id: string) {
+  async reload(id: string) {
     const plugin = this.getPlugin(id);
     const jsonPath = plugin[pluginConfigKey.JSON_PATH];
 
+    return this.reloadPluginByJsonFile(id, jsonPath);
+  }
+
+  /**
+   * 根据json文件路径重载插件信息
+   * @param id 插件ID
+   * @param jsonPath json文件路径
+   * @returns
+   */
+  async reloadPluginByJsonFile(id: string, jsonPath: string) {
     const { error, file } = await pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
@@ -116,7 +127,7 @@ class DevService {
       id,
       ...file
     };
-
+    //  异步操作，不需要等待，再争取点优化空间
     this.updatePluginInDbOrMemory(id, updateContent);
 
     return updateContent;
@@ -253,6 +264,29 @@ class DevService {
   showInFolder(id: string) {
     const plugin = this.getPlugin(id);
     fsUtils.showInFolder(plugin[pluginConfigKey.JSON_PATH]);
+  }
+
+  /**
+   * 更新插件的json读取文件路径
+   * @param id 插件ID
+   */
+  async updateJsonPath(id: string) {
+    const plugin = this.getPlugin(id);
+    const files = dialog.showOpenDialogSync({
+      defaultPath: plugin[pluginConfigKey.JSON_PATH],
+      properties: ['openFile'],
+      filters: [
+        {
+          name: 'json配置文件',
+          extensions: ['json']
+        }
+      ]
+    });
+
+    if (files) {
+      const jsonPath = files[0];
+      return await this.reloadPluginByJsonFile(id, jsonPath);
+    }
   }
 }
 
