@@ -43,10 +43,19 @@ class DevService {
       throw new Error(error);
     }
 
+    const fileId = file.id;
+    const id = fileId || utils.uuid();
+
     const result = await devPluginDB.insert({
-      id: utils.uuid(),
+      id,
       ...file
     });
+
+    if (!fileId) {
+      fsUtils.updateJson(jsonPath, {
+        id
+      });
+    }
 
     this.pluginList.push(result);
 
@@ -81,8 +90,6 @@ class DevService {
   async buildPlugin(id: string) {
     const plugin = this.getPlugin(id);
 
-    //  json文件路径
-    const jsonPath = plugin[pluginConfigKey.JSON_PATH];
     //  需要打包的文件夹
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     //  打包后的路径
@@ -90,13 +97,7 @@ class DevService {
 
     await fsUtils.buildDirTo({
       from: folderPath,
-      to: afterFolderPath,
-      updateConfig: {
-        jsonPath,
-        data: {
-          id
-        }
-      }
+      to: afterFolderPath
     });
   }
 
@@ -202,8 +203,6 @@ class DevService {
   async publish(id: string, auditDesc: string) {
     const plugin = this.getPlugin(id);
 
-    //  json文件路径
-    const jsonPath = plugin[pluginConfigKey.JSON_PATH];
     //  需要打包的文件夹路径
     const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
     //  打包后的路径
@@ -213,13 +212,13 @@ class DevService {
     const zipPath = await fsUtils.buildDirTo({
       from: folderPath,
       to: afterFolderPath,
-      explorer: false,
-      updateConfig: {
-        jsonPath,
-        data: {
-          id
-        }
-      }
+      explorer: false
+      // updateConfig: {
+      //   jsonPath,
+      //   data: {
+      //     //  此处可以更新发布插件json的文件内容
+      //   }
+      // }
     });
 
     const zip = fs.createReadStream(zipPath);

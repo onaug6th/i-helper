@@ -24,20 +24,54 @@ function getFileSize(filePath: string): Promise<number> {
 }
 
 /**
+ * 更新json文件内容
+ * @param path
+ * @param data
+ * @returns
+ */
+function updateJson(path: string, data: { [propName: string]: any }): Promise<boolean> {
+  return new Promise(resolve => {
+    fs.readFile(path, 'utf8', function(err, text) {
+      let result = JSON.parse(text);
+      result = {
+        ...result,
+        ...data
+      };
+
+      //  为打包的插件信息写入插件ID
+      fs.writeFile(path, JSON.stringify(result), 'utf8', function(err) {
+        if (err) {
+          throw new Error(err.message);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  });
+}
+
+/**
  * 更新插件json
  * @param to
  * @param param0
  * @returns
  */
-function updatePluginJson(to: string, { jsonPath, data }: { jsonPath: string; data: any }) {
+function updatePublishPluginJson(to: string, { jsonPath, data }: { jsonPath: string; data: any }) {
+  if (!data || !Object.keys(data).length) {
+    return;
+  }
+
   return new Promise(resolve => {
     const afterJsonPath = `${to}\\plugin.json`;
     fs.readFile(jsonPath, 'utf8', function(err, text) {
-      const config = JSON.parse(text);
-      config.id = data.id;
+      let result = JSON.parse(text);
+      result = {
+        ...result,
+        ...data
+      };
 
       //  为打包的插件信息写入插件ID
-      fs.writeFile(afterJsonPath, JSON.stringify(config), 'utf8', function(err) {
+      fs.writeFile(afterJsonPath, JSON.stringify(result), 'utf8', function(err) {
         if (err) {
           throw new Error(err.message);
         } else {
@@ -77,7 +111,7 @@ async function buildDirTo({
 
     //  存在内容复制后需要更新的配置
     if (updateConfig) {
-      await updatePluginJson(to, updateConfig);
+      await updatePublishPluginJson(to, updateConfig);
     }
 
     await compressing.zip.compressDir(to, zipPath);
@@ -135,31 +169,23 @@ async function copy(fromPath: string, toPath: string): Promise<any> {
   //  安全的创建文件夹
   await safeCreatedir(toPath);
 
-  return new Promise(resolve => {
-    fs.readdir(fromPath, function(err, paths) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      paths.forEach(function(item) {
-        const newFromPath = fromPath + '/' + item;
-        const newToPath = path.resolve(toPath + '/' + item);
+  const paths = fs.readdirSync(fromPath);
 
-        fs.stat(newFromPath, async function(err, stat) {
-          if (err) {
-            return;
-          }
-          if (stat.isFile()) {
-            copyFile(newFromPath, newToPath);
-          }
-          if (stat.isDirectory()) {
-            await copy(newFromPath, newToPath);
-          }
-        });
-        resolve(true);
-      });
-    });
-  });
+  for (let i = 0; i < paths.length; i++) {
+    const item = paths[i];
+    const newFromPath = fromPath + '/' + item;
+    const newToPath = path.resolve(toPath + '/' + item);
+
+    const stat = fs.statSync(newFromPath);
+    if (stat) {
+      if (stat.isFile()) {
+        copyFile(newFromPath, newToPath);
+      }
+      if (stat.isDirectory()) {
+        await copy(newFromPath, newToPath);
+      }
+    }
+  }
 }
 
 /**
@@ -184,4 +210,4 @@ function delDir(path: string): void {
   }
 }
 
-export { buildDirTo, copy, delDir, showInFolder, safeCreatedir, getFileSize };
+export { buildDirTo, copy, delDir, showInFolder, safeCreatedir, getFileSize, updateJson };

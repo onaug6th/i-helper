@@ -102,9 +102,6 @@
           <div class="info-list__item-mid">
             {{ plugin.sizeFormat }}
           </div>
-          <div class="info-list__item-bottom">
-            kb
-          </div>
         </div>
       </div>
       <!-- 列表信息 -->
