@@ -29,8 +29,8 @@ class PluginService {
   pluginList: Array<any> = [];
 
   //  剪贴板观察者
-  clipboardObserver;
-  //
+  clipboardObserver = null;
+  //  剪贴板插件注册集合
   clipboardPluginMap = {};
 
   async appOnReady(app) {
@@ -216,6 +216,9 @@ class PluginService {
    * @param id
    */
   clipboardOff(id: string): void {
+    if (!this.clipboardObserver) {
+      return;
+    }
     delete this.clipboardPluginMap[id];
 
     if (!Object.keys(this.clipboardObserver).length) {

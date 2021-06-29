@@ -3,6 +3,10 @@
     <div class="header-left"></div>
     <div class="header-center"></div>
     <div class="header-right">
+      <button v-if="isDevPluginWindow" class="icon" title="开发者工具" @click="toggleDevTools">
+        <i class="iconfont icon-code"></i>
+      </button>
+
       <button class="icon" :title="isAlwaysOnTop ? '取消置顶' : '窗口置顶'" @click="toggleOnTop">
         <i class="iconfont" :class="isAlwaysOnTop ? 'icon-pin-fill' : 'icon-pin'"></i>
       </button>
@@ -34,10 +38,13 @@ export default defineComponent({
   emits: ['close'],
   setup(props, { emit }) {
     const { proxy }: any = getCurrentInstance();
+
     const store = useStore();
     const { currentWindow, windowId, mainWindowId, setting } = store.getters;
 
-    const currentRouteName = ref(useRoute().name);
+    const route = useRoute();
+    const currentRouteName = ref(route.name);
+
     //  是否置顶
     const isAlwaysOnTop = ref(setting.isAlwaysOnTop);
     //  是否最大化
@@ -48,9 +55,21 @@ export default defineComponent({
       next();
     });
 
-    const isMain = computed(() => {
+    const isMainWindow = computed(() => {
       return windowId === mainWindowId;
     });
+
+    const isDevPluginWindow = computed(() => {
+      return currentRouteName.value === 'plugin' && route.query.isDev;
+    });
+
+    /**
+     * 切换开发者工具
+     */
+    function toggleDevTools() {
+      //  主界面置顶
+      proxy.$ipcClient('dev-plugin-devTools', windowId);
+    }
 
     /**
      * 切换置顶
@@ -59,7 +78,7 @@ export default defineComponent({
       const afterValue = !isAlwaysOnTop.value;
       isAlwaysOnTop.value = afterValue;
 
-      if (isMain.value) {
+      if (isMainWindow.value) {
         //  主界面置顶
         proxy.$ipcClient('browser-main-window-onTop', afterValue);
         //  更新vuex中的设置
@@ -98,19 +117,23 @@ export default defineComponent({
         await beforeClose();
       }
       if (windowId) {
-        const eventName = isMain.value ? 'browser-window-hide' : 'browser-window-close';
+        const eventName = isMainWindow.value ? 'browser-window-hide' : 'browser-window-close';
         proxy.$ipcClient(eventName, windowId);
       }
     }
 
     return {
-      currentRouteName,
-      close,
-      toggleOnTop,
-      minimize,
-      toggleFullScreen,
+      toggleDevTools,
+      isDevPluginWindow,
+
       isAlwaysOnTop,
-      isFullScreen
+      toggleOnTop,
+
+      minimize,
+      isFullScreen,
+      toggleFullScreen,
+
+      close
     };
   }
 });

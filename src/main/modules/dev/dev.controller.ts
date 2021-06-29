@@ -40,7 +40,13 @@ ipcMain.handle('dev-plugin-publish', (event, id, auditDesc) => {
 ipcMain.handle('dev-plugin-showInFolder', (event, id) => {
   return devService.showInFolder(id);
 });
+
 //  更新json读取文件路径
 ipcMain.handle('dev-plugin-updateJsonPath', (event, id) => {
   return devService.updateJsonPath(id);
+});
+
+//  更新json读取文件路径
+ipcMain.handle('dev-plugin-devTools', (event, windowId) => {
+  return devService.toggleDevTools(windowId);
 });

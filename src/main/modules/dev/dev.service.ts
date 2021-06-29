@@ -10,6 +10,7 @@ import FormData from 'form-data';
 import fs from 'fs';
 import { dialog } from 'electron';
 import pluginService from '../plugin/plugin.service';
+import windowService from '../window/window.service';
 
 class DevService {
   pluginList: Array<any> = [];
@@ -127,7 +128,7 @@ class DevService {
       id,
       ...file
     };
-    //  异步操作，不需要等待，再争取点优化空间
+    //  不需要等待，再争取点优化空间（没有时间浪费了！）
     this.updatePluginInDbOrMemory(id, updateContent);
 
     return updateContent;
@@ -176,16 +177,17 @@ class DevService {
             try {
               data = JSON.parse(Buffer.concat(bufferArr).toString());
             } catch (e) {
-              reject('上传失败');
+              return reject('上传失败');
             }
 
             if (!data) {
-              reject('上传失败');
+              return reject('上传失败');
             }
+
             if (data.success) {
-              resolve(true);
+              return resolve(true);
             } else {
-              reject(data.msg);
+              return reject(data.msg);
             }
           });
       });
@@ -287,6 +289,17 @@ class DevService {
       const jsonPath = files[0];
       return await this.reloadPluginByJsonFile(id, jsonPath);
     }
+  }
+
+  /**
+   * 切换打开开发者工具
+   * @param winId
+   */
+  toggleDevTools(winId: number) {
+    const viewId = windowService.pluginWin[winId].viewId;
+    const viewItem = windowService.viewWinMap[viewId].viewItem;
+
+    viewItem.webContents.toggleDevTools();
   }
 }
 
