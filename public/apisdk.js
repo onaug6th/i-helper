@@ -26,12 +26,11 @@ window.iHelper = {
     off: () => ipcRenderer.sendSync('plugin-clipboard', 'off')
   },
   db: {
-    paging: query => ipcRenderer.sendSync('plugin-db', 'paging', query),
     insert: doc => ipcRenderer.sendSync('plugin-db', 'insert', doc),
-    find: query => ipcRenderer.sendSync('plugin-db', 'find', query),
-    findAndSort: (query, sort) => ipcRenderer.sendSync('plugin-db', 'findAndSort', query, sort),
-    findOne: query => ipcRenderer.sendSync('plugin-db', 'findOne', query),
     remove: (query, options) => ipcRenderer.sendSync('plugin-db', 'remove', query, options),
-    update: (query, updateQuery, options) => ipcRenderer.sendSync('plugin-db', 'update', query, updateQuery, options)
+    update: (query, updateQuery, options) => ipcRenderer.sendSync('plugin-db', 'update', query, updateQuery, options),
+    find: (query, sort) => ipcRenderer.sendSync('plugin-db', 'find', query, sort),
+    findOne: query => ipcRenderer.sendSync('plugin-db', 'findOne', query),
+    paging: query => ipcRenderer.sendSync('plugin-db', 'paging', query)
   }
 };

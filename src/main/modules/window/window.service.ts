@@ -114,7 +114,7 @@ class WindowService {
     isDev = false,
     fatherId = null
   ): BrowserWindow {
-    const url = this.getWebUrl(`plugin?id=${pluginId}${isDev ? '&isDev' : ''}`);
+    const url = this.getWebUrl(`plugin?id=${pluginId}${isDev ? '&isDev=true' : ''}`);
     const win = this.createBrowserWindow({ option, url });
 
     this.addPluginWin(win.id, {

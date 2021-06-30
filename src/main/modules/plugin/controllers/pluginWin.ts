@@ -7,7 +7,7 @@ import pluginService from '@/main/modules/plugin/plugin.service';
 import devService from '@/main/modules/dev/dev.service';
 //  窗口配置，基础地址
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
-import { apisdk, pluginConfigKey } from '@/main/constants/plugin';
+import { apisdk, pluginConfigKey, scrollbarCSS } from '@/main/constants/plugin';
 import { session, BrowserView } from 'electron';
 import * as utils from '@/render/utils';
 
@@ -152,13 +152,15 @@ function initBrowserView(plugin, browserViewUrl, isDev): { viewItem: BrowserView
 
     //  以下代码需在挂载后执行
 
+    //  头部栏高度固定为40
+    const headerHeight = 40;
+
     //  设置嵌入视图的位置
     viewItem.setBounds({
       x: 0,
-      //  头部栏高度固定为40
-      y: 40,
+      y: headerHeight,
       width: pluginWidth,
-      height: pluginHeight
+      height: pluginHeight - headerHeight
     });
     //  设置视图自适应尺寸
     viewItem.setAutoResize({ width: true, height: true });
@@ -167,6 +169,9 @@ function initBrowserView(plugin, browserViewUrl, isDev): { viewItem: BrowserView
 
     //  监听生命周期，打开开发者控制台
     viewItem.webContents.on('dom-ready', () => {
+      //  注入滚动条样式
+      viewItem.webContents.insertCSS(scrollbarCSS);
+
       if (global.isDev) {
         viewItem.webContents.openDevTools();
       }

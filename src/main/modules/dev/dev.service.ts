@@ -176,7 +176,8 @@ class DevService {
           .on('end', () => {
             let data = null;
             try {
-              data = JSON.parse(Buffer.concat(bufferArr).toString());
+              const resStr = Buffer.concat(bufferArr).toString();
+              data = JSON.parse(resStr);
             } catch (e) {
               return reject('上传失败');
             }

@@ -48,24 +48,18 @@ class DB<T = any> {
    * @param param0
    * @returns
    */
-  paging({
-    pageNum = 0,
-    pageSize = 10,
-    sort = {
-      createdAt: -1
-    }
-  }: {
-    pageNum: number;
-    pageSize: number;
-    sort: any;
-  }): any {
+  paging(query: { pageNum: number; pageSize: number; desc: boolean }): any {
+    const { pageNum = 1, pageSize = 10, desc = true } = query || {};
+
     return new Promise(resolve => {
       this.$db
         .find({})
-        .sort(sort)
-        .skip(pageNum)
+        .sort({
+          createdAt: desc ? -1 : 1
+        })
+        .skip(pageNum * pageSize - pageSize)
         .limit(pageSize)
-        .exec(function(result) {
+        .exec(function(err, result) {
           resolve(result);
         });
     });
@@ -88,28 +82,12 @@ class DB<T = any> {
   }
 
   /**
-   * 寻找某项
-   * https://github.com/louischatriot/nedb#finding-documents
-   * @param query
-   * @returns
-   */
-  find(query: QueryDB<T> = {}): any {
-    return new Promise((resolve: (value: T[]) => void) => {
-      this.$db.find(query, (error: Error | null, document: T[]) => {
-        if (!error) {
-          resolve(document as T[]);
-        }
-      });
-    });
-  }
-
-  /**
    * 寻找某项并排序
    * @param query
    * @param sort
    * @returns
    */
-  findAndSort(query: QueryDB<T>, sort = { updatedAt: -1 }): any {
+  find(query: QueryDB<T>, sort = { updatedAt: -1 }): any {
     return new Promise(resolve => {
       this.$db
         .find(query)

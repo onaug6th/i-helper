@@ -90,17 +90,13 @@ const dbAPI = {
   insert(db: DB, doc) {
     return db.insert(doc);
   },
-  //  寻找多个
-  find(db: DB, query) {
-    return db.find(query);
+  //  寻找并排序
+  find(db: DB, query, sort) {
+    return db.find(query, sort);
   },
   //  寻找单个
   findOne(db: DB, query) {
     return db.findOne(query);
-  },
-  //  寻找并排序
-  findAndSort(db: DB, query, sort) {
-    return db.findAndSort(query, sort);
   },
   //  移除数据
   remove(db: DB, query, options) {
