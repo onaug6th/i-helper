@@ -29,8 +29,8 @@ window.iHelper = {
     insert: doc => ipcRenderer.sendSync('plugin-db', 'insert', doc),
     remove: (query, options) => ipcRenderer.sendSync('plugin-db', 'remove', query, options),
     update: (query, updateQuery, options) => ipcRenderer.sendSync('plugin-db', 'update', query, updateQuery, options),
-    find: (query, sort) => ipcRenderer.sendSync('plugin-db', 'find', query, sort),
+    find: (query, desc) => ipcRenderer.sendSync('plugin-db', 'find', query, desc),
     findOne: query => ipcRenderer.sendSync('plugin-db', 'findOne', query),
-    paging: query => ipcRenderer.sendSync('plugin-db', 'paging', query)
+    paging: (query, desc) => ipcRenderer.sendSync('plugin-db', 'paging', query, desc)
   }
 };

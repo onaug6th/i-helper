@@ -87,11 +87,11 @@ class DB<T = any> {
    * @param sort
    * @returns
    */
-  find(query: QueryDB<T>, sort = { updatedAt: -1 }): any {
+  find(query: QueryDB<T> = {}, desc = true): any {
     return new Promise(resolve => {
       this.$db
         .find(query)
-        .sort(sort)
+        .sort({ createdAt: desc ? -1 : 1 })
         .exec((e, d) => {
           resolve(d);
         });

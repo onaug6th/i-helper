@@ -50,13 +50,11 @@ const appApi = {
    * @param event
    * @param data
    */
-  communication: (allInfo, id: number, event: string, data: any): void => {
+  communication: (allInfo, id: number, event: string, ...data: any): void => {
     const viewWinItem = windowService.viewWinMap[id];
-
+    const argsStr = data.map(arg => JSON.stringify(arg)).join(',');
     if (viewWinItem) {
-      const dataArg = typeof data === 'object' ? JSON.stringify(data) : data;
-
-      viewWinItem.viewItem.webContents.executeJavaScript(`window.iHelper.trigger('${event}', ${dataArg})`);
+      viewWinItem.viewItem.webContents.executeJavaScript(`window.iHelper.trigger('${event}', ${argsStr})`);
     }
   },
 
