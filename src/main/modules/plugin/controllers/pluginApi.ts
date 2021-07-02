@@ -11,11 +11,11 @@ import DB from '@/main/dataBase/DB';
 const appApi = {
   /**
    * 获取窗体信息
-   * @param allInfo
+   * @param pluginWinItem
    * @returns
    */
-  winInfo: allInfo => {
-    const { pluginId, viewId, fatherViewId, isDev } = allInfo;
+  winInfo: pluginWinItem => {
+    const { pluginId, viewId, fatherViewId, isDev } = pluginWinItem;
 
     return {
       pluginId,
@@ -27,13 +27,13 @@ const appApi = {
 
   /**
    * 打开插件中创建的插件窗体
-   * @param allInfo
+   * @param pluginWinItem
    * @param browserViewUrl
    * @param option
    * @returns
    */
-  createBrowserWindow: (allInfo, browserViewUrl: string, option: any): number => {
-    const { pluginId, isDev, id } = allInfo;
+  createBrowserWindow: (pluginWinItem, browserViewUrl: string, option: any): number => {
+    const { pluginId, isDev, id } = pluginWinItem;
 
     //  无配置新开实例，会复用同样地址的window
     // if (!option.newInstance) {
@@ -45,12 +45,12 @@ const appApi = {
 
   /**
    * 插件窗体间通信
-   * @param allInfo
+   * @param pluginWinItem
    * @param id
    * @param event
    * @param data
    */
-  communication: (allInfo, id: number, event: string, ...data: any): void => {
+  communication: (pluginWinItem, id: number, event: string, ...data: any): void => {
     const viewWinItem = windowService.viewWinMap[id];
     const argsStr = data.map(arg => JSON.stringify(arg)).join(',');
     if (viewWinItem) {
@@ -60,10 +60,19 @@ const appApi = {
 
   /**
    * 关闭窗体
-   * @param allInfo
+   * @param pluginWinItem
    */
-  close: allInfo => {
-    windowService.closeWindow(allInfo.id);
+  close: pluginWinItem => {
+    windowService.closeWindow(pluginWinItem.id);
+  },
+
+  /**
+   * 设置插件窗体标题
+   * @param allInfo
+   * @param title
+   */
+  setTitle: (pluginWinItem, title: string) => {
+    pluginWinItem.win.webContents.send('plugin-update-title', title);
   }
 };
 

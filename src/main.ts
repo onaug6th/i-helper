@@ -24,3 +24,4 @@ app
 app.config.globalProperties.$eventBus = mitt();
 app.config.globalProperties.$ipcClient = ipcClient.normal;
 app.config.globalProperties.$ipcClientLoading = ipcClient.ipcClientLoading;
+app.config.globalProperties.$ipcClientOn = ipcClient.on;

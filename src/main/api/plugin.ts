@@ -1,4 +1,4 @@
-import { baseURL } from '../constants/url';
+import { baseURL, pluginURL } from '../constants/url';
 import httpClient from './httpClient';
 
 const pluginListURL = `${baseURL}/plugin/list`;
@@ -22,4 +22,13 @@ function downloadPlugin(url: string): Promise<any> {
   });
 }
 
-export { getPluginList, downloadPlugin };
+/**
+ * 根据id获取商店插件详情
+ * @param id
+ * @returns
+ */
+function getPlugin(id: string): Promise<any> {
+  return httpClient.get(`${pluginURL}/${id}`);
+}
+
+export { getPluginList, downloadPlugin, getPlugin };

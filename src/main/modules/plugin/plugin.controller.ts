@@ -9,6 +9,11 @@ ipcMain.handle('plugin-list', () => {
   return pluginService.pluginList;
 });
 
+//  从服务器中获取插件信息
+ipcMain.handle('plugin-detail-server', (event, id) => {
+  return pluginService.getPluginFromServer(id);
+});
+
 //  获取插件详情
 ipcMain.handle('plugin-detail', (event, id) => {
   return pluginService.getPlugin(id);

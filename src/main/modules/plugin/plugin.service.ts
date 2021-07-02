@@ -11,6 +11,7 @@ import storeService from '../store/store.service';
 import clipboardObserver from '@/main/utils/clipboardObserver';
 import windowService from '../window/window.service';
 import { PluginItem } from '../window/types';
+import * as pluginAPI from '@/main/api/plugin';
 
 /**
  * 项目内创建文件夹说明：
@@ -44,6 +45,14 @@ class PluginService {
         debugger;
       });
     });
+  }
+
+  /**
+   * 从服务器中获取插件信息
+   * @param id
+   */
+  async getPluginFromServer(id: string) {
+    return await pluginAPI.getPlugin(id);
   }
 
   /**

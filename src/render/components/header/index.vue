@@ -1,6 +1,8 @@
 <template>
   <header class="header">
-    <div class="header-left"></div>
+    <div class="header-left">
+      <span>{{ title }}</span>
+    </div>
     <div class="header-center"></div>
     <div class="header-right">
       <button v-if="isDevPluginWindow" class="icon" title="开发者工具" @click="toggleDevTools">
@@ -33,6 +35,7 @@ import { useStore } from 'vuex';
 
 export default defineComponent({
   props: {
+    title: String,
     beforeClose: Function
   },
   emits: ['close'],

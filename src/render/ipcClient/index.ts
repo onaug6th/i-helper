@@ -39,7 +39,8 @@ async function ipcClientLoading(showLoading: boolean, ...args: Array<any>): Prom
 
 const ipcClient = {
   normal: (...args): Promise<any> => ipcClientLoading(false, ...args),
-  ipcClientLoading: (...args): Promise<any> => ipcClientLoading(true, ...args)
+  ipcClientLoading: (...args): Promise<any> => ipcClientLoading(true, ...args),
+  on: (event: string, callback): any => ipcRenderer.on(event, callback)
 };
 
 export default ipcClient;

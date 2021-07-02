@@ -9,13 +9,14 @@ window.iHelper = {
   __cb__: {},
   getWinInfo: () => ipcRenderer.sendSync('plugin-app', 'winInfo'),
   createBrowserWindow: (url, options) => ipcRenderer.sendSync('plugin-app', 'createBrowserWindow', url, options),
-  send: (id, event, data) => ipcRenderer.send('plugin-app', 'communication', id, event, data),
+  send: (id, event, ...data) => ipcRenderer.send('plugin-app', 'communication', id, event, ...data),
   close: () => ipcRenderer.sendSync('plugin-app', 'close'),
+  setTitle: title => ipcRenderer.sendSync('plugin-app', 'setTitle', title),
   on(event, cb) {
     iHelper.__cb__[event] = cb;
   },
-  trigger(event, data) {
-    iHelper.__cb__[event] && iHelper.__cb__[event](data);
+  trigger(event, ...data) {
+    iHelper.__cb__[event] && iHelper.__cb__[event](...data);
   },
   clipboard: {
     on: fn => {
