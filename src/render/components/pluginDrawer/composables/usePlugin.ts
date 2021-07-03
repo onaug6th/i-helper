@@ -31,8 +31,8 @@ export default function usePlugin({
   /**
    * 打开插件
    */
-  function openPlugin() {
-    proxy.$ipcClient('plugin-open', plugin.value.id, isDev.value);
+  function pluginStart() {
+    proxy.$ipcClient('plugin-start', plugin.value.id, isDev.value);
     visibleModel.value = false;
   }
 
@@ -147,7 +147,7 @@ export default function usePlugin({
 
   return {
     updatePlugin,
-    openPlugin,
+    pluginStart,
     reload,
     build,
     confirmDel,

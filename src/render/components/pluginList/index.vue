@@ -25,7 +25,7 @@
           type="primary"
           size="mini"
           title="启动插件"
-          @click.stop="openPlugin(plugin)"
+          @click.stop="pluginStart(plugin)"
         >
           启动
         </el-button>
@@ -89,8 +89,8 @@ export default defineComponent({
      * 打开插件
      * @param plugin
      */
-    function openPlugin(plugin) {
-      proxy.$ipcClient('plugin-open', plugin.id);
+    function pluginStart(plugin) {
+      proxy.$ipcClient('plugin-start', plugin.id);
     }
 
     /**
@@ -114,7 +114,7 @@ export default defineComponent({
     return {
       state,
       currentPlugin,
-      openPlugin,
+      pluginStart,
 
       choosePlugin,
       download

@@ -1,17 +1,23 @@
-//  插件数据库
-import pluginDB from '@/main/dataBase/plugin.db';
 import compressing from 'compressing';
 import path from 'path';
+
+import pluginDB from '@/main/dataBase/plugin.db';
+
 import * as utils from '@/render/utils';
 import * as fsUtils from '@/main/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
-//  插件属性名称常量
-import { pluginConfigKey } from '@/main/constants/plugin';
+
 import storeService from '../store/store.service';
-import clipboardObserver from '@/main/utils/clipboardObserver';
 import windowService from '../window/window.service';
-import { PluginItem } from '../window/types';
+
+import clipboardObserver from '@/main/utils/clipboardObserver';
+
 import * as pluginAPI from '@/main/api/plugin';
+import { pluginConfigKey } from '@/main/constants/plugin';
+import { PluginItem } from '../window/types';
+
+import * as pluginApiService from './services/plugin-api.service';
+import * as pluginWinService from './services/plugin-win.service';
 
 /**
  * 项目内创建文件夹说明：
@@ -263,6 +269,11 @@ class PluginService {
       );
     }
   }
+
+  appApiHandler = pluginApiService.appApiHandler;
+  dbApiHandler = pluginApiService.dbApiHandler;
+  clipboardApiHandler = pluginApiService.clipboardApiHandler;
+  pluginStart = pluginWinService.pluginStart;
 }
 
 export default new PluginService();

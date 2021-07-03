@@ -8,7 +8,5 @@ ipcMain.handle('shortcutKey-get', () => {
 
 //  更新快捷键
 ipcMain.handle('shortcutKey-update', (event, data) => {
-  const { type, key } = data;
-
-  return shortcutKeyService.shortcutKeyUpdate(type, key);
+  return shortcutKeyService.shortcutKeyUpdate(data.keyType, data.keyValue);
 });

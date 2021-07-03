@@ -1,4 +1,4 @@
-import { ipcMain, WebPreferences, BrowserWindowConstructorOptions } from 'electron';
+import { WebPreferences, BrowserWindowConstructorOptions } from 'electron';
 //  窗体管理
 import windowService from '@/main/modules/window/window.service';
 //  插件管理
@@ -11,6 +11,11 @@ import { apisdk, pluginConfigKey, scrollbarCSS } from '@/main/constants/plugin';
 import { session, BrowserView } from 'electron';
 import * as utils from '@/render/utils';
 
+interface OpenPluginWindow {
+  pluginWinId: number;
+  viewId: number;
+}
+
 /**
  * 打开插件窗体
  * @param pluginId 插件ID
@@ -18,32 +23,32 @@ import * as utils from '@/render/utils';
  * @param url 窗体地址
  * @param isDev 是否开发模式
  * @param fatherId 窗体的父级窗体ID
- * @param browserViewUrl 视图地址
+ * @param viewUrl 视图地址
  */
 function openPluginWindow(
   pluginId: string,
   option: BrowserWindowConstructorOptions,
   isDev = false,
   fatherId = null,
-  browserViewUrl = ''
-): {
-  pluginWinId: number;
-  browserViewId: number;
-} {
+  viewUrl = ''
+): OpenPluginWindow {
   //  获取插件信息
   const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
-  //  插件是否多开
-  const multiple = plugin[pluginConfigKey.MULTIPLE];
   //  已打开的插件ID
   const isOpenPluginItem = windowService.findPluginItemByPluginId(plugin[pluginConfigKey.ID]);
 
-  //  已拥有插件 且 非设置多开
-  if (isOpenPluginItem && !multiple) {
+  //  已打开插件 且 不为主窗体
+  if (isOpenPluginItem && !fatherId) {
     isOpenPluginItem.win.show();
+
+    return {
+      pluginWinId: isOpenPluginItem.id,
+      viewId: isOpenPluginItem.viewId
+    };
   }
 
   //  创建视图实例
-  const initResult = initBrowserView(plugin, browserViewUrl, isDev);
+  const initResult = initBrowserView(plugin, viewUrl, isDev);
   //  视图对象
   let viewItem = initResult.viewItem;
   //  挂载方法
@@ -53,22 +58,23 @@ function openPluginWindow(
   const pluginWindow = windowService.createPluginBrowserWindow(
     pluginId,
     viewItem.webContents.id,
-    Object.assign(browserWindowOptions.plugin, option),
+    option,
     isDev,
     fatherId
   );
+
   //  视图挂载到插件窗体中
   mount(pluginWindow);
 
   //  插件窗体ID
   let pluginWinId = pluginWindow.id;
   //  视图ID
-  let browserViewId = viewItem.webContents.id;
+  let viewId = viewItem.webContents.id;
 
   //  插件窗体关闭时，回收视图信息或回收子插件窗体
   pluginWindow.on('closed', () => {
     //  从视图窗体映射中移除
-    delete windowService.viewWinMap[browserViewId];
+    delete windowService.viewWinMap[viewId];
 
     //  不存在fatherId，说明是主窗体，将全部子窗体关闭
     if (!fatherId) {
@@ -93,26 +99,26 @@ function openPluginWindow(
     //  手动gc
     viewItem = null;
     pluginWinId = null;
-    browserViewId = null;
+    viewId = null;
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowService.viewWinMap[browserViewId] = { pluginWinId, viewItem };
+  windowService.viewWinMap[viewId] = { pluginWinId, viewItem };
 
   return {
     pluginWinId,
-    browserViewId
+    viewId
   };
 }
 
 /**
  * 生成插件视图
  * @param plugin
- * @param browserViewUrl
+ * @param viewUrl
  * @param isDev
  * @returns
  */
-function initBrowserView(plugin, browserViewUrl, isDev): { viewItem: BrowserView; mount: any } {
+function initBrowserView(plugin, viewUrl: string, isDev: boolean): { viewItem: BrowserView; mount: any } {
   //  创建插件会话
   const sessionItem = session.fromPartition(plugin[pluginConfigKey.NAME]);
   //  设置会话预加载文件
@@ -120,7 +126,7 @@ function initBrowserView(plugin, browserViewUrl, isDev): { viewItem: BrowserView
   //  读取配置的对象
   const readObj = isDev ? plugin[pluginConfigKey.DEV] || plugin : plugin;
   //  优先使用传入的视图地址
-  const url = browserViewUrl || readObj[pluginConfigKey.MAIN];
+  const url = viewUrl || readObj[pluginConfigKey.MAIN];
 
   const webPreferences: WebPreferences = {
     //  启用NodeJS集成。
@@ -181,8 +187,17 @@ function initBrowserView(plugin, browserViewUrl, isDev): { viewItem: BrowserView
   return { viewItem, mount };
 }
 
-//  打开插件窗体
-ipcMain.handle('plugin-open', (event, pluginId, isDev, fatherId) => {
+/**
+ * 插件启动
+ * @param pluginId
+ * @param config
+ */
+function pluginStart(
+  pluginId: string,
+  config?: { isDev?: boolean; fatherId?: number | null; options?: any; viewUrl?: string }
+): OpenPluginWindow {
+  const { options = {}, isDev = false, fatherId = null, viewUrl = '' } = config || {};
+
   //  获取插件信息
   const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
   //  自定义窗体配置
@@ -193,7 +208,13 @@ ipcMain.handle('plugin-open', (event, pluginId, isDev, fatherId) => {
   }
 
   //  打开插件窗体
-  openPluginWindow(pluginId, winOptions, isDev, fatherId);
-});
+  return openPluginWindow(
+    pluginId,
+    Object.assign({}, browserWindowOptions.plugin, winOptions, options),
+    isDev,
+    fatherId,
+    viewUrl
+  );
+}
 
-export { openPluginWindow };
+export { pluginStart };

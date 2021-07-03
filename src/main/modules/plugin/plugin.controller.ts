@@ -1,8 +1,8 @@
 import { ipcMain } from 'electron';
 //  插件管理
 import pluginService from './plugin.service';
-import './controllers/pluginApi';
-import './controllers/pluginWin';
+import './controllers/plugin-api.controller';
+import './controllers/plugin-win.controller';
 
 //  获取插件列表
 ipcMain.handle('plugin-list', () => {

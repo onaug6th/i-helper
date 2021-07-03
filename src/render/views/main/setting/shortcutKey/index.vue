@@ -9,30 +9,34 @@
 
   <Key-Dialog
     v-model:visible="state.showDialog"
-    :type="state.keyType"
+    :keyType="state.keyType"
     :shortcutKey="getters.shortcutKey"
+    :updateFn="updateFn"
     @close="close"
   />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { state, openKeyDialog, close } from './hook';
 import { useStore } from 'vuex';
-import KeyDialog from './component/keyDialog/index.vue';
+import useHook from './hook';
+import KeyDialog from '@/render/components/keyDialog/index.vue';
 
 export default defineComponent({
+  name: 'shortcutKey',
   components: {
     KeyDialog
   },
   setup() {
     const store = useStore();
+    const { state, openKeyDialog, close, updateFn } = useHook(store);
 
     return {
       state,
       getters: store.getters,
       openKeyDialog,
-      close
+      close,
+      updateFn
     };
   }
 });

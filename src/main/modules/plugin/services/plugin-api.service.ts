@@ -1,12 +1,6 @@
-import { ipcMain } from 'electron';
-//  窗体管理
 import windowService from '@/main/modules/window/window.service';
-import {
-  //  打开插件窗体
-  openPluginWindow
-} from './pluginWin';
-
-import DB from '@/main/dataBase/DB';
+import pluginSevice from '../plugin.service';
+import { IpcMainEvent } from 'electron';
 
 const appApi = {
   /**
@@ -28,19 +22,23 @@ const appApi = {
   /**
    * 打开插件中创建的插件窗体
    * @param pluginWinItem
-   * @param browserViewUrl
+   * @param viewUrl
    * @param option
    * @returns
    */
-  createBrowserWindow: (pluginWinItem, browserViewUrl: string, option: any): number => {
+  createBrowserWindow: (pluginWinItem, viewUrl: string, options: any): number => {
     const { pluginId, isDev, id } = pluginWinItem;
 
     //  无配置新开实例，会复用同样地址的window
     // if (!option.newInstance) {
     // }
 
-    //  打开插件中创建的插件窗体
-    return openPluginWindow(pluginId, option, isDev, id, browserViewUrl).browserViewId;
+    return pluginSevice.pluginStart(pluginId, {
+      options,
+      isDev,
+      fatherId: id,
+      viewUrl
+    }).viewId;
   },
 
   /**
@@ -76,7 +74,7 @@ const appApi = {
   }
 };
 
-ipcMain.on('plugin-app', (event, method, ...args) => {
+function appApiHandler(event: IpcMainEvent, method: string, ...args: any[]): void {
   //  插件窗体信息
   const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
 
@@ -84,7 +82,9 @@ ipcMain.on('plugin-app', (event, method, ...args) => {
     const result = appApi[method](pluginWinItem, ...args);
     event.returnValue = result;
   }
-});
+}
+
+import DB from '@/main/dataBase/DB';
 
 const dbAPI = {
   //  插件数据库储存对象
@@ -115,8 +115,7 @@ const dbAPI = {
   }
 };
 
-//  插件——数据库
-ipcMain.on('plugin-db', async (event, method, ...args) => {
+async function dbApiHandler(event: IpcMainEvent, method: string, ...args: any[]): Promise<void> {
   //  插件窗体信息
   const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
 
@@ -131,9 +130,8 @@ ipcMain.on('plugin-db', async (event, method, ...args) => {
 
     event.returnValue = await dbAPI[method](db, ...args);
   }
-});
+}
 
-//  剪贴板模块及类型
 import { clipboard, nativeImage } from 'electron';
 
 const clipboardAPI = {
@@ -148,9 +146,11 @@ const clipboardAPI = {
   }
 };
 
-ipcMain.on('plugin-clipboard', async (event, method, ...args) => {
+function clipboardApiHandler(event: IpcMainEvent, method: string, ...args: any[]): void {
   //  插件窗体信息
   const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
 
   event.returnValue = clipboardAPI[method](pluginWinItem, ...args);
-});
+}
+
+export { appApiHandler, dbApiHandler, clipboardApiHandler };

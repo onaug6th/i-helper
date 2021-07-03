@@ -18,95 +18,101 @@
               更新
             </el-button>
 
-            <el-button v-if="showOpen" type="primary" size="mini" title="启动插件" @click="openPlugin">
+            <el-button v-if="showOpen" type="primary" size="mini" title="启动插件" @click="pluginStart">
               启动
             </el-button>
 
             <el-button v-if="showDelete" type="danger" size="mini" title="删除插件" @click="confirmDel">
               删除
             </el-button>
+
+            <i v-if="isInstalled" class="iconfont icon-set" title="插件设置" @click="toggleSetting"></i>
           </div>
         </div>
       </div>
       <!-- 插件基本信息 -->
 
-      <!-- 开发模式下独有信息 -->
-      <template v-if="isDev">
-        <div class="drawer-row">
-          <div class="drawer-row__title">
-            插件ID
+      <Plugin-setting v-if="state.showSetting" :plugin="plugin" />
+
+      <template v-else>
+        <!-- 开发模式下独有信息 -->
+        <template v-if="isDev">
+          <div class="drawer-row">
+            <div class="drawer-row__title">
+              插件ID
+            </div>
+            <div class="drawer-row__value" title="插件的唯一id">
+              {{ plugin.id }}
+            </div>
           </div>
-          <div class="drawer-row__value" title="插件的唯一id">
-            {{ plugin.id }}
+
+          <div class="drawer-row">
+            <div class="drawer-row__title">
+              插件路径
+            </div>
+            <div class="drawer-row__value" title="插件的文件路径">
+              {{ plugin.main }}
+            </div>
+          </div>
+
+          <div class="drawer-row">
+            <div class="drawer-row__title">
+              操作
+            </div>
+            <div class="drawer-row__content">
+              <el-button plain type="primary" size="small" title="发布插件到插件商店" @click="publishConfirm">
+                发布
+              </el-button>
+
+              <el-button
+                type="success"
+                size="small"
+                title="将插件打包为插件压缩包，压缩包能拖拽进入到面板中安装"
+                @click="build"
+              >
+                打包
+              </el-button>
+
+              <el-button plain type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
+                重载插件
+              </el-button>
+
+              <el-button type="warning" size="small" title="修改插件读取的json路径" @click="updateJsonPath">
+                修改插件路径
+              </el-button>
+
+              <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
+                文件夹中查看
+              </el-button>
+            </div>
+          </div>
+        </template>
+        <!-- 开发模式下独有信息 -->
+
+        <!-- 列表信息 -->
+        <div v-else class="drawer-row info-list">
+          <div class="info-list__item">
+            <div class="info-list__item-top">
+              开发者
+            </div>
+            <div class="info-list__item-mid">
+              官方
+            </div>
+          </div>
+
+          <div class="info-list__item">
+            <div class="info-list__item-top">
+              大小
+            </div>
+            <div class="info-list__item-mid">
+              {{ plugin.sizeFormat }}
+            </div>
           </div>
         </div>
+        <!-- 列表信息 -->
 
-        <div class="drawer-row">
-          <div class="drawer-row__title">
-            插件路径
-          </div>
-          <div class="drawer-row__value" title="插件的文件路径">
-            {{ plugin.main }}
-          </div>
-        </div>
-
-        <div class="drawer-row">
-          <div class="drawer-row__title">
-            操作
-          </div>
-          <div class="drawer-row__content">
-            <el-button plain type="primary" size="small" title="发布插件到插件商店" @click="publishConfirm">
-              发布
-            </el-button>
-
-            <el-button
-              type="success"
-              size="small"
-              title="将插件打包为插件压缩包，压缩包能拖拽进入到面板中安装"
-              @click="build"
-            >
-              打包
-            </el-button>
-
-            <el-button plain type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
-              重载插件
-            </el-button>
-
-            <el-button type="warning" size="small" title="修改插件读取的json路径" @click="updateJsonPath">
-              修改插件路径
-            </el-button>
-
-            <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
-              文件夹中查看
-            </el-button>
-          </div>
-        </div>
+        {{ plugin.readmeContent }}
       </template>
-      <!-- 开发模式下独有信息 -->
-
-      <!-- 列表信息 -->
-      <div v-else class="drawer-row info-list">
-        <div class="info-list__item">
-          <div class="info-list__item-top">
-            开发者
-          </div>
-          <div class="info-list__item-mid">
-            官方
-          </div>
-        </div>
-
-        <div class="info-list__item">
-          <div class="info-list__item-top">
-            大小
-          </div>
-          <div class="info-list__item-mid">
-            {{ plugin.sizeFormat }}
-          </div>
-        </div>
-      </div>
-      <!-- 列表信息 -->
-
-      {{ plugin.readmeContent }}
     </div>
   </el-drawer>
 
@@ -118,10 +124,12 @@ import { getCurrentInstance, defineComponent, computed, reactive } from 'vue';
 import useButton from './composables/useButton';
 import usePlugin from './composables/usePlugin';
 import PublishDialog from './components/publishDialog/index.vue';
+import PluginSetting from './components/pluginSetting/index.vue';
 
 export default defineComponent({
   components: {
-    PublishDialog
+    PublishDialog,
+    PluginSetting
   },
   props: {
     type: String,
@@ -147,7 +155,8 @@ export default defineComponent({
     });
 
     const state = reactive({
-      showDialog: false
+      showDialog: false,
+      showSetting: false
     });
 
     const isStore = computed(() => {
@@ -162,6 +171,10 @@ export default defineComponent({
       return props.type === 'installed';
     });
 
+    function toggleSetting() {
+      state.showSetting = !state.showSetting;
+    }
+
     const { showUpdate, showOpen, showDelete } = useButton(
       {
         isStore: isStore.value,
@@ -173,7 +186,7 @@ export default defineComponent({
 
     const {
       updatePlugin,
-      openPlugin,
+      pluginStart,
       reload,
       build,
       confirmDel,
@@ -202,14 +215,16 @@ export default defineComponent({
       showDelete,
 
       updatePlugin,
-      openPlugin,
+      pluginStart,
       reload,
       build,
       confirmDel,
       publishConfirm,
       publish,
       showInFolder,
-      updateJsonPath
+      updateJsonPath,
+
+      toggleSetting
     };
   }
 });

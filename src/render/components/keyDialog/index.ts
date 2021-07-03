@@ -5,7 +5,7 @@ import { mapActions } from 'vuex';
 export default {
   name: 'keyDialog',
   props: {
-    type: {
+    keyType: {
       type: String,
       default: ''
     },
@@ -22,8 +22,8 @@ export default {
     return {
       //  弹窗的展示控制
       dialogVisible: false,
-      //  实际提交的按钮文本
-      key: '',
+      //  实际提交的按键值
+      keyValue: '',
       //  展示的按键文本
       showText: '',
       //  用于记录按下的按键对象
@@ -32,7 +32,7 @@ export default {
   },
   watch: {
     visible() {
-      this.showText = this.key = this.shortcutKey[this.type];
+      this.showText = this.keyValue = this.shortcutKey[this.keyType];
     }
   },
   computed: {
@@ -83,7 +83,7 @@ export default {
         return prev;
       }, []);
 
-      this.key = this.showText = keysDetail.map(({ text }) => text).join('+');
+      this.keyValue = this.showText = keysDetail.map(({ text }) => text).join('+');
     },
 
     /**
@@ -99,8 +99,8 @@ export default {
      */
     async confirm() {
       const success = await this.$ipcClient('shortcutKey-update', {
-        type: this.type,
-        key: this.key
+        keyType: this.keyType,
+        keyValue: this.keyValue
       });
 
       if (success) {
@@ -109,11 +109,17 @@ export default {
           message: '设置成功'
         });
 
+        //  获取应用快捷键设置
         this.setShortcutKey();
+
         this.$emit('close');
         this.visibleModel = false;
       } else {
-        this.key = '';
+        this.$notify({
+          type: 'error',
+          message: '快捷键已被占用，设置失败'
+        });
+        this.keyValue = '';
         this.showText = '请重新键入';
       }
     }
