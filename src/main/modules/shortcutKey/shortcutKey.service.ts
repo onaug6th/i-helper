@@ -3,6 +3,8 @@ import windowService from '@/main/modules/window/window.service';
 import appStorageService from '@/main/modules/appStorage/appStorage.service';
 import pluginService from '@/main/modules/plugin/plugin.service';
 
+const isPluginType = (keyType: string) => keyType.includes('-');
+
 /**
  * 快捷键回调
  */
@@ -50,7 +52,19 @@ class ShortcutKeyService {
     this.shortcutKey = appStorageService.getData(this.storageName);
 
     for (const keyType in this.shortcutKey) {
-      globalShortcut.register(this.shortcutKey[keyType], shortcutCallback[keyType] || pluginOpenCallback(keyType));
+      const isPlugin = isPluginType(keyType);
+      let fn = shortcutCallback[keyType];
+
+      if (isPlugin) {
+        const pluginItem = windowService.findPluginItemByPluginId(keyType);
+        if (pluginItem) {
+          fn = pluginOpenCallback(keyType);
+        } else {
+          this.shortcutKeyUpdate(keyType, '');
+        }
+      }
+
+      globalShortcut.register(this.shortcutKey[keyType], fn);
     }
   }
 
@@ -65,6 +79,13 @@ class ShortcutKeyService {
     };
   }
 
+  setShortcutKeyData(keyType, keyValue) {
+    //  更新内存中的快捷键设置
+    this.shortcutKey[keyType] = keyValue;
+    //  更新全局设置数据
+    appStorageService.setData(`${this.storageName}.${keyType}`, keyValue);
+  }
+
   /**
    * 更新快捷键
    * @param keyType 按键操作类型
@@ -76,15 +97,16 @@ class ShortcutKeyService {
       globalShortcut.unregister(this.shortcutKey[keyType]);
     }
 
+    if (!keyValue) {
+      this.setShortcutKeyData(keyType, '');
+      return true;
+    }
+
     //  注册最新的快捷键
     globalShortcut.register(keyValue, shortcutCallback[keyType] || pluginOpenCallback(keyType));
-
     //  注册成功
     if (globalShortcut.isRegistered(keyValue)) {
-      //  更新内存中的快捷键设置
-      this.shortcutKey[keyType] = keyValue;
-      //  更新全局设置数据
-      appStorageService.setData(`${this.storageName}.${keyType}`, keyValue);
+      this.setShortcutKeyData(keyType, keyValue);
       return true;
     } else {
       return false;
