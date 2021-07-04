@@ -1,5 +1,7 @@
 const specialKeyCode = {
-  32: 'Space'
+  '32': 'Space'
 };
 
-export { specialKeyCode };
+const keysWords = ['16', '17', '18'];
+
+export { specialKeyCode, keysWords };

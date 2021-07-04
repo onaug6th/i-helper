@@ -4,7 +4,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="close">取 消</el-button>
-        <el-button type="primary" :disabled="!keyValue" @click="confirm">确 定</el-button>
+        <el-button type="primary" @click="confirm">确 定</el-button>
       </span>
     </template>
   </el-dialog>

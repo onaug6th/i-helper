@@ -17,12 +17,5 @@ export default function(store: { dispatch: (arg0: string) => void }): any {
     state.keyType = type;
   }
 
-  /**
-   * 关闭按键弹窗
-   */
-  function close(): void {
-    state.showDialog = false;
-  }
-
-  return { state, store, openKeyDialog, close };
+  return { state, store, openKeyDialog };
 }

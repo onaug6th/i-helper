@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { specialKeyCode } from './keyCode';
+import { keysWords, specialKeyCode } from './keyCode';
 import { mapActions } from 'vuex';
 
 export default {
@@ -72,18 +72,30 @@ export default {
 
       this.keys[event.keyCode] = key;
 
-      const keysDetail = Object.keys(this.keys).reduce((prev, code) => {
-        const text = specialKeyCode[code] || this.keys[code];
+      const keysDetail = Object.keys(this.keys).reduce((prev, keyCode) => {
+        const key = specialKeyCode[keyCode] || this.keys[keyCode];
 
         const keyDetail = {
-          code,
-          text
+          keyCode,
+          key
         };
         prev.push(keyDetail);
         return prev;
       }, []);
 
-      this.keyValue = this.showText = keysDetail.map(({ text }) => text).join('+');
+      /**
+       * 如果按键为如下内容
+       * 1. 全都为ctrl/shift/alt，没有其他键
+       * 不合法
+       */
+      const effective = keysDetail.some(keyItem => !keysWords.includes(keyItem.keyCode));
+
+      if (effective) {
+        this.keyValue = this.showText = keysDetail.map(({ key }) => key).join('+');
+      } else {
+        this.keyValue = '';
+        this.showText = '请继续键入';
+      }
     },
 
     /**

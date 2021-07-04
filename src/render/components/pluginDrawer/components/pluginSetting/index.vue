@@ -13,13 +13,7 @@
     </el-form>
   </div>
 
-  <Key-Dialog
-    v-model:visible="state.showDialog"
-    :shortcutKey="shortcutKey"
-    :keyType="state.keyType"
-    @confirm="confirm"
-    @close="close"
-  />
+  <Key-Dialog v-model:visible="state.showDialog" :shortcutKey="shortcutKey" :keyType="state.keyType" />
 </template>
 
 <script lang="ts">
