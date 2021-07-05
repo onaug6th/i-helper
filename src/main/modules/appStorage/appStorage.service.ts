@@ -58,7 +58,12 @@ class AppStorageService {
    * @param value
    */
   setData(path: string, value: any): void {
-    settings.setSync(path, value);
+    if (value === '') {
+      settings.setSync(path, value);
+    } else {
+      settings.unsetSync(path);
+    }
+
     this.setAppStorage();
   }
 }

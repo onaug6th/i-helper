@@ -4,46 +4,29 @@ import appStorageService from '@/main/modules/appStorage/appStorage.service';
 import pluginService from '@/main/modules/plugin/plugin.service';
 
 const isPluginType = (keyType: string) => keyType.includes('-');
-
-/**
- * 快捷键回调
- */
-const shortcutCallback = {
-  open: () => {
-    const mainWindow = windowService.mainWindow;
-    if (mainWindow.isVisible()) {
-      mainWindow.hide();
-    } else {
-      mainWindow.show();
-    }
-  }
-};
-
-/**
- * 插件快捷键打开
- * @param pluginId
- */
-function pluginOpenCallback(pluginId: string): any {
-  return function(): void {
-    const pluginItem = windowService.findPluginItemByPluginId(pluginId);
-
-    if (pluginItem) {
-      const pluginItemWin = pluginItem.win;
-      if (pluginItemWin.isVisible()) {
-        pluginItemWin.hide();
-      } else {
-        pluginItemWin.show();
-      }
-    } else {
-      pluginService.pluginStart(pluginId);
-    }
-  };
-}
-
 class ShortcutKeyService {
   storageName = 'shortcutKey';
 
   shortcutKey = {};
+
+  //  默认设置
+  defaultData = {
+    [this.storageName]: {
+      open: 'Ctrl+Space'
+    }
+  };
+
+  //  快捷键回调
+  shortcutCallback = {
+    open: () => {
+      const mainWindow = windowService.mainWindow;
+      if (mainWindow.isVisible()) {
+        mainWindow.hide();
+      } else {
+        mainWindow.show();
+      }
+    }
+  };
 
   /**
    * 应用初始化时执行
@@ -53,18 +36,20 @@ class ShortcutKeyService {
 
     for (const keyType in this.shortcutKey) {
       const isPlugin = isPluginType(keyType);
-      let fn = shortcutCallback[keyType];
+      let fn = this.shortcutCallback[keyType];
 
       if (isPlugin) {
         const pluginItem = windowService.findPluginItemByPluginId(keyType);
         if (pluginItem) {
-          fn = pluginOpenCallback(keyType);
+          fn = this.pluginOpenCallback.bind(this, keyType);
         } else {
           this.shortcutKeyUpdate(keyType, '');
         }
       }
 
-      globalShortcut.register(this.shortcutKey[keyType], fn);
+      if (fn) {
+        globalShortcut.register(this.shortcutKey[keyType], fn);
+      }
     }
   }
 
@@ -72,14 +57,42 @@ class ShortcutKeyService {
    * 注册应用储存初始化的数据
    */
   register() {
-    return {
-      [this.storageName]: {
-        open: 'Ctrl+Space'
-      }
-    };
+    return this.defaultData;
   }
 
-  setShortcutKeyData(keyType, keyValue) {
+  /**
+   * 插件快捷键打开
+   * @param pluginId
+   */
+  pluginOpenCallback(pluginId: string): any {
+    const pluginItem = pluginService.getPlugin(pluginId);
+
+    //  没有此插件，注销
+    if (!pluginItem) {
+      this.shortcutKeyUpdate(pluginId, '');
+      return;
+    }
+
+    const pluginWinItem = windowService.findPluginItemByPluginId(pluginId);
+
+    if (pluginWinItem) {
+      const pluginItemWin = pluginWinItem.win;
+      if (pluginItemWin.isVisible()) {
+        pluginItemWin.hide();
+      } else {
+        pluginItemWin.show();
+      }
+    } else {
+      pluginService.pluginStart(pluginId);
+    }
+  }
+
+  /**
+   * 设置快捷键内容及储存数据
+   * @param keyType
+   * @param keyValue
+   */
+  setShortcutKeyData(keyType: string, keyValue: string) {
     //  更新内存中的快捷键设置
     this.shortcutKey[keyType] = keyValue;
     //  更新全局设置数据
@@ -97,19 +110,19 @@ class ShortcutKeyService {
       globalShortcut.unregister(this.shortcutKey[keyType]);
     }
 
-    if (!keyValue) {
+    if (keyValue) {
+      //  注册最新的快捷键
+      globalShortcut.register(keyValue, this.shortcutCallback[keyType] || this.pluginOpenCallback.bind(this, keyType));
+      //  注册成功
+      if (globalShortcut.isRegistered(keyValue)) {
+        this.setShortcutKeyData(keyType, keyValue);
+        return true;
+      } else {
+        return false;
+      }
+    } else {
       this.setShortcutKeyData(keyType, '');
       return true;
-    }
-
-    //  注册最新的快捷键
-    globalShortcut.register(keyValue, shortcutCallback[keyType] || pluginOpenCallback(keyType));
-    //  注册成功
-    if (globalShortcut.isRegistered(keyValue)) {
-      this.setShortcutKeyData(keyType, keyValue);
-      return true;
-    } else {
-      return false;
     }
   }
 }

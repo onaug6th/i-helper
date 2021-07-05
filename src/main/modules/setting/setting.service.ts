@@ -2,13 +2,13 @@ import appStorageService from '@/main/modules/appStorage/appStorage.service';
 class SettingService {
   storageName = 'setting';
 
-  /**
-   * 默认设置
-   * @private
-   * @type {*}
-   * @memberof settingService
-   */
   settingData: any = {};
+
+  //  默认设置
+  defaultData = {
+    openAtLogin: false,
+    isAlwaysOnTop: false
+  };
 
   /**
    * 应用初始化时执行
@@ -30,10 +30,7 @@ class SettingService {
    */
   register() {
     return {
-      [this.storageName]: {
-        openAtLogin: false,
-        isAlwaysOnTop: false
-      }
+      [this.storageName]: this.defaultData
     };
   }
 
