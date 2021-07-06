@@ -39,8 +39,8 @@ class ShortcutKeyService {
       let fn = this.shortcutCallback[keyType];
 
       if (isPlugin) {
-        const pluginItem = windowService.findPluginItemByPluginId(keyType);
-        if (pluginItem) {
+        const pluginWinItem = windowService.getPluginWinItemByPluginId(keyType);
+        if (pluginWinItem) {
           fn = this.pluginOpenCallback.bind(this, keyType);
         } else {
           this.shortcutKeyUpdate(keyType, '');
@@ -65,22 +65,22 @@ class ShortcutKeyService {
    * @param pluginId
    */
   pluginOpenCallback(pluginId: string): any {
-    const pluginItem = pluginService.getPlugin(pluginId);
+    const plugin = pluginService.getPlugin(pluginId);
 
     //  没有此插件，注销
-    if (!pluginItem) {
+    if (!plugin) {
       this.shortcutKeyUpdate(pluginId, '');
       return;
     }
 
-    const pluginWinItem = windowService.findPluginItemByPluginId(pluginId);
+    const pluginWinItem = windowService.getPluginWinItemByPluginId(pluginId);
 
     if (pluginWinItem) {
-      const pluginItemWin = pluginWinItem.win;
-      if (pluginItemWin.isVisible()) {
-        pluginItemWin.hide();
+      const win = pluginWinItem.win;
+      if (win.isVisible()) {
+        win.hide();
       } else {
-        pluginItemWin.show();
+        win.show();
       }
     } else {
       pluginService.pluginStart(pluginId);

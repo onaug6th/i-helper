@@ -224,9 +224,9 @@ export default defineComponent({
 
     return {
       menuList,
-      menuTo,
       state,
       fileType,
+      menuTo,
       drop,
       drapOver,
       drapLeave,

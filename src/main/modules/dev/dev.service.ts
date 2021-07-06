@@ -296,8 +296,8 @@ class DevService {
    * @param winId
    */
   toggleDevTools(winId: number) {
-    const viewId = windowService.pluginWin[winId].viewId;
-    const viewItem = windowService.viewWinMap[viewId].viewItem;
+    const viewId = windowService.pluginWinItems[winId].viewId;
+    const viewItem = windowService.viewWins[viewId].viewItem;
 
     viewItem.webContents.toggleDevTools();
   }

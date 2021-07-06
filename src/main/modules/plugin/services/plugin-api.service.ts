@@ -1,6 +1,5 @@
 import windowService from '@/main/modules/window/window.service';
 import pluginSevice from '../plugin.service';
-import { IpcMainEvent } from 'electron';
 
 const appApi = {
   /**
@@ -8,7 +7,7 @@ const appApi = {
    * @param pluginWinItem
    * @returns
    */
-  winInfo: pluginWinItem => {
+  winInfo: (pluginWinItem: PluginWinItem) => {
     const { pluginId, viewId, fatherViewId, isDev } = pluginWinItem;
 
     return {
@@ -26,7 +25,7 @@ const appApi = {
    * @param option
    * @returns
    */
-  createBrowserWindow: (pluginWinItem, viewUrl: string, options: any): number => {
+  createBrowserWindow: (pluginWinItem: PluginWinItem, viewUrl: string, options: any): number => {
     const { pluginId, isDev, id } = pluginWinItem;
 
     //  无配置新开实例，会复用同样地址的window
@@ -48,8 +47,8 @@ const appApi = {
    * @param event
    * @param data
    */
-  communication: (pluginWinItem, id: number, event: string, ...data: any): void => {
-    const viewWinItem = windowService.viewWinMap[id];
+  communication: (pluginWinItem: PluginWinItem, id: number, event: string, ...data: any): void => {
+    const viewWinItem = windowService.viewWins[id];
     const argsStr = data.map(arg => JSON.stringify(arg)).join(',');
     if (viewWinItem) {
       viewWinItem.viewItem.webContents.executeJavaScript(`window.iHelper.trigger('${event}', ${argsStr})`);
@@ -60,7 +59,7 @@ const appApi = {
    * 关闭窗体
    * @param pluginWinItem
    */
-  close: pluginWinItem => {
+  close: (pluginWinItem: PluginWinItem) => {
     windowService.closeWindow(pluginWinItem.id);
   },
 
@@ -69,14 +68,20 @@ const appApi = {
    * @param allInfo
    * @param title
    */
-  setTitle: (pluginWinItem, title: string) => {
+  setTitle: (pluginWinItem: PluginWinItem, title: string) => {
     pluginWinItem.win.webContents.send('plugin-update-title', title);
   }
 };
 
-function appApiHandler(event: IpcMainEvent, method: string, ...args: any[]): void {
-  //  插件窗体信息
-  const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
+/**
+ * 插件应用api处理函数
+ * @param event
+ * @param method
+ * @param args
+ */
+function appApiHandler(event: Electron.IpcMainEvent, method: string, ...args: any[]): void {
+  //  插件窗体
+  const pluginWinItem = windowService.getPluginWinItemByViewId(event.sender.id);
 
   if (appApi[method]) {
     const result = appApi[method](pluginWinItem, ...args);
@@ -86,7 +91,12 @@ function appApiHandler(event: IpcMainEvent, method: string, ...args: any[]): voi
 
 import DB from '@/main/dataBase/DB';
 
-const dbAPI = {
+const dbAPI: {
+  pluginDb: {
+    [propsName: string]: DB;
+  };
+  [propsName: string]: any;
+} = {
   //  插件数据库储存对象
   pluginDb: {},
   //  分页查找
@@ -115,9 +125,15 @@ const dbAPI = {
   }
 };
 
-async function dbApiHandler(event: IpcMainEvent, method: string, ...args: any[]): Promise<void> {
-  //  插件窗体信息
-  const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
+/**
+ * 数据库api处理函数
+ * @param event
+ * @param method
+ * @param args
+ */
+async function dbApiHandler(event: Electron.IpcMainEvent, method: string, ...args: any[]): Promise<void> {
+  //  插件窗体
+  const pluginWinItem = windowService.getPluginWinItemByViewId(event.sender.id);
 
   if (dbAPI[method]) {
     const pluginId = pluginWinItem.pluginId;
@@ -135,20 +151,26 @@ async function dbApiHandler(event: IpcMainEvent, method: string, ...args: any[])
 import { clipboard, nativeImage } from 'electron';
 
 const clipboardAPI = {
-  writeText(pluginWinItem, value) {
+  writeText(pluginWinItem: PluginWinItem, value: string) {
     clipboard.writeText(value);
   },
-  writeImage(pluginWinItem, value) {
+  writeImage(pluginWinItem: PluginWinItem, value: string) {
     clipboard.writeImage(nativeImage.createFromDataURL(value));
   },
-  off() {
-    debugger;
+  off(pluginWinItem: PluginWinItem) {
+    pluginSevice.clipboardOff(pluginWinItem.pluginId);
   }
 };
 
-function clipboardApiHandler(event: IpcMainEvent, method: string, ...args: any[]): void {
-  //  插件窗体信息
-  const pluginWinItem = windowService.getPluginByViewId(event.sender.id);
+/**
+ * 剪贴板api处理函数
+ * @param event
+ * @param method
+ * @param args
+ */
+function clipboardApiHandler(event: Electron.IpcMainEvent, method: string, ...args: any[]): void {
+  //  插件窗体
+  const pluginWinItem = windowService.getPluginWinItemByViewId(event.sender.id);
 
   event.returnValue = clipboardAPI[method](pluginWinItem, ...args);
 }

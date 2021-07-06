@@ -24,6 +24,6 @@ ipcMain.handle('browser-main-window-onTop', (event, onTop) => {
 
 //  渲染进程间通信
 ipcMain.handle('browser-window-communication', (event, { windowId, params, eventName }) => {
-  const win = windowService.findWindowById(windowId);
+  const win = windowService.getWindowById(windowId);
   win.webContents.send(eventName, params);
 });

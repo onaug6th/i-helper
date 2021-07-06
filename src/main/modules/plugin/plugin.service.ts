@@ -14,7 +14,6 @@ import clipboardObserver from '@/main/utils/clipboardObserver';
 
 import * as pluginAPI from '@/main/api/plugin';
 import { pluginConfigKey } from '@/main/constants/plugin';
-import { PluginItem } from '../window/types';
 
 import * as pluginApiService from './services/plugin-api.service';
 import * as pluginWinService from './services/plugin-win.service';
@@ -206,11 +205,11 @@ class PluginService {
 
   /**
    * 监听剪贴板变化
-   * @param id
+   * @param pluginId
    * @returns
    */
-  clipboardWatch(id: string): void {
-    this.clipboardPluginMap[id] = true;
+  clipboardWatch(pluginId: string): void {
+    this.clipboardPluginMap[pluginId] = true;
 
     if (this.clipboardObserver) {
       return;
@@ -228,13 +227,13 @@ class PluginService {
 
   /**
    * 移除剪贴板监听
-   * @param id
+   * @param pluginId
    */
-  clipboardOff(id: string): void {
+  clipboardOff(pluginId: string): void {
     if (!this.clipboardObserver) {
       return;
     }
-    delete this.clipboardPluginMap[id];
+    delete this.clipboardPluginMap[pluginId];
 
     if (!Object.keys(this.clipboardObserver).length) {
       this.clipboardObserver.destroy();
@@ -248,7 +247,7 @@ class PluginService {
    * @param value 内容
    */
   sendClipboardChange(type: string, value: any): void {
-    const findPluginItem = (pluginId: string): PluginItem => windowService.findPluginItemByPluginId(pluginId);
+    const findPluginWin = (pluginId: string): PluginWinItem => windowService.getPluginWinItemByPluginId(pluginId);
 
     let result: string;
     if (type === 'image') {
@@ -258,11 +257,12 @@ class PluginService {
     }
 
     for (const pluginId in this.clipboardPluginMap) {
-      const pluginItem = findPluginItem(pluginId);
-      if (!pluginItem) {
+      const pluginWinItem = findPluginWin(pluginId);
+
+      if (!pluginWinItem) {
         continue;
       }
-      const viewItem = windowService.viewWinMap[pluginItem.viewId].viewItem;
+      const viewItem = windowService.viewWins[pluginWinItem.viewId].viewItem;
 
       viewItem.webContents.executeJavaScript(
         `window.iHelper.clipboard.__cb__ && window.iHelper.clipboard.__cb__('${type}', '${result}')`

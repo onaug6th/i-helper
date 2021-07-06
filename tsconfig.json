@@ -13,6 +13,9 @@
     "suppressImplicitAnyIndexErrors":true,
     "sourceMap": true,
     "baseUrl": ".",
+    "typeRoots": [
+      "src/main/types/*",
+    ],
     "types": [
       "webpack-env"
     ],

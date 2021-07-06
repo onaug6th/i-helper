@@ -7,8 +7,8 @@
         </el-button>
       </el-form-item>
 
-      <el-form-item label="插件数据">
-        1da2a2-sd12f-2asdf-fasdf
+      <el-form-item label="插件ID" class="select-text">
+        {{ plugin.id }}
       </el-form-item>
     </el-form>
   </div>
@@ -49,4 +49,6 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+@import './index.less';
+</style>

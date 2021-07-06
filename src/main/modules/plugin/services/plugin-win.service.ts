@@ -34,16 +34,16 @@ function openPluginWindow(
 ): OpenPluginWindow {
   //  获取插件信息
   const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
-  //  已打开的插件ID
-  const isOpenPluginItem = windowService.findPluginItemByPluginId(plugin[pluginConfigKey.ID]);
+  //  已打开的插件窗体
+  const isOpenPluginWin = windowService.getPluginWinItemByPluginId(plugin[pluginConfigKey.ID]);
 
   //  已打开插件 且 不为主窗体
-  if (isOpenPluginItem && !fatherId) {
-    isOpenPluginItem.win.show();
+  if (isOpenPluginWin && !fatherId) {
+    isOpenPluginWin.win.show();
 
     return {
-      pluginWinId: isOpenPluginItem.id,
-      viewId: isOpenPluginItem.viewId
+      pluginWinId: isOpenPluginWin.id,
+      viewId: isOpenPluginWin.viewId
     };
   }
 
@@ -74,18 +74,18 @@ function openPluginWindow(
   //  插件窗体关闭时，回收视图信息或回收子插件窗体
   pluginWindow.on('closed', () => {
     //  从视图窗体映射中移除
-    delete windowService.viewWinMap[viewId];
+    delete windowService.viewWins[viewId];
 
     //  不存在fatherId，说明是主窗体，将全部子窗体关闭
     if (!fatherId) {
-      const pluginWin = windowService.pluginWin;
+      const pluginWinItems = windowService.pluginWinItems;
 
-      for (const winId in pluginWin) {
-        const pluginWinItem = pluginWin[winId];
-        //  如插件窗体的fatherId为关闭窗体ID
-        const isFatherWin = pluginWinItem.fatherId === pluginWinId;
+      for (const winId in pluginWinItems) {
+        const pluginWinItem = pluginWinItems[winId];
+        //  如插件窗体的fatherId为本次关闭窗体ID
+        const isHisFatherWin = pluginWinItem.fatherId === pluginWinId;
 
-        if (isFatherWin) {
+        if (isHisFatherWin) {
           //  在插件窗体关闭后，会进入该窗体的 'close' 回调，进行回收视图
           windowService.closeWindow(pluginWinItem.id);
         }
@@ -103,7 +103,7 @@ function openPluginWindow(
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowService.viewWinMap[viewId] = { pluginWinId, viewItem };
+  windowService.viewWins[viewId] = { pluginWinId, viewItem, pluginId };
 
   return {
     pluginWinId,
@@ -178,7 +178,7 @@ function initBrowserView(plugin, viewUrl: string, isDev: boolean): { viewItem: B
       //  注入滚动条样式
       viewItem.webContents.insertCSS(scrollbarCSS);
 
-      if (global.isDev) {
+      if (isDev) {
         viewItem.webContents.openDevTools();
       }
     });
