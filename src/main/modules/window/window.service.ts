@@ -22,6 +22,7 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import { browserWindowOptions, winURL } from '@/main/constants/config/browserWindow';
 import * as utils from '@/render/utils';
 import pluginService from '../plugin/plugin.service';
+import { pluginConfigKey } from '@/main/constants/plugin';
 
 class WindowService {
   /**
@@ -113,8 +114,13 @@ class WindowService {
     isDev = false,
     fatherId = null
   ): BrowserWindow {
-    const url = this.getWebUrl(`plugin?id=${pluginId}${isDev ? '&isDev=true' : ''}`);
+    const plugin = pluginService.getPlugin(pluginId);
+    const url = this.getWebUrl(
+      `plugin?id=${pluginId}${isDev ? '&isDev=true' : ''}&title=${plugin[pluginConfigKey.NAME]}`
+    );
     const win = this.createBrowserWindow({ option, url });
+
+    win.setIcon(plugin[pluginConfigKey.LOGO_PATH]);
 
     this.addPluginWinItem(win.id, {
       id: win.id,

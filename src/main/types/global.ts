@@ -16,6 +16,8 @@ declare global {
       viewWins: any;
       //  下载文件夹路径
       downloadPath: string;
+      //  强制退出
+      forceQuit: boolean;
     }
   }
 }

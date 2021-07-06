@@ -33,14 +33,25 @@ export default function launchApp(): void {
   function createWindow() {
     win = windowService.createHomeBrowserWindow();
 
+    win.on('close', e => {
+      if (!global.forceQuit) {
+        e.preventDefault();
+        win.hide();
+      }
+    });
+
     if (!process.env.WEBPACK_DEV_SERVER_URL) {
       createProtocol('app');
     }
   }
 
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit();
+  app.on('window-all-closed', e => {
+    if (global.forceQuit) {
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+    } else {
+      e.preventDefault();
     }
   });
 

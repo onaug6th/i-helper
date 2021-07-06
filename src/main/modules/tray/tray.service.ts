@@ -1,4 +1,4 @@
-import { Menu, MenuItem, Tray } from 'electron';
+import { app, Menu, MenuItem, Tray } from 'electron';
 import path from 'path';
 import windowService from '@/main/modules/window/window.service';
 
@@ -8,7 +8,10 @@ const menus: Array<MenuItem> = [
   /* eslint-disable @typescript-eslint/ban-ts-comment */
   // @ts-ignore
   {
-    role: 'quit',
+    click() {
+      global.forceQuit = true;
+      app.quit();
+    },
     label: '退出'
   }
 ];

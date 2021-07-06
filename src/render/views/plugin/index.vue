@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts">
+import { useRoute } from 'vue-router';
 import Header from '@render/components/header/index.vue';
 import { defineComponent, getCurrentInstance, reactive } from 'vue';
 
@@ -14,11 +15,17 @@ export default defineComponent({
     Header
   },
   setup() {
-    let state = reactive({
+    const { proxy }: any = getCurrentInstance();
+    const state = reactive({
       //  窗体标题
       title: ''
     });
-    const { proxy }: any = getCurrentInstance();
+    const route = useRoute();
+    const { title } = route.query;
+
+    if (title) {
+      document.title = title as string;
+    }
 
     proxy.$ipcClientOn('plugin-update-title', (event, title) => {
       state.title = title;
