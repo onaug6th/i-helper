@@ -13,7 +13,6 @@ import windowService from '../window/window.service';
 import clipboardObserver from '@/main/utils/clipboardObserver';
 
 import * as pluginAPI from '@/main/api/plugin';
-import { pluginConfigKey } from '@/main/constants/plugin';
 
 import * as pluginApiService from './services/plugin-api.service';
 import * as pluginWinService from './services/plugin-win.service';
@@ -23,16 +22,11 @@ import * as pluginWinService from './services/plugin-win.service';
  * publishZips 发布时，插件的压缩包存放的文件夹
  * pluginPackages 插件安装后，插件文件夹存放的文件夹
  * pluginZips 插件安装后，插件压缩包存放的文件夹
- *
- * 插件部分自定义字段说明：
- * isDownload 是否已下载
- * canUpdate 允许更新
- * publishVerson dev中独有，已发布的版本号
  */
 
 class PluginService {
   //  插件列表
-  pluginList: Array<any> = [];
+  pluginList: Array<Plugin> = [];
 
   //  剪贴板观察者
   clipboardObserver = null;
@@ -56,7 +50,7 @@ class PluginService {
    * 从服务器中获取插件信息
    * @param id
    */
-  async getPluginFromServer(id: string) {
+  async getPluginFromServer(id: string): Promise<StorePlugin> {
     return await pluginAPI.getPlugin(id);
   }
 
@@ -111,7 +105,7 @@ class PluginService {
    * @param id
    * @returns
    */
-  getPlugin(id: string) {
+  getPlugin(id: string): Plugin {
     return this.pluginList.find(app => app.id === id);
   }
 
@@ -129,7 +123,7 @@ class PluginService {
     const index = this.pluginList.findIndex(plugin => plugin.id === id);
     this.pluginList.splice(index, 1);
 
-    const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
+    const folderPath = plugin.folderPath;
     fsUtils.delDir(folderPath);
 
     //  因为删除了插件，需要刷新插件的安装信息

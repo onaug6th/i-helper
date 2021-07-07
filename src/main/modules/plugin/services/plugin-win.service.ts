@@ -7,7 +7,7 @@ import pluginService from '@/main/modules/plugin/plugin.service';
 import devService from '@/main/modules/dev/dev.service';
 //  窗口配置，基础地址
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
-import { apisdk, pluginConfigKey, scrollbarCSS } from '@/main/constants/plugin';
+import { apisdk, scrollbarCSS } from '@/main/constants/plugin';
 import { session, BrowserView } from 'electron';
 import * as utils from '@/render/utils';
 
@@ -35,7 +35,7 @@ function openPluginWindow(
   //  获取插件信息
   const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
   //  已打开的插件窗体
-  const isOpenPluginWin = windowService.getPluginWinItemByPluginId(plugin[pluginConfigKey.ID]);
+  const isOpenPluginWin = windowService.getPluginWinItemByPluginId(plugin.id);
 
   //  已打开插件 且 不为主窗体
   if (isOpenPluginWin && !fatherId) {
@@ -56,7 +56,7 @@ function openPluginWindow(
 
   //  创建插件窗体
   const pluginWindow = windowService.createPluginBrowserWindow(
-    pluginId,
+    plugin,
     viewItem.webContents.id,
     option,
     isDev,
@@ -118,15 +118,15 @@ function openPluginWindow(
  * @param isDev
  * @returns
  */
-function initBrowserView(plugin, viewUrl: string, isDev: boolean): { viewItem: BrowserView; mount: any } {
+function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { viewItem: BrowserView; mount: any } {
   //  创建插件会话
-  const sessionItem = session.fromPartition(plugin[pluginConfigKey.NAME]);
+  const sessionItem = session.fromPartition(plugin.name);
   //  设置会话预加载文件
   sessionItem.setPreloads([apisdk]);
   //  读取配置的对象
-  const readObj = isDev ? plugin[pluginConfigKey.DEV] || plugin : plugin;
+  const readObj: PluginDevConfig | Plugin = isDev ? plugin.dev || plugin : plugin;
   //  优先使用传入的视图地址
-  const url = viewUrl || readObj[pluginConfigKey.MAIN];
+  const url = viewUrl || readObj.main;
 
   const webPreferences: WebPreferences = {
     //  启用NodeJS集成。
@@ -137,8 +137,8 @@ function initBrowserView(plugin, viewUrl: string, isDev: boolean): { viewItem: B
   };
 
   //  如插件存在预加载文件
-  if (plugin[pluginConfigKey.PRELOAD]) {
-    webPreferences.preload = readObj[pluginConfigKey.PRELOAD];
+  if (plugin.preload) {
+    webPreferences.preload = readObj.preload;
   }
 
   //  实例化 BrowserView
@@ -160,13 +160,21 @@ function initBrowserView(plugin, viewUrl: string, isDev: boolean): { viewItem: B
 
     //  头部栏高度固定为40
     const headerHeight = 40;
+    let y = headerHeight;
+    let height = pluginHeight - headerHeight;
+
+    //  无头部配置
+    if (plugin.noHeader) {
+      y = 0;
+      height = pluginHeight;
+    }
 
     //  设置嵌入视图的位置
     viewItem.setBounds({
       x: 0,
-      y: headerHeight,
+      y,
       width: pluginWidth,
-      height: pluginHeight - headerHeight
+      height
     });
     //  设置视图自适应尺寸
     viewItem.setAutoResize({ width: true, height: true });
@@ -175,8 +183,10 @@ function initBrowserView(plugin, viewUrl: string, isDev: boolean): { viewItem: B
 
     //  监听生命周期，打开开发者控制台
     viewItem.webContents.on('dom-ready', () => {
-      //  注入滚动条样式
-      viewItem.webContents.insertCSS(scrollbarCSS);
+      if (!plugin.noScrollbarCSS) {
+        //  注入滚动条样式
+        viewItem.webContents.insertCSS(scrollbarCSS);
+      }
 
       if (isDev) {
         viewItem.webContents.openDevTools();
@@ -201,9 +211,9 @@ function pluginStart(
   //  获取插件信息
   const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
   //  自定义窗体配置
-  const winOptions = plugin[pluginConfigKey.WIN_OPTIONS];
+  const winOptions = plugin.winOptions;
 
-  if (utils.safeGet(plugin, `${pluginConfigKey.PERMISSIONS}.clipboard`)) {
+  if (utils.safeGet(plugin, 'permissions.clipboard')) {
     pluginService.clipboardWatch(pluginId);
   }
 

@@ -1,7 +1,5 @@
 //  开发者插件数据库
 import devPluginDB from '@/main/dataBase/devPlugin.db';
-//  插件属性名称常量
-import { pluginConfigKey } from '@/main/constants/plugin';
 import * as utils from '@/render/utils';
 import * as fsUtils from '@/main/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
@@ -13,13 +11,13 @@ import pluginService from '../plugin/plugin.service';
 import windowService from '../window/window.service';
 
 class DevService {
-  pluginList: Array<any> = [];
+  pluginList: Array<Plugin> = [];
 
   /**
    * 在应用启动后执行的回调
    */
   async appOnReady() {
-    const data = await devPluginDB.find();
+    const data: Array<Plugin> = await devPluginDB.find();
     this.pluginList = data;
   }
 
@@ -36,7 +34,7 @@ class DevService {
    * @param jsonPath
    * @returns
    */
-  async addPlugin(jsonPath: string) {
+  async addPlugin(jsonPath: string): Promise<Plugin> {
     const { error, file } = await pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
@@ -79,7 +77,7 @@ class DevService {
    * @param id
    * @returns
    */
-  getPlugin(id: string) {
+  getPlugin(id: string): Plugin {
     return this.pluginList.find(plugin => plugin.id === id);
   }
 
@@ -91,7 +89,7 @@ class DevService {
     const plugin = this.getPlugin(id);
 
     //  需要打包的文件夹
-    const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
+    const folderPath = plugin.folderPath;
     //  打包后的路径
     const afterFolderPath = `${global.downloadPath}\\${plugin.id}`;
 
@@ -107,7 +105,7 @@ class DevService {
    */
   async reload(id: string) {
     const plugin = this.getPlugin(id);
-    const jsonPath = plugin[pluginConfigKey.JSON_PATH];
+    const jsonPath = plugin.jsonPath;
 
     return this.reloadPluginByJsonFile(id, jsonPath);
   }
@@ -205,7 +203,7 @@ class DevService {
     const plugin = this.getPlugin(id);
 
     //  需要打包的文件夹路径
-    const folderPath = plugin[pluginConfigKey.FOLDER_PATH];
+    const folderPath = plugin.folderPath;
     //  打包后的路径
     const afterFolderPath = `${global.rootPath}\\publishZips\\${id}`;
 
@@ -223,14 +221,14 @@ class DevService {
     });
 
     const zip = fs.createReadStream(zipPath);
-    const logo = fs.createReadStream(plugin[pluginConfigKey.LOGO_PATH]);
+    const logo = fs.createReadStream(plugin.logoPath);
     const body = {
       id,
-      name: plugin[pluginConfigKey.NAME],
-      version: plugin[pluginConfigKey.VERSION],
-      desc: plugin[pluginConfigKey.DESC],
+      name: plugin.name,
+      version: plugin.version,
+      desc: plugin.desc,
       auditDesc,
-      readmeContent: plugin[pluginConfigKey.README_CONTENT]
+      readmeContent: plugin.readmeContent
     };
 
     const formData = new FormData();
@@ -246,17 +244,12 @@ class DevService {
       throw new Error(error);
     }
 
-    const updateContent = {
-      ...plugin,
-      publishVerson: plugin.version
-    };
-
-    await this.updatePluginInDbOrMemory(id, updateContent);
+    await this.updatePluginInDbOrMemory(id, plugin);
 
     //  因为发布了插件，需要刷新插件的安装信息
     await pluginService.initPluginInstallInfo();
 
-    return updateContent;
+    return plugin;
   }
 
   /**
@@ -265,7 +258,7 @@ class DevService {
    */
   showInFolder(id: string) {
     const plugin = this.getPlugin(id);
-    fsUtils.showInFolder(plugin[pluginConfigKey.JSON_PATH]);
+    fsUtils.showInFolder(plugin.jsonPath);
   }
 
   /**
@@ -275,7 +268,7 @@ class DevService {
   async updateJsonPath(id: string) {
     const plugin = this.getPlugin(id);
     const files = dialog.showOpenDialogSync({
-      defaultPath: plugin[pluginConfigKey.JSON_PATH],
+      defaultPath: plugin.jsonPath,
       properties: ['openFile'],
       filters: [
         {

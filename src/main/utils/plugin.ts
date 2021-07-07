@@ -1,6 +1,4 @@
 import fs from 'fs';
-//  插件属性名称常量
-import { pluginConfigKey } from '@/main/constants/plugin';
 
 /**
  * 校验json文件是否合法
@@ -13,8 +11,8 @@ function validPluginJSON(jsonPath: string | any): string | undefined {
     file = jsonPath;
   }
 
-  const main = file[pluginConfigKey.MAIN];
-  const name = file[pluginConfigKey.NAME];
+  const main = file.main;
+  const name = file.name;
   let result: string;
 
   if (main) {
@@ -36,7 +34,7 @@ function validPluginJSON(jsonPath: string | any): string | undefined {
  * @param jsonPath
  * @returns
  */
-function getJSONFileData(jsonPath: string): any {
+function getJSONFileData(jsonPath: string): Plugin {
   const text = fs.readFileSync(jsonPath, 'utf8');
   return JSON.parse(text);
 }
@@ -69,18 +67,17 @@ function try2GetReadme(
  * @param obj
  * @param folderPath 文件目录路径
  */
-function pathCompletion(obj: any, folderPath: string): void {
-  const main = obj[pluginConfigKey.MAIN];
-  const preload = obj[pluginConfigKey.PRELOAD];
+function pathCompletion(obj: PluginDevConfig | Plugin, folderPath: string): void {
+  const { main, preload } = obj;
 
   //  入口文件，如不为 http 协议开头，补全文件夹目录加入口文件地址
   if (!main.startsWith('http')) {
-    obj[pluginConfigKey.MAIN] = `${folderPath}${main}`;
+    obj.main = `${folderPath}${main}`;
   }
 
   //  预加载js文件
   if (preload) {
-    obj[pluginConfigKey.PRELOAD] = `${folderPath}${preload}`;
+    obj.preload = `${folderPath}${preload}`;
   }
 }
 
@@ -102,29 +99,29 @@ async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; 
   //  文件夹路径
   const folderPath = jsonPath.replace('plugin.json', '');
   //  图标
-  const logo = file[pluginConfigKey.LOGO];
+  const logo = file.logo;
   //  插件图标路径
-  file[pluginConfigKey.LOGO_PATH] = `${folderPath}${logo}`;
+  file.logoPath = `${folderPath}${logo}`;
   //  补充协议
-  file[pluginConfigKey.LOGO] = `atom:///${file[pluginConfigKey.LOGO_PATH]}`;
+  file.logo = `atom:///${file.logoPath}`;
 
   //  补全路径
   pathCompletion(file, folderPath);
   //  存在开发者配置
-  if (file[pluginConfigKey.DEV]) {
+  if (file.dev) {
     //  补全dev的路径
-    pathCompletion(file[pluginConfigKey.DEV], folderPath);
+    pathCompletion(file.dev, folderPath);
   }
 
   //  json文件的路径
-  file[pluginConfigKey.JSON_PATH] = jsonPath;
+  file.jsonPath = jsonPath;
   //  文件夹路径（移除了最后的斜杠）
-  file[pluginConfigKey.FOLDER_PATH] = folderPath.slice(0, -1);
+  file.folderPath = folderPath.slice(0, -1);
 
   //  补全插件说明路径
   const readmeInfo = await try2GetReadme(folderPath);
-  file[pluginConfigKey.README_PATH] = readmeInfo.path;
-  file[pluginConfigKey.README_CONTENT] = readmeInfo.content;
+  file.readmePath = readmeInfo.path;
+  file.readmeContent = readmeInfo.content;
 
   return { file };
 }

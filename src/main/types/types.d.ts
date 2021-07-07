@@ -36,3 +36,167 @@ interface ViewWins {
   //  视图ID：窗体ID
   [propName: number]: ViewWin;
 }
+
+interface PluginDevConfig {
+  main: string;
+  preload?: string;
+}
+
+interface PluginWinOptions {
+  width: number;
+  height: number;
+  maxWidth: number;
+  maxHeight: number;
+}
+
+interface PluginPermissions {
+  /**
+   * 剪贴板
+   */
+  clipboard: boolean;
+}
+
+interface HeaderConfig {
+  btns?: Array<string>;
+}
+interface Plugin {
+  /**
+   * ID
+   */
+  id: string;
+  /**
+   * 版本号
+   */
+  version: string;
+  /**
+   * 名称
+   */
+  name: string;
+  /**
+   * LOGO
+   */
+  logo: string;
+  /**
+   * 描述
+   */
+  desc: string;
+  /**
+   * 主入口文件
+   */
+  main: string;
+
+  /**
+   * 开发模式配置
+   */
+  dev?: PluginDevConfig;
+  /**
+   * 是否多开
+   */
+  multiple?: boolean;
+  /**
+   * 预加载文件
+   */
+  preload?: string;
+  /**
+   * 是否不展示标题
+   */
+  noTitle?: boolean;
+  /**
+   * 是否不注入滚动条样式
+   */
+  noScrollbarCSS?: boolean;
+  /**
+   * 没有头部栏
+   */
+  noHeader?: boolean;
+  /**
+   * 头部栏配置
+   */
+  header?: HeaderConfig;
+  /**
+   * 窗体配置
+   */
+  winOptions?: PluginWinOptions;
+  /**
+   * 权限配置
+   */
+  permissions?: PluginPermissions;
+
+  /**
+   * 图标补全地址
+   */
+  logoPath?: string;
+  /**
+   * json文件补全地址
+   */
+  jsonPath?: string;
+  /**
+   * 插件文件夹补全地址
+   */
+  folderPath?: string;
+  /**
+   * readme补全地址
+   */
+  readmePath?: string;
+  /**
+   * readme内容
+   */
+  readmeContent?: string;
+
+  /**
+   * 是否允许更新
+   */
+  canUpdate?: boolean;
+}
+
+interface StorePlugin {
+  /**
+   * ID
+   */
+  id: string;
+  /**
+   * 版本号
+   */
+  version: string;
+  /**
+   * 名称
+   */
+  name: string;
+  /**
+   * 描述
+   */
+  desc: string;
+  /**
+   * readme内容
+   */
+  readmeContent: string;
+  /**
+   * 压缩包地址
+   */
+  fileUrl: string;
+  /**
+   * 作者ID
+   */
+  authorId: string;
+  /**
+   * logo地址
+   */
+  logo: string;
+  /**
+   * 压缩包大小（字节）
+   */
+  size: number;
+  /**
+   * 压缩包大小（格式化后的字符串）
+   */
+  sizeFormat: string;
+
+  /**
+   * 是否允许更新
+   */
+  canUpdate?: boolean;
+  /**
+   * 是否已下载
+   */
+  isDownload?: boolean;
+}

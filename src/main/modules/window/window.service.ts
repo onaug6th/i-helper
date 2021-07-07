@@ -15,14 +15,10 @@
  * 通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体
  * 新增插件窗体后。将插件窗体的 fatherId 指向 插件主窗体ID
  */
-
-//  创建窗口
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
-//  窗口配置，基础地址
 import { browserWindowOptions, winURL } from '@/main/constants/config/browserWindow';
-import * as utils from '@/render/utils';
 import pluginService from '../plugin/plugin.service';
-import { pluginConfigKey } from '@/main/constants/plugin';
+import * as utils from '@/render/utils';
 
 class WindowService {
   /**
@@ -88,7 +84,7 @@ class WindowService {
   }
 
   /**
-   * 创建主界面窗口
+   * 创建主界面窗体
    */
   createHomeBrowserWindow(): BrowserWindow {
     const url = this.getWebUrl();
@@ -99,7 +95,7 @@ class WindowService {
   }
 
   /**
-   * 创建插件窗口
+   * 创建插件窗体
    * @param pluginId
    * @param viewId
    * @param option
@@ -108,23 +104,37 @@ class WindowService {
    * @returns
    */
   createPluginBrowserWindow(
-    pluginId: string,
+    plugin: Plugin,
     viewId: number,
     option: BrowserWindowConstructorOptions,
     isDev = false,
     fatherId = null
   ): BrowserWindow {
-    const plugin = pluginService.getPlugin(pluginId);
-    const url = this.getWebUrl(
-      `plugin?id=${pluginId}${isDev ? '&isDev=true' : ''}&title=${plugin[pluginConfigKey.NAME]}`
-    );
+    const query: {
+      id?: string;
+      isDev?: boolean;
+    } = {
+      id: plugin.id
+    };
+
+    if (isDev) {
+      query.isDev = isDev;
+    }
+
+    const queryStr = utils.obj2Query(query);
+
+    const url = this.getWebUrl(`plugin?${queryStr}`);
     const win = this.createBrowserWindow({ option, url });
 
-    win.setIcon(plugin[pluginConfigKey.LOGO_PATH]);
+    const logo = plugin.logoPath;
+    const fileExtra = utils.getFileExtra(logo);
+    if (fileExtra !== 'gif') {
+      win.setIcon(logo);
+    }
 
     this.addPluginWinItem(win.id, {
       id: win.id,
-      pluginId,
+      pluginId: plugin.id,
       viewId,
       win,
       isDev,
@@ -197,7 +207,7 @@ class WindowService {
   }
 
   /**
-   * 从窗口对象中删除窗口
+   * 从窗体对象中删除窗体
    * @param id
    */
   deleteWindow(id: number): void {

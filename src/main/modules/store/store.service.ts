@@ -5,9 +5,9 @@ import pluginService from '../plugin/plugin.service';
 import * as fsUtils from '@/main/utils/fs';
 
 class StoreService {
-  pluginList: Array<any> = [];
+  pluginList: Array<StorePlugin> = [];
   //  插件ID/插件信息的映射对象
-  storePluginKeyMap: { [propName: string]: any } = {};
+  storePluginKeyMap: { [propName: string]: StorePlugin } = {};
 
   async appOnReady() {
     await this.getPluginList();
@@ -17,8 +17,8 @@ class StoreService {
    * 请求获取商店插件列表
    * @returns
    */
-  async getPluginList() {
-    this.pluginList = await pluginAPI.getPluginList();
+  async getPluginList(): Promise<void> {
+    this.pluginList = (await pluginAPI.getPluginList()) as Array<StorePlugin>;
 
     /**
      * 设置插件ID/插件信息的映射对象
@@ -37,7 +37,7 @@ class StoreService {
    * @param id
    * @returns
    */
-  getPlugin(id: string) {
+  getPlugin(id: string): StorePlugin {
     return this.storePluginKeyMap[id];
   }
 
