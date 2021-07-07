@@ -7,8 +7,8 @@
         <div v-if="state.currentFile.name" class="file-name">{{ state.currentFile.name }} {{ state.shadeText }}</div>
 
         <div class="operate">
-          <el-button v-if="fileType.isJson" type="primary" size="small" @click="addDev">添加到开发者插件</el-button>
-          <el-button v-if="fileType.isZip" type="primary" size="small" @click="install">安装插件</el-button>
+          <el-button v-if="fileExtra.isJson" type="primary" size="small" @click="addDev">添加到开发者插件</el-button>
+          <el-button v-if="fileExtra.isZip" type="primary" size="small" @click="install">安装插件</el-button>
         </div>
       </div>
     </div>
@@ -57,6 +57,7 @@
 import { getCurrentInstance, defineComponent, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Header from '@render/components/header/index.vue';
+import * as utils from '@/render/utils';
 
 export default defineComponent({
   name: 'main',
@@ -111,7 +112,7 @@ export default defineComponent({
       }
     ];
 
-    const fileType = computed(() => {
+    const fileExtra = computed(() => {
       const type = state.currentFile.type;
       return {
         isJson: type === 'json',
@@ -146,11 +147,9 @@ export default defineComponent({
 
       if (files.length === 1) {
         const fileName = files[0].name;
-        const reg = /([^\\/]+)\.([^\\/]+)/i;
-        reg.test(fileName);
-        const fileType = RegExp.$2;
+        const fileExtra = utils.getFileExtra(fileName);
 
-        switch (fileType) {
+        switch (fileExtra) {
           case 'json': {
             if (fileName === 'plugin.json') {
               state.currentFile = {
@@ -225,7 +224,7 @@ export default defineComponent({
     return {
       menuList,
       state,
-      fileType,
+      fileExtra,
       menuTo,
       drop,
       drapOver,

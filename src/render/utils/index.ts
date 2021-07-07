@@ -120,3 +120,43 @@ export function byteConvert(bytes: number): string {
   }
   return r + symbols[biteIndex];
 }
+
+/**
+ * 获取文件扩展名
+ * @param fileName
+ * @returns
+ */
+export function getFileExtra(fileName: string): string {
+  const reg = /([^\\/]+)\.([^\\/]+)/i;
+  reg.test(fileName);
+  return RegExp.$2;
+}
+
+/**
+ * 对象转query
+ * @param {*} obj
+ */
+export function obj2Query(obj: unknown): string {
+  return Object.keys(obj).reduce((prev, current, index) => {
+    if (obj[current] !== '' && obj[current] !== undefined) {
+      prev += `${!index ? '' : '&'}${current}=${obj[current]}`;
+    }
+    return prev;
+  }, '');
+}
+
+/**
+ * query转对象
+ * @param {*} obj
+ */
+export function query2Obj(url: string): any {
+  url = url || location.href;
+  return url
+    .substr(url.indexOf('?') + 1)
+    .split('&')
+    .reduce(function(prev, current) {
+      const queryArr = current.split('=');
+      prev[queryArr[0]] = queryArr[1];
+      return prev;
+    }, {});
+}

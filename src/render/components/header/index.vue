@@ -5,38 +5,48 @@
     </div>
     <div class="header-center"></div>
     <div class="header-right">
-      <button v-if="isDevPluginWindow" class="icon" title="开发者工具" @click="toggleDevTools">
+      <button v-if="isDev" class="icon" title="开发者工具" @click="toggleDevTools">
         <i class="iconfont icon-code"></i>
       </button>
 
-      <button class="icon" :title="isAlwaysOnTop ? '取消置顶' : '窗口置顶'" @click="toggleOnTop">
-        <i class="iconfont" :class="isAlwaysOnTop ? 'icon-pin-fill' : 'icon-pin'"></i>
+      <button
+        v-if="hasBtn('pin')"
+        class="icon"
+        :title="state.isAlwaysOnTop ? '取消置顶' : '窗口置顶'"
+        @click="toggleOnTop"
+      >
+        <i class="iconfont" :class="state.isAlwaysOnTop ? 'icon-pin-fill' : 'icon-pin'"></i>
       </button>
 
-      <button class="icon" title="最小化" @click="minimize">
-        <i class="iconfont icon-minus"></i>
-      </button>
+      <template v-if="hasBtn('resize')">
+        <button class="icon" title="最小化" @click="minimize">
+          <i class="iconfont icon-minus"></i>
+        </button>
 
-      <button class="icon" :title="isFullScreen ? '向下还原' : '最大化'" @click="toggleFullScreen">
-        <i class="iconfont" :class="isFullScreen ? 'icon-fullscreen-shrink' : 'icon-fullscreen-expand'"></i>
-      </button>
+        <button class="icon" :title="state.isFullScreen ? '向下还原' : '最大化'" @click="toggleFullScreen">
+          <i class="iconfont" :class="state.isFullScreen ? 'icon-fullscreen-shrink' : 'icon-fullscreen-expand'"></i>
+        </button>
+      </template>
 
-      <button class="icon close-window" @click="close" title="关闭">
-        <i class="iconfont icon-close"></i>
-      </button>
+      <template v-if="hasBtn('close')">
+        <button class="icon close-window" @click="close" title="关闭">
+          <i class="iconfont icon-close"></i>
+        </button>
+      </template>
     </div>
   </header>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, getCurrentInstance } from 'vue';
-import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { defineComponent, reactive, getCurrentInstance, computed } from 'vue';
 import { useStore } from 'vuex';
 
 export default defineComponent({
   props: {
     title: String,
-    beforeClose: Function
+    beforeClose: Function,
+    isDev: Boolean,
+    btns: Array
   },
   emits: ['close'],
   setup(props, { emit }) {
@@ -45,26 +55,26 @@ export default defineComponent({
     const store = useStore();
     const { currentWindow, windowId, mainWindowId, setting } = store.getters;
 
-    const route = useRoute();
-    const currentRouteName = ref(route.name);
-
-    //  是否置顶
-    const isAlwaysOnTop = ref(setting.isAlwaysOnTop);
-    //  是否最大化
-    const isFullScreen = ref(false);
-
-    onBeforeRouteUpdate((to, from, next) => {
-      currentRouteName.value = to.name;
-      next();
+    const state = reactive({
+      //  是否主面板
+      isMainWindow: windowId === mainWindowId,
+      //  是否置顶
+      isAlwaysOnTop: setting.isAlwaysOnTop,
+      //  是否最大化
+      isFullScreen: false,
+      //  默认按钮
+      defaultBtns: ['pin', 'resize', 'close']
     });
 
-    const isMainWindow = computed(() => {
-      return windowId === mainWindowId;
+    //  展示的按钮
+    const showBtns = computed(() => {
+      return props.btns || state.defaultBtns;
     });
 
-    const isDevPluginWindow = computed(() => {
-      return currentRouteName.value === 'plugin' && route.query.isDev;
-    });
+    //  是否拥有指定按钮
+    function hasBtn(btn: string): boolean {
+      return showBtns.value.includes(btn);
+    }
 
     /**
      * 切换开发者工具
@@ -78,10 +88,10 @@ export default defineComponent({
      * 切换置顶
      */
     function toggleOnTop() {
-      const afterValue = !isAlwaysOnTop.value;
-      isAlwaysOnTop.value = afterValue;
+      const afterValue = !state.isAlwaysOnTop;
+      state.isAlwaysOnTop = afterValue;
 
-      if (isMainWindow.value) {
+      if (state.isMainWindow) {
         //  主界面置顶
         proxy.$ipcClient('browser-main-window-onTop', afterValue);
         //  更新vuex中的设置
@@ -102,12 +112,12 @@ export default defineComponent({
      * 切换全屏
      */
     function toggleFullScreen() {
-      if (isFullScreen.value) {
+      if (state.isFullScreen) {
         currentWindow.unmaximize();
       } else {
         currentWindow.maximize();
       }
-      isFullScreen.value = !isFullScreen.value;
+      state.isFullScreen = !state.isFullScreen;
     }
 
     /**
@@ -120,20 +130,21 @@ export default defineComponent({
         await beforeClose();
       }
       if (windowId) {
-        const eventName = isMainWindow.value ? 'browser-window-hide' : 'browser-window-close';
+        const eventName = state.isMainWindow ? 'browser-window-hide' : 'browser-window-close';
         proxy.$ipcClient(eventName, windowId);
       }
     }
 
     return {
-      toggleDevTools,
-      isDevPluginWindow,
+      state,
+      showBtns,
+      hasBtn,
 
-      isAlwaysOnTop,
+      toggleDevTools,
+
       toggleOnTop,
 
       minimize,
-      isFullScreen,
       toggleFullScreen,
 
       close

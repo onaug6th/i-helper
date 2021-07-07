@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <Header :title="state.title" />
+  <div v-if="state.showHeader">
+    <Header :title="state.title" :isDev="state.isDev" :btns="state.headerBtns" />
   </div>
 </template>
 
@@ -16,16 +16,38 @@ export default defineComponent({
   },
   setup() {
     const { proxy }: any = getCurrentInstance();
+    const { id, isDev } = useRoute().query;
     const state = reactive({
       //  窗体标题
-      title: ''
+      title: '',
+      //  展示头部栏
+      showHeader: true,
+      //  头部栏按钮配置
+      headerBtns: null,
+      //  是否开发者模式
+      isDev: Boolean(isDev)
     });
-    const route = useRoute();
-    const { title } = route.query;
 
-    if (title) {
-      document.title = title as string;
-    }
+    proxy.$ipcClient(state.isDev ? 'dev-plugin-detail' : 'plugin-detail', id).then(plugin => {
+      const { name, noTitle, noHeader, header } = plugin;
+      if (name) {
+        document.title = name;
+      }
+
+      if (!noTitle) {
+        state.title = name;
+      }
+
+      if (noHeader) {
+        state.showHeader = false;
+      }
+
+      if (header) {
+        if (header.btns) {
+          state.headerBtns = header.btns;
+        }
+      }
+    });
 
     proxy.$ipcClientOn('plugin-update-title', (event, title) => {
       state.title = title;
