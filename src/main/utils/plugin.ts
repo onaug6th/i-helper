@@ -1,4 +1,16 @@
 import fs from 'fs';
+import merge from 'lodash/merge';
+
+/**
+ * 插件默认配置
+ */
+const DEFAULT_PLUGIN_CONFIG = {
+  useScrollbarCSS: true,
+  header: {
+    show: true,
+    title: true
+  }
+};
 
 /**
  * 校验json文件是否合法
@@ -86,7 +98,7 @@ function pathCompletion(obj: PluginDevConfig | Plugin, folderPath: string): void
  * @param jsonPath
  * @returns
  */
-async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; file?: any }> {
+async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; file?: Plugin }> {
   const file = getJSONFileData(jsonPath);
   const error = validPluginJSON(file);
 
@@ -123,7 +135,7 @@ async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; 
   file.readmePath = readmeInfo.path;
   file.readmeContent = readmeInfo.content;
 
-  return { file };
+  return { file: merge(DEFAULT_PLUGIN_CONFIG, file) };
 }
 
 export { getPluginInfoByFile };

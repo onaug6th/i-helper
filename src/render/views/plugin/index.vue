@@ -29,23 +29,21 @@ export default defineComponent({
     });
 
     proxy.$ipcClient(state.isDev ? 'dev-plugin-detail' : 'plugin-detail', id).then(plugin => {
-      const { name, noTitle, noHeader, header } = plugin;
+      const { name, header } = plugin;
+      //  窗体程序的标题
       if (name) {
         document.title = name;
       }
 
-      if (!noTitle) {
+      //  是否展示头部栏
+      state.showHeader = header.show;
+      //  是否展示头部栏标题
+      if (header.title) {
         state.title = name;
       }
-
-      if (noHeader) {
-        state.showHeader = false;
-      }
-
-      if (header) {
-        if (header.btns) {
-          state.headerBtns = header.btns;
-        }
+      //  是否存在头部栏按钮配置
+      if (header.btns) {
+        state.headerBtns = header.btns;
       }
     });
 

@@ -22,6 +22,7 @@
     "electron-settings": "^4.0.2",
     "element-plus": "^1.0.2-beta.30",
     "fs-extra": "^9.0.1",
+    "lodash": "^4.17.21",
     "mitt": "^2.1.0",
     "nedb": "^1.8.0",
     "request": "^2.88.2",
@@ -30,7 +31,9 @@
     "vue-class-component": "^8.0.0-0",
     "vue-cli-plugin-electron-builder": "^2.0.0-rc.5",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.8.2",

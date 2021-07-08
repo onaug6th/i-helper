@@ -164,7 +164,7 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
     let height = pluginHeight - headerHeight;
 
     //  无头部配置
-    if (plugin.noHeader) {
+    if (plugin.header && !plugin.header.show) {
       y = 0;
       height = pluginHeight;
     }
@@ -183,7 +183,7 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
 
     //  监听生命周期，打开开发者控制台
     viewItem.webContents.on('dom-ready', () => {
-      if (!plugin.noScrollbarCSS) {
+      if (plugin.useScrollbarCSS) {
         //  注入滚动条样式
         viewItem.webContents.insertCSS(scrollbarCSS);
       }

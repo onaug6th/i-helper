@@ -57,8 +57,11 @@ interface PluginPermissions {
 }
 
 interface HeaderConfig {
+  show?: boolean;
+  title?: boolean;
   btns?: Array<string>;
 }
+
 interface Plugin {
   /**
    * ID
@@ -98,17 +101,9 @@ interface Plugin {
    */
   preload?: string;
   /**
-   * 是否不展示标题
+   * 是否使用默认滚动条样式
    */
-  noTitle?: boolean;
-  /**
-   * 是否不注入滚动条样式
-   */
-  noScrollbarCSS?: boolean;
-  /**
-   * 没有头部栏
-   */
-  noHeader?: boolean;
+  useScrollbarCSS?: boolean;
   /**
    * 头部栏配置
    */
