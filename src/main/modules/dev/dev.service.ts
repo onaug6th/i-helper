@@ -1,6 +1,6 @@
 //  开发者插件数据库
 import devPluginDB from '@/main/dataBase/devPlugin.db';
-import * as utils from '@/render/utils';
+import * as utils from '@/main/utils';
 import * as fsUtils from '@/main/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 import { publishURL } from '@/main/constants/url';
@@ -43,6 +43,10 @@ class DevService {
 
     const fileId = file.id;
     const id = fileId || utils.uuid();
+
+    if (this.getPlugin(id)) {
+      throw new Error('此开发者插件已经添加过了');
+    }
 
     const result = await devPluginDB.insert({
       id,

@@ -4,7 +4,7 @@
       v-for="(plugin, appIndex) in state.pluginList"
       class="plugin-list_item"
       :key="appIndex"
-      @click="choosePlugin(appIndex)"
+      @click="choosePlugin(plugin.id)"
     >
       <div class="plugin-list_item-left">
         <img :src="plugin.logo" />
@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { getCurrentInstance, defineComponent, computed, reactive, ComputedRef } from 'vue';
+import { getCurrentInstance, defineComponent, computed, reactive, ComputedRef, PropType } from 'vue';
 import PluginDrawer from '../pluginDrawer/index.vue';
 
 export default defineComponent({
@@ -56,7 +56,10 @@ export default defineComponent({
     PluginDrawer
   },
   props: {
-    pluginList: Array,
+    pluginList: {
+      type: Array as PropType<Array<Plugin | StorePlugin>>,
+      required: true
+    },
     type: String
   },
   setup(props) {
@@ -66,30 +69,31 @@ export default defineComponent({
     let state = reactive({
       //  打开抽屉
       openDrawer: false,
+      //  插件列表
       pluginList: computed(() => props.pluginList),
       //  当前插件
-      currentIndex: 0
+      currentPluginId: ''
     });
 
     //  当前插件
     const currentPlugin: ComputedRef<any> = computed(() => {
-      return state.pluginList[state.currentIndex] || {};
+      return state.pluginList.find(plugin => plugin.id === state.currentPluginId) || {};
     });
 
     /**
      * 打开插件
-     * @param index
+     * @param id
      */
-    function choosePlugin(index: number) {
+    function choosePlugin(id: string) {
       state.openDrawer = true;
-      state.currentIndex = index;
+      state.currentPluginId = id;
     }
 
     /**
      * 打开插件
      * @param plugin
      */
-    function pluginStart(plugin) {
+    function pluginStart(plugin: Plugin) {
       proxy.$ipcClient('plugin-start', plugin.id);
     }
 
@@ -97,7 +101,7 @@ export default defineComponent({
      * 下载插件
      * @param plugin
      */
-    async function download(plugin) {
+    async function download(plugin: Plugin) {
       await proxy.$ipcClientLoading('store-download', plugin.id);
 
       //  通知我的插件面板更新列表

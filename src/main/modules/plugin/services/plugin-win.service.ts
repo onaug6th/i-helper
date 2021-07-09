@@ -9,7 +9,7 @@ import devService from '@/main/modules/dev/dev.service';
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { apisdk, scrollbarCSS } from '@/main/constants/plugin';
 import { session, BrowserView } from 'electron';
-import * as utils from '@/render/utils';
+import * as utils from '@/main/utils';
 
 interface OpenPluginWindow {
   pluginWinId: number;

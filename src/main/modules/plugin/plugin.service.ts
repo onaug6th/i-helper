@@ -3,7 +3,7 @@ import path from 'path';
 
 import pluginDB from '@/main/dataBase/plugin.db';
 
-import * as utils from '@/render/utils';
+import * as utils from '@/main/utils';
 import * as fsUtils from '@/main/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
 
@@ -86,14 +86,10 @@ class PluginService {
 
       if (installed) {
         storePlugin.isDownload = true;
+        const canUpdate = utils.compareVersion(storePlugin.version, installed.version);
 
-        if (storePlugin.version > installed.version) {
-          installed.canUpdate = true;
-          storePlugin.canUpdate = true;
-        } else {
-          installed.canUpdate = false;
-          storePlugin.canUpdate = false;
-        }
+        installed.canUpdate = canUpdate;
+        storePlugin.canUpdate = canUpdate;
       } else {
         storePlugin.isDownload = false;
       }

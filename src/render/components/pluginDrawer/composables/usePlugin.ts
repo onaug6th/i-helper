@@ -1,4 +1,5 @@
 import { ComputedRef } from '@vue/reactivity';
+import * as utils from '@/render/utils';
 
 export default function usePlugin({
   plugin,
@@ -98,9 +99,8 @@ export default function usePlugin({
    * 发布确认
    */
   async function publishConfirm() {
-    const result = await proxy.$ipcClientLoading('plugin-detail-server', plugin.value.id);
-
-    if (result && plugin.value.version <= result.version) {
+    const result = await proxy.$ipcClient('plugin-detail-server', plugin.value.id);
+    if (result && !utils.compareVersion(result.version, plugin.value.version)) {
       return proxy.$alert('发布的版本小于商店中已发布的版本，请将版本号升级后再试', '提醒');
     }
     state.showDialog = true;

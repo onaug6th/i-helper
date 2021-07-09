@@ -18,7 +18,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import { browserWindowOptions, winURL } from '@/main/constants/config/browserWindow';
 import pluginService from '../plugin/plugin.service';
-import * as utils from '@/render/utils';
+import * as utils from '@/main/utils';
 
 class WindowService {
   /**
