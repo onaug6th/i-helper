@@ -9,6 +9,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 //  窗体管理
 import windowService from './modules/window/window.service';
 import modules from './modules';
+import { exec } from 'child_process';
 
 export default function launchApp(): void {
   const gotTheLock = app.requestSingleInstanceLock();
@@ -46,6 +47,10 @@ export default function launchApp(): void {
   }
 
   app.on('window-all-closed', e => {
+    if (global.downloadFile) {
+      exec(`start ${global.downloadFile}`);
+    }
+
     if (global.forceQuit) {
       if (process.platform !== 'darwin') {
         app.quit();

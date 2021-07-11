@@ -45,19 +45,9 @@ function getLatestVersionInfo(): Promise<any> {
  * @returnsw
  */
 function getInstallPackage(url: string): any {
-  progress(request(url), {
+  return progress(request(url), {
     throttle: 1000
-  })
-    .on('progress', state => {
-      console.info(Number(Math.round(state.percent * 100)));
-    })
-    .on('error', err => {
-      console.info(err);
-    });
-  // .on('end', () => {
-  //   this.$electron.ipcRenderer.send('quit-and-open', path.join(saveDir, filename));
-  // })
-  // .pipe(fs.createWriteStream(path.join(saveDir, filename)));
+  });
 }
 
 export { getPluginList, downloadPlugin, getPlugin, getLatestVersionInfo, getInstallPackage };

@@ -1,6 +1,8 @@
 import { getInstallPackage, getLatestVersionInfo } from '@/main/api';
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { compareVersion } from '@/utils';
+import fs from 'fs';
+import path from 'path';
 import { app, BrowserWindow, dialog } from 'electron';
 import windowService from '../window/window.service';
 
@@ -30,7 +32,7 @@ class UpdateService {
    * 打开更新弹窗
    */
   updateWinOpen() {
-    if (this.updateWinow) {
+    if (this.updateWinow && !this.updateWinow.isDestroyed()) {
       this.updateWinow.show();
       return;
     }
@@ -62,7 +64,22 @@ class UpdateService {
     });
 
     if (files) {
-      getInstallPackage(this.updateInfo.exeUrl);
+      const saveDir = files[0];
+      const savePath = path.join(saveDir, this.updateInfo.downloadFile);
+
+      getInstallPackage(this.updateInfo.exeUrl)
+        .on('progress', state => {
+          console.info(Number(Math.round(state.percent * 100)));
+        })
+        .on('error', err => {
+          throw new Error(err);
+        })
+        .on('end', () => {
+          global.downloadFile = savePath;
+          global.forceQuit = true;
+          app.quit();
+        })
+        .pipe(fs.createWriteStream(savePath));
     }
   }
 
@@ -95,6 +112,7 @@ class UpdateService {
       version: latestVersion.tag_name,
       localVersion: this.version,
       more: latestVersion.html_url,
+      downloadFile: latestVersion.assets[0].name,
       exeUrl: latestVersion.assets[0].browser_download_url
     };
 
