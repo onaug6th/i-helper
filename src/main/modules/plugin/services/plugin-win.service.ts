@@ -55,13 +55,7 @@ function openPluginWindow(
   const mount = initResult.mount;
 
   //  创建插件窗体
-  const pluginWindow = windowService.createPluginBrowserWindow(
-    plugin,
-    viewItem.webContents.id,
-    option,
-    isDev,
-    fatherId
-  );
+  const pluginWindow = windowService.createPluginWin(plugin, viewItem.webContents.id, option, isDev, fatherId);
 
   //  视图挂载到插件窗体中
   mount(pluginWindow);

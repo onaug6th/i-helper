@@ -19,6 +19,11 @@ const browserWindowOptions = {
   },
   plugin: {
     ...commonOptions
+  },
+  update: {
+    ...commonOptions,
+    width: 320,
+    height: 410
   }
 };
 

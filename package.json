@@ -26,6 +26,7 @@
     "mitt": "^2.1.0",
     "nedb": "^1.8.0",
     "request": "^2.88.2",
+    "request-progress": "^3.0.0",
     "style-resources-loader": "^1.4.1",
     "vue": "3.0.4",
     "vue-class-component": "^8.0.0-0",

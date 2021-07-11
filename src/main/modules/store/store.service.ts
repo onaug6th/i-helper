@@ -1,4 +1,4 @@
-import * as pluginAPI from '@/main/api/plugin';
+import * as api from '@/main/api';
 import path from 'path';
 import fs from 'fs';
 import pluginService from '../plugin/plugin.service';
@@ -18,7 +18,7 @@ class StoreService {
    * @returns
    */
   async getPluginList(): Promise<void> {
-    this.pluginList = (await pluginAPI.getPluginList()) as Array<StorePlugin>;
+    this.pluginList = (await api.getPluginList()) as Array<StorePlugin>;
 
     /**
      * 设置插件ID/插件信息的映射对象
@@ -58,7 +58,7 @@ class StoreService {
     const zipPath = path.resolve(pluginZipsPath, `${id}.zip`);
     const writer = fs.createWriteStream(zipPath);
 
-    const data = await pluginAPI.downloadPlugin('https://' + plugin.fileUrl);
+    const data = await api.downloadPlugin('https://' + plugin.fileUrl);
 
     const finish = () =>
       new Promise(resolve => {

@@ -33,6 +33,10 @@ export default defineComponent({
               {
                 path: '/shortcutKey',
                 title: '快捷键'
+              },
+              {
+                path: '/about',
+                title: '关于iHelper'
               }
             ]
           }

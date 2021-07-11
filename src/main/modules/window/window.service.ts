@@ -86,7 +86,7 @@ class WindowService {
   /**
    * 创建主界面窗体
    */
-  createHomeBrowserWindow(): BrowserWindow {
+  createMainWin(): BrowserWindow {
     const url = this.getWebUrl();
     const option = browserWindowOptions.main;
 
@@ -103,7 +103,7 @@ class WindowService {
    * @param fatherId
    * @returns
    */
-  createPluginBrowserWindow(
+  createPluginWin(
     plugin: Plugin,
     viewId: number,
     option: BrowserWindowConstructorOptions,

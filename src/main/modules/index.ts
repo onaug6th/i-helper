@@ -16,6 +16,8 @@ import devModule from './dev/dev.module';
 import windowModule from './window/window.module';
 //  商店模块
 import storeModule from './store/store.module';
+//  更新模块
+import updateModule from './update/update.module';
 
 export default {
   async init(app: App): Promise<void> {
@@ -34,6 +36,8 @@ export default {
     trayModule.init(app);
     //  窗体模块初始化
     windowModule.init(app);
+    //  更新模块初始化
+    updateModule.init(app);
 
     //  应用启动时，对我的插件/插件商店的插件安装情况进行初始化
     pluginService.setPluginInstallInfo();

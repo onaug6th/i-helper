@@ -5,6 +5,8 @@ const state = {
   mainWindowId: 1,
   //  当前窗体实例
   currentWindow: {},
+  //  应用版本号
+  version: '',
   //  应用设置
   setting: {},
   //  快捷键设置
@@ -12,8 +14,9 @@ const state = {
 };
 
 const mutations = {
-  setWindow: (state: any, currentWindow) => {
+  setApp: (state: any, { currentWindow, version }) => {
     state.currentWindow = currentWindow;
+    state.version = version;
   },
   setSetting: (state: { setting: any }, setting: any) => {
     state.setting = setting;
@@ -24,10 +27,10 @@ const mutations = {
 };
 
 const actions = {
-  setWindow({ commit }: any) {
+  setApp({ commit }: any) {
     const currentWindow = remote.getCurrentWindow();
-
-    commit('setWindow', currentWindow);
+    const version = remote.app.getVersion();
+    commit('setApp', { currentWindow, version });
   },
   setSetting({ commit }: any) {
     //  获取应用设置

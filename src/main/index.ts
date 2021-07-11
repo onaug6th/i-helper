@@ -31,7 +31,7 @@ export default function launchApp(): void {
    * 打开主界面
    */
   function createWindow() {
-    win = windowService.createHomeBrowserWindow();
+    win = windowService.createMainWin();
 
     win.on('close', e => {
       if (!global.forceQuit) {

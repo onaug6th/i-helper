@@ -17,7 +17,7 @@ export default function({ shortcutKey, plugin }: any): any {
   });
 
   /**
-   * @desc 打开按键设置弹窗
+   * 打开按键设置弹窗
    */
   function openKeyDialog() {
     state.showDialog = true;

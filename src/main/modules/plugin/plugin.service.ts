@@ -12,7 +12,7 @@ import windowService from '../window/window.service';
 
 import clipboardObserver from '@/main/utils/clipboardObserver';
 
-import * as pluginAPI from '@/main/api/plugin';
+import * as api from '@/main/api';
 
 import * as pluginApiService from './services/plugin-api.service';
 import * as pluginWinService from './services/plugin-win.service';
@@ -51,7 +51,7 @@ class PluginService {
    * @param id
    */
   async getPluginFromServer(id: string): Promise<StorePlugin> {
-    return await pluginAPI.getPlugin(id);
+    return await api.getPlugin(id);
   }
 
   /**

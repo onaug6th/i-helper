@@ -36,6 +36,10 @@ const routes: Array<RouteRecordRaw> = [
           {
             path: 'shortcutKey',
             component: () => import('../views/main/setting/shortcutKey/index.vue')
+          },
+          {
+            path: 'about',
+            component: () => import('../views/main/setting/about/index.vue')
           }
         ]
       }
@@ -46,6 +50,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/plugin',
     name: 'plugin',
     component: () => import('../views/plugin/index.vue')
+  },
+
+  {
+    path: '/update',
+    name: 'update',
+    component: () => import('../views/update/index.vue')
   }
 ];
 

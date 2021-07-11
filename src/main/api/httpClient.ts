@@ -24,18 +24,19 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   response => {
-    if (response.headers.server === 'tencent-cos') {
+    if (response.config.url.includes('ihelper')) {
+      const {
+        data: { success, msg, data }
+      } = response;
+
+      if (!success) {
+        throw new Error(msg);
+      }
+
+      return data;
+    } else {
       return response.data;
     }
-    const {
-      data: { success, msg, data }
-    } = response;
-
-    if (!success) {
-      throw new Error(msg);
-    }
-
-    return data;
   },
   error => {
     const { response } = error;
