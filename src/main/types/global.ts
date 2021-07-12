@@ -18,8 +18,6 @@ declare global {
       downloadPath: string;
       //  强制退出
       forceQuit: boolean;
-      //  下载文件地址
-      downloadFile: string;
     }
   }
 }

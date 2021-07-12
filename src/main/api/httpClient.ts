@@ -24,7 +24,7 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   response => {
-    if (response.config.url.includes('ihelper')) {
+    if (response.config.url.includes('ihelper.instarry')) {
       const {
         data: { success, msg, data }
       } = response;

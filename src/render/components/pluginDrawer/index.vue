@@ -32,87 +32,89 @@
       </div>
       <!-- 插件基本信息 -->
 
-      <Plugin-setting v-if="state.showSetting" :plugin="plugin" />
+      <div class="main">
+        <Plugin-setting v-if="state.showSetting" :plugin="plugin" />
 
-      <template v-else>
-        <!-- 开发模式下独有信息 -->
-        <template v-if="isDev">
-          <div class="drawer-row">
-            <div class="drawer-row__title">
-              插件ID
+        <template v-else>
+          <!-- 开发模式下独有信息 -->
+          <template v-if="isDev">
+            <div class="drawer-row">
+              <div class="drawer-row__title">
+                插件ID
+              </div>
+              <div class="drawer-row__value" title="插件的唯一id">
+                {{ plugin.id }}
+              </div>
             </div>
-            <div class="drawer-row__value" title="插件的唯一id">
-              {{ plugin.id }}
+
+            <div class="drawer-row">
+              <div class="drawer-row__title">
+                插件路径
+              </div>
+              <div class="drawer-row__value" title="插件的文件路径">
+                {{ plugin.main }}
+              </div>
+            </div>
+
+            <div class="drawer-row">
+              <div class="drawer-row__title">
+                操作
+              </div>
+              <div class="drawer-row__content">
+                <el-button plain type="primary" size="small" title="发布插件到插件商店" @click="publishConfirm">
+                  发布
+                </el-button>
+
+                <el-button
+                  type="success"
+                  size="small"
+                  title="将插件打包为插件压缩包，压缩包能拖拽进入到面板中安装"
+                  @click="build"
+                >
+                  打包
+                </el-button>
+
+                <el-button plain type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
+                  重载插件
+                </el-button>
+
+                <el-button type="warning" size="small" title="修改插件读取的json路径" @click="updateJsonPath">
+                  修改插件路径
+                </el-button>
+
+                <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
+                  文件夹中查看
+                </el-button>
+              </div>
+            </div>
+          </template>
+          <!-- 开发模式下独有信息 -->
+
+          <!-- 列表信息 -->
+          <div v-else class="drawer-row info-list">
+            <div class="info-list__item">
+              <div class="info-list__item-top">
+                开发者
+              </div>
+              <div class="info-list__item-mid">
+                官方
+              </div>
+            </div>
+
+            <div class="info-list__item">
+              <div class="info-list__item-top">
+                大小
+              </div>
+              <div class="info-list__item-mid">
+                {{ plugin.sizeFormat }}
+              </div>
             </div>
           </div>
+          <!-- 列表信息 -->
 
-          <div class="drawer-row">
-            <div class="drawer-row__title">
-              插件路径
-            </div>
-            <div class="drawer-row__value" title="插件的文件路径">
-              {{ plugin.main }}
-            </div>
-          </div>
-
-          <div class="drawer-row">
-            <div class="drawer-row__title">
-              操作
-            </div>
-            <div class="drawer-row__content">
-              <el-button plain type="primary" size="small" title="发布插件到插件商店" @click="publishConfirm">
-                发布
-              </el-button>
-
-              <el-button
-                type="success"
-                size="small"
-                title="将插件打包为插件压缩包，压缩包能拖拽进入到面板中安装"
-                @click="build"
-              >
-                打包
-              </el-button>
-
-              <el-button plain type="warning" size="small" title="重新读取json配置文件并更新信息" @click="reload">
-                重载插件
-              </el-button>
-
-              <el-button type="warning" size="small" title="修改插件读取的json路径" @click="updateJsonPath">
-                修改插件路径
-              </el-button>
-
-              <el-button plain type="success" size="small" title="在文件夹中查看" @click="showInFolder">
-                文件夹中查看
-              </el-button>
-            </div>
-          </div>
+          <v-md-preview :text="plugin.readmeContent"></v-md-preview>
         </template>
-        <!-- 开发模式下独有信息 -->
-
-        <!-- 列表信息 -->
-        <div v-else class="drawer-row info-list">
-          <div class="info-list__item">
-            <div class="info-list__item-top">
-              开发者
-            </div>
-            <div class="info-list__item-mid">
-              官方
-            </div>
-          </div>
-
-          <div class="info-list__item">
-            <div class="info-list__item-top">
-              大小
-            </div>
-            <div class="info-list__item-mid">
-              {{ plugin.sizeFormat }}
-            </div>
-          </div>
-        </div>
-        <!-- 列表信息 -->
-
-        {{ plugin.readmeContent }}
-      </template>
+      </div>
     </div>
   </el-drawer>
 

@@ -1,9 +1,9 @@
 import { getInstallPackage, getLatestVersionInfo } from '@/main/api';
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
-import { compareVersion } from '@/utils';
+import { byteConvert, compareVersion } from '@/utils';
 import fs from 'fs';
 import path from 'path';
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog, shell } from 'electron';
 import windowService from '../window/window.service';
 
 interface GithubLatestVersion {
@@ -53,10 +53,19 @@ class UpdateService {
     this.updateWinow = null;
   }
 
+  sendWebContents({ transferred, total, speed, percent }: any) {
+    this.updateWinow.webContents.send('update-download-progress', {
+      transferred: byteConvert(transferred),
+      total: byteConvert(total),
+      speed: byteConvert(speed),
+      percent
+    });
+  }
+
   /**
    * 更新下载
    */
-  updateDownload() {
+  async updateDownload() {
     const files = dialog.showOpenDialogSync({
       defaultPath: global.downloadPath,
       properties: ['openDirectory'],
@@ -67,19 +76,33 @@ class UpdateService {
       const saveDir = files[0];
       const savePath = path.join(saveDir, this.updateInfo.downloadFile);
 
-      getInstallPackage(this.updateInfo.exeUrl)
-        .on('progress', state => {
-          console.info(Number(Math.round(state.percent * 100)));
-        })
-        .on('error', err => {
-          throw new Error(err);
-        })
-        .on('end', () => {
-          global.downloadFile = savePath;
-          global.forceQuit = true;
-          app.quit();
-        })
-        .pipe(fs.createWriteStream(savePath));
+      try {
+        getInstallPackage(this.updateInfo.exeUrl)
+          .on('progress', state => {
+            this.sendWebContents({
+              transferred: state.size.transferred,
+              total: state.size.total,
+              speed: state.speed,
+              percent: Number(Math.round(state.percent * 100))
+            });
+          })
+          .on('error', error => {
+            throw new Error(error);
+          })
+          .on('end', async () => {
+            this.sendWebContents({
+              percent: 100
+            });
+
+            await shell.openExternal(savePath);
+
+            global.forceQuit = true;
+            app.quit();
+          })
+          .pipe(fs.createWriteStream(savePath));
+      } catch (error) {
+        throw new Error('网络异常，请重试');
+      }
     }
   }
 
@@ -97,7 +120,7 @@ class UpdateService {
    */
   async checkLatestVersion(): Promise<{
     canUpdate: boolean;
-    updateList: Array<string>;
+    body: Array<string>;
     name: string;
     version: string;
     localVersion: string;
@@ -107,7 +130,7 @@ class UpdateService {
 
     const result = {
       canUpdate: compareVersion(latestVersion.tag_name, this.version),
-      updateList: latestVersion.body.split('.').filter(Boolean),
+      body: latestVersion.body,
       name: latestVersion.name,
       version: latestVersion.tag_name,
       localVersion: this.version,
@@ -118,9 +141,9 @@ class UpdateService {
 
     this.updateInfo = result;
 
-    // if (result.canUpdate) {
-    this.updateWinOpen();
-    // }
+    if (result.canUpdate) {
+      this.updateWinOpen();
+    }
 
     return result;
   }

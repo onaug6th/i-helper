@@ -116,7 +116,7 @@ function getLastPath(path: string): string {
  * @returns
  */
 function byteConvert(bytes: number): string {
-  if (isNaN(bytes)) {
+  if (isNaN(bytes) || bytes === 0) {
     return '';
   }
   const symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
