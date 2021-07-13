@@ -3,7 +3,7 @@ import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { byteConvert, compareVersion } from '@/utils';
 import fs from 'fs';
 import path from 'path';
-import { app, BrowserWindow, dialog, shell } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import windowService from '../window/window.service';
 
 interface GithubLatestVersion {
@@ -65,45 +65,33 @@ class UpdateService {
   /**
    * 更新下载
    */
-  async updateDownload() {
-    const files = dialog.showOpenDialogSync({
-      defaultPath: global.downloadPath,
-      properties: ['openDirectory'],
-      title: '请选择保存路径'
+  updateDownload() {
+    return new Promise((resolve, reject) => {
+      const savePath = path.join(global.downloadPath, this.updateInfo.downloadFile);
+
+      getInstallPackage(this.updateInfo.exeUrl)
+        .on('progress', state => {
+          this.sendWebContents({
+            transferred: state.size.transferred,
+            total: state.size.total,
+            speed: state.speed,
+            percent: Number(Math.round(state.percent * 100))
+          });
+        })
+        .on('error', () => {
+          reject('网络异常');
+        })
+        .on('end', async () => {
+          this.sendWebContents({
+            percent: 100
+          });
+
+          await shell.openExternal(savePath);
+          global.forceQuit = true;
+          app.quit();
+        })
+        .pipe(fs.createWriteStream(savePath));
     });
-
-    if (files) {
-      const saveDir = files[0];
-      const savePath = path.join(saveDir, this.updateInfo.downloadFile);
-
-      try {
-        getInstallPackage(this.updateInfo.exeUrl)
-          .on('progress', state => {
-            this.sendWebContents({
-              transferred: state.size.transferred,
-              total: state.size.total,
-              speed: state.speed,
-              percent: Number(Math.round(state.percent * 100))
-            });
-          })
-          .on('error', error => {
-            throw new Error(error);
-          })
-          .on('end', async () => {
-            this.sendWebContents({
-              percent: 100
-            });
-
-            await shell.openExternal(savePath);
-
-            global.forceQuit = true;
-            app.quit();
-          })
-          .pipe(fs.createWriteStream(savePath));
-      } catch (error) {
-        throw new Error('网络异常，请重试');
-      }
-    }
   }
 
   /**
@@ -141,9 +129,7 @@ class UpdateService {
 
     this.updateInfo = result;
 
-    if (result.canUpdate) {
-      this.updateWinOpen();
-    }
+    this.updateWinOpen();
 
     return result;
   }

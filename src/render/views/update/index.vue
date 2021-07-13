@@ -57,7 +57,11 @@ export default defineComponent({
 
     const state: any = reactive({
       isDownload: false,
-      downloadStatus: {},
+      downloadStatus: {
+        percent: 0,
+        transferred: 0,
+        total: 0
+      },
       updateInfo: {}
     });
 
@@ -83,7 +87,7 @@ export default defineComponent({
       try {
         await proxy.$ipcClient('update-download');
       } catch (error) {
-        state.isDownload = true;
+        state.isDownload = false;
       }
     }
 
