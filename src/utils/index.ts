@@ -2,12 +2,13 @@ import { lt } from 'semver';
 
 /**
  * 对比版本
- * @param latest
- * @param old
+ * @param v1
+ * @param v2
  * @returns
  */
-function compareVersion(latest: string, old: string): boolean {
-  return lt(latest, old);
+function compareVersion(v1: string, v2: string): boolean {
+  //  如果v2 大于 v1，返回true
+  return lt(v1, v2);
 }
 
 type FunctionalControl = (this: any, fn: any, delay?: number) => (...args: any) => void;

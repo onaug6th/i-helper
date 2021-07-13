@@ -129,7 +129,7 @@ class UpdateService {
     const latestVersion = await this.getLatestVersionInfo();
 
     const result = {
-      canUpdate: compareVersion(latestVersion.tag_name, this.version),
+      canUpdate: compareVersion(this.version, latestVersion.tag_name),
       body: latestVersion.body,
       name: latestVersion.name,
       version: latestVersion.tag_name,
