@@ -36,7 +36,7 @@ function getPlugin(id: string): Promise<StorePlugin> {
  * @returns
  */
 function getLatestVersionInfo(): Promise<any> {
-  return httpClient.get('https://api.github.com/repos/onaug6th/i-helper/releases/latest');
+  return httpClient.get('https://gitee.com/api/v5/repos/onaug6th/i-helper/releases/latest');
 }
 
 /**

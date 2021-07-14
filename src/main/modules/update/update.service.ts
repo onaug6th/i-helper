@@ -95,14 +95,6 @@ class UpdateService {
   }
 
   /**
-   * 获取最新版本信息
-   * @returns
-   */
-  async getLatestVersionInfo(): Promise<GithubLatestVersion> {
-    return await getLatestVersionInfo();
-  }
-
-  /**
    * 检查是否存在更新版本号
    * @returns
    */
@@ -114,7 +106,8 @@ class UpdateService {
     localVersion: string;
     exeUrl: string;
   }> {
-    const latestVersion = await this.getLatestVersionInfo();
+    //  获取最新版本信息
+    const latestVersion = await getLatestVersionInfo();
 
     const result = {
       canUpdate: compareVersion(this.version, latestVersion.tag_name),
@@ -122,7 +115,7 @@ class UpdateService {
       name: latestVersion.name,
       version: latestVersion.tag_name,
       localVersion: this.version,
-      more: latestVersion.html_url,
+      more: 'https://github.com/onaug6th/i-helper/releases',
       downloadFile: latestVersion.assets[0].name,
       exeUrl: latestVersion.assets[0].browser_download_url
     };
