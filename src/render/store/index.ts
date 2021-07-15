@@ -16,7 +16,10 @@ const modules = modulesFiles.keys().reduce((modules: any, modulePath) => {
 
 const store = createStore({
   modules,
-  getters
+  getters,
+  state: {
+    user: {}
+  }
 });
 
 export default store;

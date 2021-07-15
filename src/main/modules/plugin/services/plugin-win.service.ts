@@ -175,15 +175,15 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
     //  加载页面资源
     viewItem.webContents.loadURL(url);
 
+    if (isDev) {
+      viewItem.webContents.openDevTools();
+    }
+
     //  监听生命周期，打开开发者控制台
     viewItem.webContents.on('dom-ready', () => {
       if (plugin.useScrollbarCSS) {
         //  注入滚动条样式
         viewItem.webContents.insertCSS(scrollbarCSS);
-      }
-
-      if (isDev) {
-        viewItem.webContents.openDevTools();
       }
     });
   }

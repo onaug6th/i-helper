@@ -1,5 +1,5 @@
-import { baseURL, pluginURL } from '../constants/url';
-import httpClient from './httpClient';
+import { baseURL, pluginURL } from '../../constants/url';
+import httpClient from '../httpClient';
 import request from 'request';
 import progress from 'request-progress';
 

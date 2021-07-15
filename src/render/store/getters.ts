@@ -5,6 +5,7 @@ const getters = {
   version: (state: any) => state.app.version,
   mainWindowId: (state: any) => state.app.mainWindowId,
   setting: (state: any) => state.app.setting,
-  shortcutKey: (state: any) => state.app.shortcutKey
+  shortcutKey: (state: any) => state.app.shortcutKey,
+  user: (state: any) => state.user
 };
 export default getters;

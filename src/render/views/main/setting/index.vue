@@ -27,6 +27,10 @@ export default defineComponent({
             groupName: '设置',
             list: [
               {
+                path: '/user',
+                title: '账号设置'
+              },
+              {
                 path: '/common',
                 title: '通用设置'
               },
@@ -66,5 +70,6 @@ export default defineComponent({
 
 main {
   padding: 20px;
+  flex: 1;
 }
 </style>

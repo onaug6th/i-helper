@@ -12,7 +12,7 @@ import windowService from '../window/window.service';
 
 import clipboardObserver from '@/main/utils/clipboardObserver';
 
-import * as api from '@/main/api';
+import * as api from '@/main/api/plugin';
 
 import * as pluginApiService from './services/plugin-api.service';
 import * as pluginWinService from './services/plugin-win.service';

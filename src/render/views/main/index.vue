@@ -51,18 +51,22 @@
       <!-- 右侧主体内容 -->
     </div>
   </div>
+
+  <register :visible="true" />
 </template>
 
 <script lang="ts">
 import { getCurrentInstance, defineComponent, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Header from '@render/components/header/index.vue';
+import Register from '@render/components/register/index.vue';
 import * as utils from '@/render/utils';
 
 export default defineComponent({
   name: 'main',
   components: {
-    Header
+    Header,
+    Register
   },
   setup() {
     const { proxy }: any = getCurrentInstance();

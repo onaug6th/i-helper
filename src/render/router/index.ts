@@ -30,6 +30,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/main/setting/index.vue'),
         children: [
           {
+            path: 'user',
+            component: () => import('../views/main/setting/user/index.vue')
+          },
+          {
             path: 'common',
             component: () => import('../views/main/setting/common/index.vue')
           },

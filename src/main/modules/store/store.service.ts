@@ -1,4 +1,4 @@
-import * as api from '@/main/api';
+import * as api from '@/main/api/plugin';
 import path from 'path';
 import fs from 'fs';
 import pluginService from '../plugin/plugin.service';

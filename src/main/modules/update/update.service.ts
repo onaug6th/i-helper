@@ -1,14 +1,10 @@
-import { getInstallPackage, getLatestVersionInfo } from '@/main/api';
+import { getInstallPackage, getLatestVersionInfo } from '@/main/api/plugin';
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { byteConvert, compareVersion } from '@/utils';
 import fs from 'fs';
 import path from 'path';
 import { app, BrowserWindow, shell } from 'electron';
 import windowService from '../window/window.service';
-
-interface GithubLatestVersion {
-  [propName: string]: any;
-}
 
 class UpdateService {
   /**
