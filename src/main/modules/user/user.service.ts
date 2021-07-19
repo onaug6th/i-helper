@@ -23,7 +23,7 @@ class userService {
    */
   async register(data: RegisterData) {
     try {
-      await api.register(data);
+      return await api.register(data);
     } catch (error) {
       throw new Error(error);
     }

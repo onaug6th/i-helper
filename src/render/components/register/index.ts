@@ -4,6 +4,10 @@ import { mapActions } from 'vuex';
 export default {
   name: 'register',
   props: {
+    type: {
+      type: String,
+      default: 'register'
+    },
     visible: {
       type: Boolean,
       default: false
@@ -38,6 +42,9 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.typeModel === 'register' ? '注册账户' : '登录账户';
+    },
     visibleModel: {
       get() {
         return this.visible;
@@ -45,10 +52,29 @@ export default {
       set(visible: boolean) {
         this.$emit('update:visible', visible);
       }
+    },
+    typeModel: {
+      get() {
+        return this.type;
+      },
+      set(type: string) {
+        this.$emit('update:type', type);
+      }
+    },
+    isLogin() {
+      return this.typeModel === 'login';
     }
   },
   methods: {
     ...mapActions({ setShortcutKey: 'app/setShortcutKey' }),
+
+    /**
+     * 切换类型
+     * @param type
+     */
+    switchType(type: string) {
+      this.typeModel = type;
+    },
 
     /**
      * 校验密码
@@ -106,9 +132,9 @@ export default {
      * 确认
      */
     async register() {
-      const success = await this.$ipcClient('user-register', this.form);
+      const user = await this.$ipcClient('user-register', this.form);
 
-      if (success) {
+      if (user) {
         this.$notify({
           type: 'success',
           message: '注册成功'

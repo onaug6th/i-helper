@@ -1,5 +1,9 @@
 <template>
-  <el-dialog title="注册账户" v-model="visibleModel" width="50%">
+  <el-dialog v-model="visibleModel" width="50%">
+    <template #title>
+      <span class="register" :class="isLogin ? '' : 'active'" @click="switchType('register')">注册账户</span>|
+      <span class="login" :class="isLogin ? 'active' : ''" @click="switchType('login')">登录账户</span>
+    </template>
     <el-form ref="ruleForm" status-icon :model="form" :rules="rules" label-width="80px">
       <el-form-item label="用户名" prop="name">
         <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -14,9 +18,9 @@
         <el-input type="password" v-model="form.rePassword" autocomplete="off"></el-input>
       </el-form-item>
 
-      <el-form-item class="submit-row">
+      <div class="submit-row">
         <el-button type="primary" @click="submitForm">注册</el-button>
-      </el-form-item>
+      </div>
     </el-form>
   </el-dialog>
 </template>
@@ -29,5 +33,17 @@ export default Register;
 <style lang="less" scoped>
 .submit-row {
   text-align: center;
+}
+
+.register,
+.login {
+  cursor: pointer;
+}
+
+.register {
+  margin-right: 5px;
+}
+.active {
+  color: #66b1ff;
 }
 </style>
