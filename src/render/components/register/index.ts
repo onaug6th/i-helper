@@ -15,11 +15,15 @@ export default {
   },
   data() {
     return {
-      form: {
+      registerForm: {
         name: '',
         email: '',
         password: '',
         rePassword: ''
+      },
+      loginForm: {
+        name: '',
+        password: ''
       },
       rules: {
         name: [
@@ -38,7 +42,9 @@ export default {
           { required: true, message: '请再次输入密码', trigger: 'blur' },
           { validator: this.validateRePass, trigger: 'blur' }
         ]
-      }
+      },
+
+      typeModel: this.type
     };
   },
   computed: {
@@ -51,14 +57,6 @@ export default {
       },
       set(visible: boolean) {
         this.$emit('update:visible', visible);
-      }
-    },
-    typeModel: {
-      get() {
-        return this.type;
-      },
-      set(type: string) {
-        this.$emit('update:type', type);
       }
     },
     isLogin() {
@@ -86,7 +84,7 @@ export default {
       if (value === '') {
         callback(new Error('请输入密码'));
       } else {
-        if (this.form.rePassword !== '') {
+        if (this.registerForm.rePassword !== '') {
           this.$refs.ruleForm.validateField('rePassword');
         }
         callback();
@@ -102,7 +100,7 @@ export default {
     validateRePass(rule, value, callback) {
       if (value === '') {
         callback(new Error('请再次输入密码'));
-      } else if (value !== this.form.password) {
+      } else if (value !== this.registerForm.password) {
         callback(new Error('两次输入密码不一致!'));
       } else {
         callback();
@@ -118,9 +116,9 @@ export default {
     },
 
     /**
-     * 表单提交
+     * 注册提交
      */
-    submitForm() {
+    registerSubmit() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.register();
@@ -129,10 +127,10 @@ export default {
     },
 
     /**
-     * 确认
+     * 注册
      */
     async register() {
-      const user = await this.$ipcClient('user-register', this.form);
+      const user = await this.$ipcClient('user-register', this.registerForm);
 
       if (user) {
         this.$notify({
@@ -140,9 +138,28 @@ export default {
           message: '注册成功'
         });
 
-        this.$emit('close');
-        this.visibleModel = false;
+        this.close();
       }
+    },
+
+    /**
+     * 登录提交
+     */
+    loginSubmit() {
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          this.register();
+        }
+      });
+    },
+
+    /**
+     * 登录
+     */
+    async login() {
+      await this.$ipcClient('user-login', this.loginForm);
+
+      this.close();
     }
   }
 };

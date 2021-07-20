@@ -52,7 +52,7 @@
     </div>
   </div>
 
-  <register :visible="true" />
+  <register :visible="true" type="register" />
 </template>
 
 <script lang="ts">
