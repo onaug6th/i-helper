@@ -6,6 +6,7 @@ const getters = {
   mainWindowId: (state: any) => state.app.mainWindowId,
   setting: (state: any) => state.app.setting,
   shortcutKey: (state: any) => state.app.shortcutKey,
-  user: (state: any) => state.user
+  user: (state: any) => state.app.user,
+  userId: (state: any) => state.app.userId
 };
 export default getters;

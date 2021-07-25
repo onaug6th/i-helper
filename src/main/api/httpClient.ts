@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { ElNotification } from 'element-plus';
 import { baseURL } from '@/main/constants/url';
 import { safeGet } from '@/render/utils';
 
@@ -24,7 +23,8 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   response => {
-    if (response.config.url.includes('ihelper.instarry')) {
+    const url = response.config.url;
+    if (url.includes('ihelper.instarry') || url.includes('localhost')) {
       const {
         data: { success, msg, data }
       } = response;
@@ -40,13 +40,9 @@ axios.interceptors.response.use(
   },
   error => {
     const { response } = error;
-    const msg = safeGet(response, 'response.data.data.msg');
+    const msg = safeGet(response, 'data.msg');
     if (msg) {
-      ElNotification({
-        type: 'error',
-        message: msg
-      });
-      throw new Error(response);
+      throw new Error(msg);
     }
   }
 );

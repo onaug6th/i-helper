@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import Register from './index';
+import Register from './register';
 export default Register;
 </script>
 

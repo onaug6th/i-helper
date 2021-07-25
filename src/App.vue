@@ -13,6 +13,8 @@ import { useStore } from 'vuex';
 export default defineComponent({
   setup() {
     const store = useStore();
+    //  获取账户信息
+    store.dispatch('app/getUser');
     //  获取应用信息
     store.dispatch('app/setApp');
     //  获取应用设置

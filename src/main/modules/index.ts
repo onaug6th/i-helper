@@ -18,9 +18,13 @@ import windowModule from './window/window.module';
 import storeModule from './store/store.module';
 //  更新模块
 import updateModule from './update/update.module';
+//  用户模块
+import userModule from './user/user.module';
 
 export default {
   async init(app: App): Promise<void> {
+    //  用户模块初始化
+    userModule.init(app);
     //  插件模块、商店模块、开发者模块初始化
     await Promise.all([pluginModule.init(app), storeModule.init(app), devModule.init(app)]);
 

@@ -1,6 +1,8 @@
 <template>
   <div class="user">
+    <el-button size="mini" @click="state.showLogin = true">登录账户</el-button>
     <div class="user-info">
+      {{ getters.user }}
       <img class="user-info__avatar" :src="state.avatar" alt="" />
       <div class="user-info__name">{{ state.userName }}</div>
       <div class="user-info__email">{{ state.email }}</div>
@@ -10,20 +12,27 @@
       </div>
     </div>
   </div>
+
+  <register v-model:visible="state.showLogin" type="login" />
 </template>
 
 <script lang="ts">
 import { useStore } from 'vuex';
 import { defineComponent, getCurrentInstance, reactive } from 'vue';
+import Register from '@render/components/register/index.vue';
 
 export default defineComponent({
   name: 'user',
+  components: {
+    Register
+  },
   setup() {
     const { proxy }: any = getCurrentInstance();
-    const { user } = useStore().getters;
+    const getters = useStore().getters;
 
     const state = reactive({
-      user,
+      showLogin: false,
+      user: getters.user,
       avatar: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg',
       userName: 'onaug6th',
       email: 'onaug6th@qq.com'
@@ -55,7 +64,8 @@ export default defineComponent({
     return {
       checkLatestVersion,
       editInfo,
-      state
+      state,
+      getters
     };
   }
 });
