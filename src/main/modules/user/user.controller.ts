@@ -15,3 +15,8 @@ ipcMain.handle('user-register', (event, formData) => {
 ipcMain.handle('user-login', (event, formData) => {
   return userService.login(formData);
 });
+
+//  用户退出
+ipcMain.handle('user-quit', () => {
+  return userService.quit();
+});

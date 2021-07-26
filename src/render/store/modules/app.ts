@@ -30,7 +30,7 @@ const mutations = {
     state.shortcutKey = shortcutKey;
   },
   setUser: (state: any, user: any) => {
-    state.user = user;
+    state.user = user || {};
   }
 };
 

@@ -16,7 +16,7 @@ class userService {
   storageName = 'user';
 
   //  更新信息
-  user: any = {};
+  user: any = null;
 
   /**
    * 应用初始化时执行
@@ -52,10 +52,21 @@ class userService {
     try {
       const user = await api.login(data);
       this.user = user;
+      //  更新全局设置数据
+      appStorageService.setData(`${this.storageName}`, user);
       return user;
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  /**
+   * 退出
+   */
+  quit() {
+    this.user = null;
+    //  移除用户数据
+    appStorageService.setData(`${this.storageName}`, '');
   }
 }
 

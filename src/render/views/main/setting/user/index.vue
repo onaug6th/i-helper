@@ -1,15 +1,18 @@
 <template>
   <div class="user">
-    <el-button size="mini" @click="state.showLogin = true">登录账户</el-button>
     <div class="user-info">
-      {{ getters.user }}
-      <img class="user-info__avatar" :src="state.avatar" alt="" />
-      <div class="user-info__name">{{ state.userName }}</div>
-      <div class="user-info__email">{{ state.email }}</div>
-      <div class="user-info__operate">
-        <el-button size="mini" @click="editInfo">修改信息</el-button>
-        <el-button type="danger" size="mini">退出账号</el-button>
-      </div>
+      <template v-if="userId">
+        <img class="user-info__avatar" :src="user.avatar || state.avatar" alt="" />
+        <div class="user-info__name">{{ user.userName }}</div>
+        <div class="user-info__email">{{ user.email }}</div>
+        <div class="user-info__operate">
+          <el-button size="mini" @click="editInfo">修改信息</el-button>
+          <el-button type="danger" size="mini" @click="quit">退出账号</el-button>
+        </div>
+      </template>
+      <template v-else>
+        <el-button type="primary" size="mini" @click="state.showLogin = true">登录账户</el-button>
+      </template>
     </div>
   </div>
 
@@ -18,7 +21,7 @@
 
 <script lang="ts">
 import { useStore } from 'vuex';
-import { defineComponent, getCurrentInstance, reactive } from 'vue';
+import { computed, defineComponent, getCurrentInstance, reactive } from 'vue';
 import Register from '@render/components/register/index.vue';
 
 export default defineComponent({
@@ -28,31 +31,16 @@ export default defineComponent({
   },
   setup() {
     const { proxy }: any = getCurrentInstance();
-    const getters = useStore().getters;
+    const store = useStore();
+    const getters = store.getters;
 
     const state = reactive({
       showLogin: false,
-      user: getters.user,
-      avatar: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg',
-      userName: 'onaug6th',
-      email: 'onaug6th@qq.com'
+      avatar: 'https://onaug6th-1253668581.cos.ap-guangzhou.myqcloud.com/common/92249761857029110.jpg'
     });
 
-    /**
-     * 更新设置
-     * @param val
-     * @param type
-     */
-    async function checkLatestVersion() {
-      const { canUpdate } = await proxy.$ipcClientLoading('check-latest-version');
-
-      if (!canUpdate) {
-        proxy.$notify({
-          type: 'success',
-          message: '当前已经是最新版本了'
-        });
-      }
-    }
+    const user = computed(() => getters.user);
+    const userId = computed(() => getters.userId);
 
     /**
      * 修改个人信息
@@ -61,11 +49,27 @@ export default defineComponent({
       debugger;
     }
 
+    /**
+     * 退出账号
+     */
+    async function quit() {
+      await proxy.$ipcClientLoading('user-quit');
+
+      //  获取账户信息
+      store.dispatch('app/setUser');
+
+      proxy.$notify({
+        type: 'success',
+        message: '退出账号成功'
+      });
+    }
+
     return {
-      checkLatestVersion,
       editInfo,
+      quit,
       state,
-      getters
+      userId,
+      user
     };
   }
 });
