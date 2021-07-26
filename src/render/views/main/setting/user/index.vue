@@ -3,10 +3,10 @@
     <div class="user-info">
       <template v-if="userId">
         <img class="user-info__avatar" :src="user.avatar || state.avatar" alt="" />
-        <div class="user-info__name">{{ user.userName }}</div>
+        <div class="user-info__name">{{ user.name }}</div>
         <div class="user-info__email">{{ user.email }}</div>
         <div class="user-info__operate">
-          <el-button size="mini" @click="editInfo">修改信息</el-button>
+          <!-- <el-button size="mini" @click="editInfo">修改信息</el-button> -->
           <el-button type="danger" size="mini" @click="quit">退出账号</el-button>
         </div>
       </template>
@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <register v-model:visible="state.showLogin" type="login" />
+  <Register v-model:visible="state.showLogin" type="login" />
 </template>
 
 <script lang="ts">

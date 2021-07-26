@@ -97,7 +97,7 @@
                 开发者
               </div>
               <div class="info-list__item-mid">
-                官方
+                {{ plugin.authorName }}
               </div>
             </div>
 
@@ -119,19 +119,24 @@
   </el-drawer>
 
   <Publish-Dialog v-model:visible="state.showDialog" @confirm="publish" />
+
+  <Register v-model:visible="state.showRegister" type="register" />
 </template>
 
 <script lang="ts">
 import { getCurrentInstance, defineComponent, computed, reactive } from 'vue';
+import { useStore } from 'vuex';
 import useButton from './composables/useButton';
 import usePlugin from './composables/usePlugin';
 import PublishDialog from './components/publishDialog/index.vue';
 import PluginSetting from './components/pluginSetting/index.vue';
+import Register from '@render/components/register/index.vue';
 
 export default defineComponent({
   components: {
     PublishDialog,
-    PluginSetting
+    PluginSetting,
+    Register
   },
   props: {
     type: String,
@@ -143,9 +148,8 @@ export default defineComponent({
   },
   emits: ['update:visible', 'reload', 'remove', 'publish'],
   setup(props, { emit }) {
+    const store = useStore();
     const { proxy }: any = getCurrentInstance();
-
-    const plugin = computed(() => props.plugin);
 
     const visibleModel = computed({
       get() {
@@ -158,8 +162,13 @@ export default defineComponent({
 
     const state = reactive({
       showDialog: false,
-      showSetting: false
+      showSetting: false,
+      showRegister: false
     });
+
+    const plugin = computed(() => props.plugin);
+
+    const userId = computed(() => store.getters.userId);
 
     const isStore = computed(() => {
       return props.type === 'store';
@@ -201,8 +210,9 @@ export default defineComponent({
       proxy,
       visibleModel,
       isDev,
-      emit,
-      state
+      state,
+      userId,
+      emit
     });
 
     return {

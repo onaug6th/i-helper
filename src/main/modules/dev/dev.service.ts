@@ -9,6 +9,7 @@ import fs from 'fs';
 import { dialog } from 'electron';
 import pluginService from '../plugin/plugin.service';
 import windowService from '../window/window.service';
+import userService from '../user/user.service';
 
 class DevService {
   pluginList: Array<Plugin> = [];
@@ -232,7 +233,8 @@ class DevService {
       version: plugin.version,
       desc: plugin.desc,
       auditDesc,
-      readmeContent: plugin.readmeContent
+      readmeContent: plugin.readmeContent,
+      authorId: userService.getUser().userId
     };
 
     const formData = new FormData();
