@@ -9,7 +9,12 @@
         <el-input v-model="loginForm.email" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
+        <el-input
+          type="password"
+          v-model="loginForm.password"
+          autocomplete="off"
+          @keydown.enter="loginSubmit"
+        ></el-input>
       </el-form-item>
 
       <div class="submit-row">
@@ -28,7 +33,12 @@
         <el-input type="password" v-model="registerForm.password" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="rePassword">
-        <el-input type="password" v-model="registerForm.rePassword" autocomplete="off"></el-input>
+        <el-input
+          type="password"
+          v-model="registerForm.rePassword"
+          autocomplete="off"
+          @keydown.enter="registerSubmit"
+        ></el-input>
       </el-form-item>
 
       <div class="submit-row">

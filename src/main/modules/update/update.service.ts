@@ -118,9 +118,9 @@ class UpdateService {
 
     this.updateInfo = result;
 
-    if (result.canUpdate) {
-      this.updateWinOpen();
-    }
+    // if (result.canUpdate) {
+    this.updateWinOpen();
+    // }
 
     return result;
   }

@@ -56,14 +56,14 @@ function updateJson(path: string, data: { [propName: string]: any }): Promise<bo
  * @param param0
  * @returns
  */
-function updatePublishPluginJson(to: string, { jsonPath, data }: { jsonPath: string; data: any }) {
+function updatePublishPluginJson(to: string, data: any) {
   if (!data || !Object.keys(data).length) {
     return;
   }
 
   return new Promise(resolve => {
     const afterJsonPath = `${to}\\plugin.json`;
-    fs.readFile(jsonPath, 'utf8', function(err, text) {
+    fs.readFile(afterJsonPath, 'utf8', function(err, text) {
       let result = JSON.parse(text);
       result = {
         ...result,
@@ -87,21 +87,18 @@ function updatePublishPluginJson(to: string, { jsonPath, data }: { jsonPath: str
  * @param from 从哪来
  * @param to 想去哪
  * @param explorer 是否在资源管理目录中查看
- * @param updateConfig 内容更新配置
+ * @param updateJsonData 内容更新配置
  */
 async function buildDirTo({
   from,
   to,
   explorer = true,
-  updateConfig
+  updateJsonData
 }: {
   from: string;
   to: string;
   explorer?: boolean;
-  updateConfig?: {
-    jsonPath: string;
-    data: any;
-  };
+  updateJsonData?: any;
 }): Promise<string> {
   //  打包后的压缩包路径
   const zipPath = `${to}.zip`;
@@ -110,8 +107,8 @@ async function buildDirTo({
     await copy(from, to);
 
     //  存在内容复制后需要更新的配置
-    if (updateConfig) {
-      await updatePublishPluginJson(to, updateConfig);
+    if (updateJsonData) {
+      await updatePublishPluginJson(to, updateJsonData);
     }
 
     await compressing.zip.compressDir(to, zipPath);

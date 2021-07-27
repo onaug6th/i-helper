@@ -7,6 +7,7 @@ if (global.isDev) {
 
 window.iHelper = {
   __cb__: {},
+  getUser: () => ipcRenderer.sendSync('plugin-app', 'userInfo'),
   getWinInfo: () => ipcRenderer.sendSync('plugin-app', 'winInfo'),
   createBrowserWindow: (url, options) => ipcRenderer.sendSync('plugin-app', 'createBrowserWindow', url, options),
   send: (id, event, ...data) => ipcRenderer.send('plugin-app', 'communication', id, event, ...data),

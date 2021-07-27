@@ -97,11 +97,20 @@ class DevService {
     const folderPath = plugin.folderPath;
     //  打包后的路径
     const afterFolderPath = `${global.downloadPath}\\${plugin.id}`;
+    const user = userService.getUser();
 
-    await fsUtils.buildDirTo({
+    const buildConfig: any = {
       from: folderPath,
       to: afterFolderPath
-    });
+    };
+
+    if (user) {
+      buildConfig.updateJsonData = {
+        authorId: user.userId,
+        authorName: user.name
+      };
+    }
+    await fsUtils.buildDirTo(buildConfig);
   }
 
   /**
@@ -212,17 +221,18 @@ class DevService {
     //  打包后的路径
     const afterFolderPath = `${global.rootPath}\\publishZips\\${id}`;
 
+    const user = userService.getUser();
+
     //  打完包后的压缩包路径
     const zipPath = await fsUtils.buildDirTo({
       from: folderPath,
       to: afterFolderPath,
-      explorer: false
-      // updateConfig: {
-      //   jsonPath,
-      //   data: {
-      //     //  此处可以更新发布插件json的文件内容
-      //   }
-      // }
+      explorer: false,
+      updateJsonData: {
+        //  此处可以更新发布的插件json文件内容
+        authorId: user.userId,
+        authorName: user.name
+      }
     });
 
     const zip = fs.createReadStream(zipPath);
@@ -234,7 +244,7 @@ class DevService {
       desc: plugin.desc,
       auditDesc,
       readmeContent: plugin.readmeContent,
-      authorId: userService.getUser().userId
+      authorId: user.userId
     };
 
     const formData = new FormData();

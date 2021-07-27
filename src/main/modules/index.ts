@@ -23,14 +23,14 @@ import userModule from './user/user.module';
 
 export default {
   async init(app: App): Promise<void> {
-    //  用户模块初始化
-    userModule.init(app);
     //  插件模块、商店模块、开发者模块初始化
     await Promise.all([pluginModule.init(app), storeModule.init(app), devModule.init(app)]);
 
     //  应用数据模块初始化
     appStorageModule.init(app);
 
+    //  用户模块初始化（依赖应用数据模块）
+    userModule.init(app);
     //  设置模块初始化（依赖应用数据模块）
     settingModule.init(app);
     //  快捷键模块初始化（依赖应用数据模块、插件模块）

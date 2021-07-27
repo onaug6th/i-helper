@@ -1,7 +1,17 @@
 import windowService from '@/main/modules/window/window.service';
 import pluginSevice from '../plugin.service';
+import userService from '../../user/user.service';
 
 const appApi = {
+  /**
+   * 获取用户信息
+   */
+  userInfo: () => {
+    const user = userService.getUser();
+
+    return user;
+  },
+
   /**
    * 获取窗体信息
    * @param pluginWinItem
