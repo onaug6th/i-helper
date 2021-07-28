@@ -61,7 +61,14 @@
                 操作
               </div>
               <div class="drawer-row__content">
-                <el-button plain type="primary" size="small" title="发布插件到插件商店" @click="publishConfirm">
+                <el-button
+                  plain
+                  type="primary"
+                  size="small"
+                  title="发布插件到插件商店"
+                  :disabled="isInReview"
+                  @click="publishConfirm"
+                >
                   发布
                 </el-button>
 
@@ -186,7 +193,7 @@ export default defineComponent({
       state.showSetting = !state.showSetting;
     }
 
-    const { showUpdate, showOpen, showDelete } = useButton(
+    const { showUpdate, showOpen, showDelete, isInReview } = useButton(
       {
         isStore: isStore.value,
         isDev: isDev.value,
@@ -225,6 +232,7 @@ export default defineComponent({
       showUpdate,
       showOpen,
       showDelete,
+      isInReview,
 
       updatePlugin,
       pluginStart,

@@ -16,9 +16,14 @@ export default function useButton(
     return isDev || isInstalled;
   });
 
+  const isInReview = computed(() => {
+    return plugin.value.isInReview;
+  });
+
   return {
     showUpdate,
     showOpen,
-    showDelete
+    showDelete,
+    isInReview
   };
 }

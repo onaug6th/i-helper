@@ -126,6 +126,9 @@ export default function usePlugin({
       message: '发布成功'
     });
 
+    //  正在审核
+    plugin.value.isInReview = true;
+
     proxy.$eventBus.emit('installed-update');
     proxy.$eventBus.emit('store-plugin-update');
 
