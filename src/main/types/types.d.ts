@@ -142,6 +142,10 @@ interface Plugin {
    * 是否允许更新
    */
   canUpdate?: boolean;
+  /**
+   * 审核状态
+   */
+  reviewStatus?: number;
 }
 
 interface StorePlugin {

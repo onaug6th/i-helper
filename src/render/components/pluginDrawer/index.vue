@@ -65,7 +65,7 @@
                   plain
                   type="primary"
                   size="small"
-                  title="发布插件到插件商店"
+                  :title="isInReview ? '插件正在审核中' : '发布插件到插件商店'"
                   :disabled="isInReview"
                   @click="publishConfirm"
                 >

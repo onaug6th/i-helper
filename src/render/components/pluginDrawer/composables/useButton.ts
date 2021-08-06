@@ -17,7 +17,7 @@ export default function useButton(
   });
 
   const isInReview = computed(() => {
-    return plugin.value.isInReview;
+    return plugin.value.isInReview === 0;
   });
 
   return {

@@ -11,6 +11,8 @@ import pluginService from '../plugin/plugin.service';
 import windowService from '../window/window.service';
 import userService from '../user/user.service';
 
+import * as api from '@/main/api/review';
+
 class DevService {
   pluginList: Array<Plugin> = [];
 
@@ -18,8 +20,27 @@ class DevService {
    * 在应用启动后执行的回调
    */
   async appOnReady() {
-    const data: Array<Plugin> = await devPluginDB.find();
-    this.pluginList = data;
+    const pluginList: Array<Plugin> = await devPluginDB.find();
+
+    const result: Array<Plugin> = [];
+
+    for (let i = 0; i < pluginList.length; i++) {
+      const plugin = pluginList[i];
+
+      //  存在审核状态，查询最新的审核状态
+      if (plugin.reviewStatus === 0) {
+        const review = await api.lastestReview(plugin.id);
+        plugin.reviewStatus = review.status;
+        //  更新数据库中的插件信息
+        this.updatePluginInDb(plugin.id, {
+          ...plugin,
+          reviewStatus: review.status
+        });
+      }
+      result.push(plugin);
+    }
+
+    this.pluginList = result;
   }
 
   /**
@@ -148,17 +169,27 @@ class DevService {
   }
 
   /**
-   * 更新插件在数据库/内存中的数据
+   * 更新数据库中的插件信息
    * @param id
    * @param data
+   * @returns
    */
-  async updatePluginInDbOrMemory(id: string, data: any) {
-    await devPluginDB.update(
+  updatePluginInDb(id: string, data: Plugin) {
+    return devPluginDB.update(
       {
         id
       },
       data
     );
+  }
+
+  /**
+   * 更新插件在数据库/内存中的数据
+   * @param id
+   * @param data
+   */
+  async updatePluginInDbOrMemory(id: string, data: Plugin) {
+    await this.updatePluginInDb(id, data);
 
     for (let i = 0; i < this.pluginList.length; i++) {
       if (this.pluginList[i].id === id) {
@@ -259,6 +290,9 @@ class DevService {
     } catch (error) {
       throw new Error(error);
     }
+
+    //  正在审核
+    plugin.reviewStatus = 0;
 
     await this.updatePluginInDbOrMemory(id, plugin);
 
