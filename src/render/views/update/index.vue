@@ -31,7 +31,7 @@
       </template>
     </div>
     <div v-else class="update-main">
-      <div class="update-title">发现新版本 v{{ state.updateInfo.version }}</div>
+      <div class="update-title">发现新版本 {{ state.updateInfo.version }}</div>
       <v-md-preview :text="state.updateInfo.body"></v-md-preview>
       <div class="update-version">
         <span>当前版本：v{{ state.updateInfo.localVersion }} </span>

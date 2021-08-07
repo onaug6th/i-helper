@@ -123,11 +123,11 @@ export default function usePlugin({
     const result = await proxy.$ipcClientLoading('dev-plugin-publish', plugin.value.id, desc);
     proxy.$notify({
       type: 'success',
-      message: '发布成功'
+      message: '提交审核成功'
     });
 
     //  正在审核
-    plugin.value.isInReview = true;
+    plugin.value.reviewStatus = 0;
 
     proxy.$eventBus.emit('installed-update');
     proxy.$eventBus.emit('store-plugin-update');
