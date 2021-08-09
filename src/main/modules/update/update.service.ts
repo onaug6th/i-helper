@@ -49,6 +49,17 @@ class UpdateService {
     this.updateWinow = null;
   }
 
+  /**
+   * 关闭更新弹窗
+   */
+  openMore() {
+    shell.openExternal(this.updateInfo.more);
+  }
+
+  /**
+   * 往更新窗体发送消息
+   * @param param0
+   */
   sendWebContents({ transferred, total, speed, percent }: any) {
     this.updateWinow.webContents.send('update-download-progress', {
       transferred: byteConvert(transferred),

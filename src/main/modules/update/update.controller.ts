@@ -20,3 +20,8 @@ ipcMain.handle('update-download', () => {
 ipcMain.handle('update-win-close', () => {
   updateService.updateWinClose();
 });
+
+//  打开更新信息页
+ipcMain.handle('update-open-more', () => {
+  updateService.openMore();
+});

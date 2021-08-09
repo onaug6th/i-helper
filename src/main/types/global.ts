@@ -1,4 +1,5 @@
 import { app } from 'electron';
+import path from 'path';
 
 //  https://blog.csdn.net/simplehouse/article/details/95502071
 //  在描述文件里面添加全局属性无效，查过资料后只能在导入模块里声明
@@ -18,6 +19,8 @@ declare global {
       downloadPath: string;
       //  强制退出
       forceQuit: boolean;
+      //  应用图标地址
+      appLogoPath: string;
     }
   }
 }
@@ -25,5 +28,12 @@ declare global {
 global.isDev = process.env.NODE_ENV !== 'production';
 global.rootPath = global.isDev ? __dirname : app.getPath('userData');
 global.downloadPath = app.getPath('downloads');
+
+const trayPath = {
+  dev: path.join(process.cwd(), 'public', 'favicon.ico'),
+  prod: path.join(__dirname, 'favicon.ico')
+};
+
+global.appLogoPath = global.isDev ? trayPath.dev : trayPath.prod;
 
 export {};

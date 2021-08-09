@@ -91,6 +91,7 @@ class WindowService {
     const option = browserWindowOptions.main;
 
     this.mainWindow = this.createBrowserWindow({ option, url });
+    this.mainWindow.setIcon(global.appLogoPath);
     return this.mainWindow;
   }
 

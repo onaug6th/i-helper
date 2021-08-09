@@ -76,7 +76,7 @@ export default defineComponent({
      * 打开更多
      */
     function openMore() {
-      state.updateInfo.more;
+      proxy.$ipcClient('update-open-more');
     }
 
     /**

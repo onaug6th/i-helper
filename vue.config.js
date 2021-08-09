@@ -31,7 +31,9 @@ module.exports = {
         copyright: 'onaug6th',
         compression: 'store',
         win: {
-          target: ['nsis', 'zip']
+          target: ['nsis', 'zip'],
+          //  win下的程序图标
+          icon: './public/app.ico'
         },
         nsis: {
           // 一键安装
@@ -45,11 +47,11 @@ module.exports = {
           // 允许修改安装目录
           allowToChangeInstallationDirectory: true,
           // 安装图标
-          // installerIcon: './build/icons/aaa.ico',
+          installerIcon: './public/favicon.ico',
           // 卸载图标
-          // uninstallerIcon: './build/icons/bbb.ico',
+          uninstallerIcon: './public/favicon.ico',
           // 安装时头部图标
-          // installerHeaderIcon: './build/icons/aaa.ico',
+          installerHeaderIcon: './public/favicon.ico',
           // 创建桌面图标
           createDesktopShortcut: true,
           // 创建开始菜单图标
