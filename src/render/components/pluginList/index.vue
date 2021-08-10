@@ -1,9 +1,9 @@
 <template>
   <div class="plugin-list">
     <div
-      v-for="(plugin, appIndex) in state.pluginList"
+      v-for="(plugin, pluginIndex) in state.pluginList"
       class="plugin-list_item"
-      :key="appIndex"
+      :key="pluginIndex"
       @click="choosePlugin(plugin.id)"
     >
       <div class="plugin-list_item-left">
@@ -42,6 +42,11 @@
         </el-button>
       </div>
     </div>
+    <el-empty
+      v-if="!pluginList.length"
+      description="暂无插件"
+      title="将插件压缩包/配置文件拖入应用即可添加插件"
+    ></el-empty>
   </div>
 
   <Plugin-drawer v-model:visible="state.openDrawer" v-bind="$attrs" :type="type" :plugin="currentPlugin" />
