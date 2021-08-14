@@ -4,6 +4,7 @@ import storeService from './store.service';
 
 //  获取插件列表
 ipcMain.handle('store-list', async (event, forceUpdate) => {
+  //  强制更新时，从服务端拉取最新的插件信息，并执行各模块的更新后逻辑
   if (forceUpdate) {
     await pluginService.initPluginInstallInfo();
   }

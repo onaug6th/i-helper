@@ -1,3 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+enum ReviewStatus {
+  pending,
+  success,
+  fail
+}
+
 //  插件窗体项
 interface PluginWinItem {
   //  窗体ID

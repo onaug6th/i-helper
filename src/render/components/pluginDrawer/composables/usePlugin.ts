@@ -126,11 +126,9 @@ export default function usePlugin({
       message: '提交审核成功'
     });
 
-    //  正在审核
-    plugin.value.reviewStatus = 0;
-
     proxy.$eventBus.emit('installed-update');
     proxy.$eventBus.emit('store-plugin-update');
+    proxy.$eventBus.emit('dev-updateList');
 
     emit('publish', result);
   }

@@ -48,18 +48,22 @@ export default defineComponent({
     /**
      * 获取应用列表
      */
-    async function getAppList() {
+    async function getDevPluginList() {
       const result = await proxy.$ipcClient('dev-list');
       state.pluginList = reactive(result);
     }
 
-    //  开发者面板监听——更新列表
+    /**
+     * 开发者面板监听——更新列表
+     * 1. 拖拽插件配置文件完成安装时
+     * 2. 插件发布时
+     */
     proxy.$eventBus.on('dev-updateList', () => {
-      getAppList();
+      getDevPluginList();
     });
 
     onBeforeMount(() => {
-      getAppList();
+      getDevPluginList();
     });
 
     return {

@@ -17,6 +17,8 @@ import * as api from '@/main/api/plugin';
 import * as pluginApiService from './services/plugin-api.service';
 import * as pluginWinService from './services/plugin-win.service';
 
+import devService from '../dev/dev.service';
+
 /**
  * 项目内创建文件夹说明：
  * publishZips 发布时，插件的压缩包存放的文件夹
@@ -65,12 +67,15 @@ class PluginService {
   }
 
   /**
-   * 应用启动时，对我的插件/插件商店的插件安装情况进行初始化
+   * 对我的插件/插件商店的插件安装情况进行初始化
    */
   async initPluginInstallInfo() {
+    //  先拉取最新的商店插件信息
     await storeService.getPluginList();
-
+    //  根据商店的插件信息，来设置本地插件的（下载，可更新）标记信息
     this.setPluginInstallInfo();
+    //  初始化开发者插件的审核状态
+    await devService.initReviewStatus();
   }
 
   /**

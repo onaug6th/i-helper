@@ -21,26 +21,32 @@ class DevService {
    */
   async appOnReady() {
     const pluginList: Array<Plugin> = await devPluginDB.find();
+    this.pluginList = pluginList;
+  }
 
-    const result: Array<Plugin> = [];
+  /**
+   * 初始化开发者插件的审核状态
+   */
+  async initReviewStatus() {
+    const pluginList = this.pluginList;
 
-    for (let i = 0; i < pluginList.length; i++) {
+    for (let i = 0; i < this.pluginList.length; i++) {
       const plugin = pluginList[i];
 
       //  存在审核状态，查询最新的审核状态
-      if (plugin.reviewStatus === 0) {
+      if (plugin.reviewStatus === ReviewStatus.pending) {
         const review = await api.lastestReview(plugin.id);
+
+        //  更新内存中插件信息
         plugin.reviewStatus = review.status;
+
         //  更新数据库中的插件信息
         this.updatePluginInDb(plugin.id, {
           ...plugin,
           reviewStatus: review.status
         });
       }
-      result.push(plugin);
     }
-
-    this.pluginList = result;
   }
 
   /**
@@ -292,7 +298,7 @@ class DevService {
     }
 
     //  正在审核
-    plugin.reviewStatus = 0;
+    plugin.reviewStatus = ReviewStatus.pending;
 
     await this.updatePluginInDbOrMemory(id, plugin);
 
