@@ -1,106 +1,108 @@
 import { clipboard, NativeImage } from 'electron';
 
-/**
- * 为不同文本
- * @param {*} beforeText
- * @param {*} afterText
- */
-function isDiffText(beforeText: string, afterText: string) {
-  return afterText && beforeText !== afterText;
-}
-
-/**
- * 为不同图片
- * @param {*} beforeImage
- * @param {*} afterImage
- */
-function isDiffImage(beforeImage: NativeImage, afterImage: NativeImage) {
-  return afterImage && !afterImage.isEmpty() && beforeImage.toDataURL() !== afterImage.toDataURL();
-}
-
-const DEFAULT_OPTIONS = {
-  duration: 500
-};
-
 interface Options {
-  duration: number;
-  textChange?: any;
-  imageChange?: any;
+  duration?: number;
+  textChange?: (value: string) => void;
+  imageChange?: (value: NativeImage) => void;
 }
 
-/**
- * 传递配置，观察需要变化的剪贴板内容
- * @param {*} option
- */
-function clipboardObserver(
-  option = {}
-): {
-  start(): void;
-  stop(): void;
-  destroy(): void;
-} {
-  const options: Options = Object.assign({}, DEFAULT_OPTIONS, option);
-  const { duration, textChange, imageChange } = options;
-  let timer: any;
-  let stop: boolean;
-  let beforeText: string;
-  let beforeImage: NativeImage;
+class ClipboardObserver {
+  timer: NodeJS.Timeout;
+  beforeText: string;
+  beforeImage: NativeImage;
+
+  duration = 500;
+  textChange: (text: string, brforeText: string) => void;
+  imageChange: (image: NativeImage, beforeImage: NativeImage) => void;
+
+  constructor(options: Options) {
+    const { duration, textChange, imageChange } = options;
+
+    this.duration = duration;
+    this.textChange = textChange;
+    this.imageChange = imageChange;
+
+    if (this.textChange || this.imageChange) {
+      this.start();
+    }
+  }
 
   /**
-   * 设置剪贴板默认值
+   * 设置定时器
    */
-  function setClipboardDefaultValue() {
-    //  为了尽量少读取剪贴板
-    if (textChange) {
-      beforeText = clipboard.readText();
-    }
-    //  为了尽量少读取剪贴板
-    if (imageChange) {
-      beforeImage = clipboard.readImage();
-    }
-  }
-  // const filePath = clipboard.readBuffer('FileNameW').toString('ucs2').replace(`\u0000`, '');
-
-  if (textChange || imageChange) {
-    setClipboardDefaultValue();
-
-    timer = setInterval(() => {
-      if (stop) {
-        return false;
-      }
-      if (textChange) {
+  setTimer(): void {
+    this.timer = setInterval(() => {
+      if (this.textChange) {
         const text = clipboard.readText();
-        if (isDiffText(beforeText, text)) {
-          textChange(text, beforeText);
-          beforeText = text;
+        if (this.isDiffText(this.beforeText, text)) {
+          this.textChange(text, this.beforeText);
+          this.beforeText = text;
         }
       }
 
-      if (imageChange) {
+      if (this.imageChange) {
         const image = clipboard.readImage();
-        if (isDiffImage(beforeImage, image)) {
-          imageChange(image, beforeImage);
-          beforeImage = image;
+        if (this.isDiffImage(this.beforeImage, image)) {
+          this.imageChange(image, this.beforeImage);
+          this.beforeImage = image;
         }
       }
-    }, duration);
+    }, this.duration);
   }
 
-  return {
-    //  开始
-    start() {
-      setClipboardDefaultValue();
-      stop = false;
-    },
-    //  暂停
-    stop() {
-      stop = true;
-    },
-    //  摧毁
-    destroy() {
-      clearInterval(timer);
+  /**
+   * 清除定时器
+   */
+  clearTimer(): void {
+    clearInterval(this.timer);
+  }
+
+  /**
+   * 设置剪贴板默认内容
+   */
+  setClipboardDefaultValue(): void {
+    if (this.textChange) {
+      this.beforeText = clipboard.readText();
     }
-  };
+    if (this.imageChange) {
+      this.beforeImage = clipboard.readImage();
+    }
+  }
+
+  /**
+   * 判断内容是否不一致
+   * @param beforeText
+   * @param afterText
+   * @returns
+   */
+  isDiffText(beforeText: string, afterText: string): boolean {
+    return afterText && beforeText !== afterText;
+  }
+
+  /**
+   * 判断图片是否不一致
+   * @param beforeImage
+   * @param afterImage
+   * @returns
+   */
+  isDiffImage(beforeImage: NativeImage, afterImage: NativeImage): boolean {
+    return afterImage && !afterImage.isEmpty() && beforeImage.toDataURL() !== afterImage.toDataURL();
+  }
+
+  /**
+   * 开始
+   */
+  start(): void {
+    this.setClipboardDefaultValue();
+    this.setTimer();
+  }
+
+  /**
+   * 暂停
+   */
+  stop(): void {
+    this.clearTimer();
+  }
 }
 
-export default clipboardObserver;
+export default ClipboardObserver;

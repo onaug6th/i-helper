@@ -10,7 +10,7 @@ import * as pluginUtils from '@/main/utils/plugin';
 import storeService from '../store/store.service';
 import windowService from '../window/window.service';
 
-import clipboardObserver from '@/main/utils/clipboardObserver';
+import ClipboardObserver from '@/main/utils/clipboardObserver';
 
 import * as api from '@/main/api/plugin';
 
@@ -210,11 +210,11 @@ class PluginService {
       return;
     }
 
-    this.clipboardObserver = clipboardObserver({
+    this.clipboardObserver = new ClipboardObserver({
       textChange: (value: string) => {
         this.sendClipboardChange('text', value);
       },
-      imageChange: (value: string) => {
+      imageChange: (value: Electron.NativeImage) => {
         this.sendClipboardChange('image', value);
       }
     });
@@ -241,12 +241,12 @@ class PluginService {
    * @param type 类型
    * @param value 内容
    */
-  sendClipboardChange(type: string, value: any): void {
+  sendClipboardChange(type: string, value: Electron.NativeImage | string): void {
     const findPluginWin = (pluginId: string): PluginWinItem => windowService.getPluginWinItemByPluginId(pluginId);
 
     let result: string;
     if (type === 'image') {
-      result = value.toDataURL();
+      result = (value as Electron.NativeImage).toDataURL();
     } else {
       result = String(value);
     }
