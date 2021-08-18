@@ -13,6 +13,12 @@ import userService from '../user/user.service';
 
 import * as api from '@/main/api/review';
 
+enum ReviewStatus {
+  pending,
+  success,
+  fail
+}
+
 class DevService {
   pluginList: Array<Plugin> = [];
 
