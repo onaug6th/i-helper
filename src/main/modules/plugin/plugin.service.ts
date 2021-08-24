@@ -10,7 +10,7 @@ import * as pluginUtils from '@/main/utils/plugin';
 import storeService from '../store/store.service';
 import windowService from '../window/window.service';
 
-import ClipboardObserver from '@/main/utils/clipboardObserver';
+import ClipboardObserver from 'electron-clipboard-observer';
 
 import * as api from '@/main/api/plugin';
 

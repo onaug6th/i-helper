@@ -15,8 +15,8 @@ const DEFAULT_PLUGIN_CONFIG = {
 /**
  * 校验json文件是否合法
  */
-function validPluginJSON(jsonPath: string | any): string | undefined {
-  let file;
+function validPluginJSON(jsonPath: string | Plugin): string | undefined {
+  let file: Plugin;
   if (typeof jsonPath === 'string') {
     file = getJSONFileData(jsonPath);
   } else {

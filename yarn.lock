@@ -4475,6 +4475,11 @@ electron-builder@^22.2.0, electron-builder@^22.9.1:
     update-notifier "^4.1.1"
     yargs "^16.0.3"
 
+electron-clipboard-observer@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/electron-clipboard-observer/-/electron-clipboard-observer-1.0.0.tgz#94a0e98c67f9a1857b096770270145c418e0ae52"
+  integrity sha512-oE/Ak0s/fbn/sdX9FSwPCNP2Ie2TIxRWVwIc/ofvYZDP7ovxxBRm5H4HU4/d2AtWhRv8HRp9ss1QFl65SOkZ6A==
+
 electron-publish@22.9.1:
   version "22.9.1"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-22.9.1.tgz#7cc76ac4cc53efd29ee31c1e5facb9724329068e"

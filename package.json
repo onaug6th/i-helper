@@ -20,6 +20,7 @@
     "compressing": "^1.5.1",
     "core-js": "^3.7.0",
     "dayjs": "^1.9.7",
+    "electron-clipboard-observer": "^1.0.0",
     "electron-settings": "^4.0.2",
     "element-plus": "^1.0.2-beta.30",
     "fs-extra": "^9.0.1",
