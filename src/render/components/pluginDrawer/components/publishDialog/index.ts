@@ -8,6 +8,7 @@ export default {
       default: false
     }
   },
+  emits: ['close', 'confirm'],
   data() {
     return {
       dialogVisible: false,

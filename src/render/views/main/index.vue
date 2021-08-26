@@ -60,7 +60,7 @@ import Header from '@render/components/header/index.vue';
 import * as utils from '@/render/utils';
 
 export default defineComponent({
-  name: 'main',
+  name: 'mainPanel',
   components: {
     Header
   },
