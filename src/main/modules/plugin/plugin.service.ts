@@ -265,6 +265,12 @@ class PluginService {
     }
   }
 
+  handleBtnAdd(id: string) {
+    const viewId = windowService.getPluginWinItemByPluginId(id).viewId;
+
+    windowService.viewWins[viewId].viewItem.webContents.executeJavaScript('window.iHelper.trigger("btn-add")');
+  }
+
   appApiHandler = pluginApiService.appApiHandler;
   dbApiHandler = pluginApiService.dbApiHandler;
   clipboardApiHandler = pluginApiService.clipboardApiHandler;

@@ -1,7 +1,13 @@
 <template>
   <header class="header">
     <div class="header-left">
-      <span>{{ title }}</span>
+      <div v-if="title" class="header-left__title">
+        <span>{{ title }}</span>
+      </div>
+
+      <button v-else-if="hasBtn('add')" class="icon" @click="add">
+        <i class="iconfont icon-add-select"></i>
+      </button>
     </div>
     <div class="header-center"></div>
     <div class="header-right">
@@ -48,7 +54,7 @@ export default defineComponent({
     isDev: Boolean,
     btns: Array
   },
-  emits: ['close'],
+  emits: ['add', 'close'],
   setup(props, { emit }) {
     const { proxy }: any = getCurrentInstance();
 
@@ -74,6 +80,13 @@ export default defineComponent({
     //  是否拥有指定按钮
     function hasBtn(btn: string): boolean {
       return showBtns.value.includes(btn);
+    }
+
+    /**
+     * 点击新增按钮
+     */
+    function add() {
+      emit('add');
     }
 
     /**
@@ -139,6 +152,8 @@ export default defineComponent({
       state,
       showBtns,
       hasBtn,
+
+      add,
 
       toggleDevTools,
 

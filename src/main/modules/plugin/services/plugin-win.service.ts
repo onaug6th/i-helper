@@ -10,6 +10,7 @@ import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { apisdk, scrollbarCSS } from '@/main/constants/plugin';
 import { session, BrowserView } from 'electron';
 import * as utils from '@/main/utils';
+import merge from 'lodash/merge';
 
 interface OpenPluginWindow {
   pluginWinId: number;
@@ -18,7 +19,7 @@ interface OpenPluginWindow {
 
 /**
  * 打开插件窗体
- * @param pluginId 插件ID
+ * @param plugin 插件
  * @param option 窗体配置
  * @param url 窗体地址
  * @param isDev 是否开发模式
@@ -26,14 +27,12 @@ interface OpenPluginWindow {
  * @param viewUrl 视图地址
  */
 function openPluginWindow(
-  pluginId: string,
+  plugin: Plugin,
   option: BrowserWindowConstructorOptions,
   isDev = false,
   fatherId = null,
   viewUrl = ''
 ): OpenPluginWindow {
-  //  获取插件信息
-  const plugin = isDev ? devService.getPlugin(pluginId) : pluginService.getPlugin(pluginId);
   //  已打开的插件窗体
   const isOpenPluginWin = windowService.getPluginWinItemByPluginId(plugin.id);
 
@@ -97,7 +96,7 @@ function openPluginWindow(
   });
 
   //  记录此视图与所属窗体ID的映射关系
-  windowService.viewWins[viewId] = { pluginWinId, viewItem, pluginId };
+  windowService.viewWins[viewId] = { pluginWinId, viewItem, pluginId: plugin.id };
 
   return {
     pluginWinId,
@@ -207,14 +206,20 @@ function pluginStart(
   //  自定义窗体配置
   const winOptions = plugin.winOptions;
 
+  //  如此插件需要监听剪贴板
   if (utils.safeGet(plugin, 'permissions.clipboard')) {
     pluginService.clipboardWatch(pluginId);
   }
 
+  //  通过插件内打开的窗体，因为部分配置可能写在传入配置中，所以需要将传入的配置与插件配置进行合并。
+  if (fatherId) {
+    merge(plugin, options.pluginOptions);
+  }
+
   //  打开插件窗体
   return openPluginWindow(
-    pluginId,
-    Object.assign({}, browserWindowOptions.plugin, winOptions, options),
+    plugin,
+    merge({}, browserWindowOptions.plugin, winOptions, options),
     isDev,
     fatherId,
     viewUrl

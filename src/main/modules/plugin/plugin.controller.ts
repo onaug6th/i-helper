@@ -33,3 +33,8 @@ ipcMain.handle('plugin-install', (event, path) => {
 ipcMain.handle('plugin-del', (event, id) => {
   return pluginService.delPlugin(id);
 });
+
+//  插件按钮点击
+ipcMain.handle('plugin-btn', (event, type, pluginId) => {
+  return pluginService.handleBtnAdd(pluginId);
+});

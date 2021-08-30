@@ -114,8 +114,12 @@ class WindowService {
     const query: {
       id?: string;
       isDev?: boolean;
+      name?: string;
+      header?: string;
     } = {
-      id: plugin.id
+      id: plugin.id,
+      name: plugin.name,
+      header: JSON.stringify(plugin.header)
     };
 
     if (isDev) {
