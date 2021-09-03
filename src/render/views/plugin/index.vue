@@ -1,6 +1,6 @@
 <template>
   <div v-if="state.showHeader">
-    <Header :title="state.title" :isDev="state.isDev" :btns="state.headerBtns" @add="add" />
+    <Header :title="state.title" :isDev="state.isDev" :btns="state.headerBtns" />
   </div>
 </template>
 
@@ -18,7 +18,6 @@ export default defineComponent({
     const { proxy }: any = getCurrentInstance();
     const query = useRoute().query;
 
-    const pluginId = query.id;
     const isDev = Boolean(query.isDev);
     const name = query.name as string;
     const header = JSON.parse(query.header as string);
@@ -40,18 +39,11 @@ export default defineComponent({
     }
 
     //  监听标题更新事件
-    proxy.$ipcClientOn('plugin-update-title', (event, title) => {
+    proxy.$ipcClientOn('plugin-update-title', (event, title: string) => {
       state.title = title;
     });
 
-    /**
-     * 头部栏点击新增按钮
-     */
-    function add() {
-      proxy.$ipcClient('plugin-btn', 'add', pluginId);
-    }
-
-    return { state, add };
+    return { state };
   }
 });
 </script>

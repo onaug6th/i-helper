@@ -4,10 +4,6 @@
       <div v-if="title" class="header-left__title">
         <span>{{ title }}</span>
       </div>
-
-      <button v-else-if="hasBtn('add')" class="icon" @click="add">
-        <i class="iconfont icon-add-select"></i>
-      </button>
     </div>
     <div class="header-center"></div>
     <div class="header-right">
@@ -54,7 +50,7 @@ export default defineComponent({
     isDev: Boolean,
     btns: Array
   },
-  emits: ['add', 'close'],
+  emits: ['close'],
   setup(props, { emit }) {
     const { proxy }: any = getCurrentInstance();
 
@@ -83,17 +79,9 @@ export default defineComponent({
     }
 
     /**
-     * 点击新增按钮
-     */
-    function add() {
-      emit('add');
-    }
-
-    /**
      * 切换开发者工具
      */
     function toggleDevTools() {
-      //  主界面置顶
       proxy.$ipcClient('dev-plugin-devTools', windowId);
     }
 
@@ -152,8 +140,6 @@ export default defineComponent({
       state,
       showBtns,
       hasBtn,
-
-      add,
 
       toggleDevTools,
 
