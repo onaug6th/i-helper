@@ -5,14 +5,23 @@ if (global.isDev) {
   console.info('apisdk ready');
 }
 
-window.iHelper = {
-  __cb__: {},
+const app = {
   getUser: () => ipcRenderer.sendSync('plugin-app', 'userInfo'),
   getWinInfo: () => ipcRenderer.sendSync('plugin-app', 'winInfo'),
   createBrowserWindow: (url, options) => ipcRenderer.sendSync('plugin-app', 'createBrowserWindow', url, options),
   send: (id, event, ...data) => ipcRenderer.send('plugin-app', 'communication', id, event, ...data),
-  close: () => ipcRenderer.sendSync('plugin-app', 'close'),
   setTitle: title => ipcRenderer.sendSync('plugin-app', 'setTitle', title),
+  close: () => ipcRenderer.sendSync('plugin-app', 'close'),
+  setAlwaysOnTop: alwaysOnTop => ipcRenderer.sendSync('plugin-app', 'setAlwaysOnTop', alwaysOnTop),
+  minimize: () => ipcRenderer.sendSync('plugin-app', 'minimize'),
+  unmaximize: () => ipcRenderer.sendSync('plugin-app', 'unmaximize'),
+  maximize: () => ipcRenderer.sendSync('plugin-app', 'maximize'),
+  hide: () => ipcRenderer.sendSync('plugin-app', 'hide')
+};
+
+window.iHelper = {
+  __cb__: {},
+  ...app,
   on(event, cb) {
     iHelper.__cb__[event] = cb;
   },

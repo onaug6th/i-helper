@@ -66,6 +66,47 @@ const appApi = {
   },
 
   /**
+   * 插件窗体置顶
+   * @param pluginWinItem
+   * @param alwaysOnTop
+   */
+  setAlwaysOnTop: (pluginWinItem: PluginWinItem, alwaysOnTop: boolean) => {
+    pluginWinItem.win.setAlwaysOnTop(alwaysOnTop);
+  },
+
+  /**
+   * 插件窗体最小化
+   * @param pluginWinItem
+   */
+  minimize: (pluginWinItem: PluginWinItem) => {
+    pluginWinItem.win.minimize();
+  },
+
+  /**
+   * 插件窗体缩放
+   * @param pluginWinItem
+   */
+  unmaximize: (pluginWinItem: PluginWinItem) => {
+    pluginWinItem.win.unmaximize();
+  },
+
+  /**
+   * 插件窗体最大化
+   * @param pluginWinItem
+   */
+  maximize: (pluginWinItem: PluginWinItem) => {
+    pluginWinItem.win.maximize();
+  },
+
+  /**
+   * 隐藏插件窗体
+   * @param pluginWinItem
+   */
+  hide: (pluginWinItem: PluginWinItem) => {
+    pluginWinItem.win.hide();
+  },
+
+  /**
    * 关闭窗体
    * @param pluginWinItem
    */
