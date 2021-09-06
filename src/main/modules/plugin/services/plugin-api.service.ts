@@ -35,19 +35,27 @@ const appApi = {
    * @param option
    * @returns
    */
-  createBrowserWindow: (pluginWinItem: PluginWinItem, viewUrl: string, options: any): number => {
+  createBrowserWindow: (pluginWinItem: PluginWinItem, viewUrl: string, options: any = {}): number => {
     const { pluginId, isDev, id } = pluginWinItem;
 
-    //  无配置新开实例，会复用同样地址的window
-    // if (!option.newInstance) {
-    // }
+    //  无配置新开实例，会将之前同样地址的window打开并返回
+    if (!options.newWin) {
+      const pluginWinItemArr = windowService.getPluginWinItemByPluginId(pluginId);
+      const sameUrlWinItem = pluginWinItemArr.find(pluginWinItem => pluginWinItem.viewUrl === viewUrl);
+      if (sameUrlWinItem) {
+        sameUrlWinItem.win.show();
+        return sameUrlWinItem.viewId;
+      }
+    }
 
-    return pluginSevice.pluginStart(pluginId, {
+    const pluginResult = pluginSevice.pluginStart(pluginId, {
       options,
       isDev,
       fatherId: id,
       viewUrl
-    }).viewId;
+    });
+
+    return pluginResult.viewId;
   },
 
   /**

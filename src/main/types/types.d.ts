@@ -8,6 +8,10 @@ interface PluginWinItem {
   pluginId: string;
   //  窗体实例
   win: Electron.BrowserWindow;
+  //  窗体加载的地址
+  url: string;
+  //  窗体加载的视图地址
+  viewUrl: string;
   //  是否开发者模式
   isDev?: boolean;
   //  窗体的父窗体id

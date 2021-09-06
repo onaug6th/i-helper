@@ -44,6 +44,7 @@ class WindowService {
   mainWindow: BrowserWindow;
 
   constructor() {
+    global.windowService = this;
     global.pluginWinItems = this.pluginWinItems;
     global.viewWins = this.viewWins;
   }
@@ -107,6 +108,7 @@ class WindowService {
   createPluginWin(
     plugin: Plugin,
     viewId: number,
+    viewUrl: string,
     option: BrowserWindowConstructorOptions,
     isDev = false,
     fatherId = null
@@ -142,6 +144,8 @@ class WindowService {
       pluginId: plugin.id,
       viewId,
       win,
+      url,
+      viewUrl,
       isDev,
       fatherId,
       fatherViewId: utils.safeGet(this.getPluginWinItemByWindowId(fatherId), 'viewId', null)
@@ -177,22 +181,20 @@ class WindowService {
    * @param pluginId
    * @returns
    */
-  getPluginWinItemByPluginId(pluginId: string): PluginWinItem | null {
-    const pluginWinItem = Object.values(this.pluginWinItems).find(plugin => plugin.pluginId === pluginId);
+  getPluginWinItemByPluginId(pluginId: string): Array<PluginWinItem> {
+    const pluginWinItemArr = Object.values(this.pluginWinItems).filter((pluginWinItem: PluginWinItem) => {
+      const isTarget = pluginWinItem.pluginId === pluginId;
 
-    if (!pluginWinItem) {
-      return null;
-    }
-    //  已被摧毁
-    else if (pluginWinItem.win.isDestroyed()) {
-      //  移除内存中的窗体对象
-      this.deleteWindow(pluginWinItem.id);
-      return null;
-    }
-    //  存在窗体
-    else if (pluginWinItem) {
-      return pluginWinItem;
-    }
+      if (pluginWinItem.win.isDestroyed()) {
+        //  移除内存中的窗体对象
+        this.deleteWindow(pluginWinItem.id);
+        return false;
+      } else {
+        return isTarget;
+      }
+    });
+
+    return pluginWinItemArr;
   }
 
   /**

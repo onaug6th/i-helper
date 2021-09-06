@@ -39,10 +39,13 @@ class ShortcutKeyService {
       let fn = this.shortcutCallback[keyType];
 
       if (isPlugin) {
+        //  @Todo: 这段代码有问题
         const pluginWinItem = windowService.getPluginWinItemByPluginId(keyType);
         if (pluginWinItem) {
           fn = this.pluginOpenCallback.bind(this, keyType);
-        } else {
+        }
+        //  移除快捷键设置
+        else {
           this.shortcutKeyUpdate(keyType, '');
         }
       }
@@ -73,7 +76,7 @@ class ShortcutKeyService {
       return;
     }
 
-    const pluginWinItem = windowService.getPluginWinItemByPluginId(pluginId);
+    const pluginWinItem = windowService.getPluginWinItemByPluginId(pluginId)[0];
 
     if (pluginWinItem) {
       const win = pluginWinItem.win;

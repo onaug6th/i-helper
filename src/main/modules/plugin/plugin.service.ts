@@ -242,7 +242,7 @@ class PluginService {
    * @param value 内容
    */
   sendClipboardChange(type: string, value: Electron.NativeImage | string): void {
-    const findPluginWin = (pluginId: string): PluginWinItem => windowService.getPluginWinItemByPluginId(pluginId);
+    const findPluginWin = (pluginId: string): PluginWinItem => windowService.getPluginWinItemByPluginId(pluginId)[0];
 
     let result: string;
     if (type === 'image') {

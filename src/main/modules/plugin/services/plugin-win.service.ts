@@ -34,9 +34,9 @@ function openPluginWindow(
   viewUrl = ''
 ): OpenPluginWindow {
   //  已打开的插件窗体
-  const isOpenPluginWin = windowService.getPluginWinItemByPluginId(plugin.id);
+  const isOpenPluginWin = windowService.getPluginWinItemByPluginId(plugin.id)[0];
 
-  //  已打开插件 且 不为主窗体
+  //  已打开插件 且 不存在父窗体ID
   if (isOpenPluginWin && !fatherId) {
     isOpenPluginWin.win.show();
 
@@ -54,7 +54,7 @@ function openPluginWindow(
   const mount = initResult.mount;
 
   //  创建插件窗体
-  const pluginWindow = windowService.createPluginWin(plugin, viewItem.webContents.id, option, isDev, fatherId);
+  const pluginWindow = windowService.createPluginWin(plugin, viewItem.webContents.id, viewUrl, option, isDev, fatherId);
 
   //  视图挂载到插件窗体中
   mount(pluginWindow);
