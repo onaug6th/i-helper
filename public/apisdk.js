@@ -19,29 +19,37 @@ const app = {
   hide: () => ipcRenderer.sendSync('plugin-app', 'hide')
 };
 
-window.iHelper = {
-  __cb__: {},
-  ...app,
+const event = {
   on(event, cb) {
     iHelper.__cb__[event] = cb;
   },
   trigger(event, ...data) {
     iHelper.__cb__[event] && iHelper.__cb__[event](...data);
-  },
-  clipboard: {
-    on: fn => {
-      window.iHelper.clipboard.__cb__ = fn;
-    },
-    writeText: value => ipcRenderer.sendSync('plugin-clipboard', 'writeText', value),
-    writeImage: value => ipcRenderer.sendSync('plugin-clipboard', 'writeImage', value),
-    off: () => ipcRenderer.sendSync('plugin-clipboard', 'off')
-  },
-  db: {
-    insert: doc => ipcRenderer.sendSync('plugin-db', 'insert', doc),
-    remove: (query, options) => ipcRenderer.sendSync('plugin-db', 'remove', query, options),
-    update: (query, updateQuery, options) => ipcRenderer.sendSync('plugin-db', 'update', query, updateQuery, options),
-    find: (query, desc) => ipcRenderer.sendSync('plugin-db', 'find', query, desc),
-    findOne: query => ipcRenderer.sendSync('plugin-db', 'findOne', query),
-    paging: (query, desc) => ipcRenderer.sendSync('plugin-db', 'paging', query, desc)
   }
+};
+
+const clipboard = {
+  on: fn => {
+    window.iHelper.clipboard.__cb__ = fn;
+  },
+  writeText: value => ipcRenderer.sendSync('plugin-clipboard', 'writeText', value),
+  writeImage: value => ipcRenderer.sendSync('plugin-clipboard', 'writeImage', value),
+  off: () => ipcRenderer.sendSync('plugin-clipboard', 'off')
+};
+
+const db = {
+  insert: doc => ipcRenderer.sendSync('plugin-db', 'insert', doc),
+  remove: (query, options) => ipcRenderer.sendSync('plugin-db', 'remove', query, options),
+  update: (query, updateQuery, options) => ipcRenderer.sendSync('plugin-db', 'update', query, updateQuery, options),
+  find: (query, desc) => ipcRenderer.sendSync('plugin-db', 'find', query, desc),
+  findOne: query => ipcRenderer.sendSync('plugin-db', 'findOne', query),
+  paging: (query, desc) => ipcRenderer.sendSync('plugin-db', 'paging', query, desc)
+};
+
+window.iHelper = {
+  __cb__: {},
+  ...app,
+  ...event,
+  clipboard,
+  db
 };

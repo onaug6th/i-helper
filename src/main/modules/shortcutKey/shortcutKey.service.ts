@@ -39,8 +39,7 @@ class ShortcutKeyService {
       let fn = this.shortcutCallback[keyType];
 
       if (isPlugin) {
-        //  @Todo: 这段代码有问题
-        const pluginWinItem = windowService.getPluginWinItemByPluginId(keyType);
+        const pluginWinItem = pluginService.getPlugin(keyType);
         if (pluginWinItem) {
           fn = this.pluginOpenCallback.bind(this, keyType);
         }
