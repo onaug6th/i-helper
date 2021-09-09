@@ -139,9 +139,9 @@ class PluginService {
     //  文件夹名称
     const folderName = utils.getLastPath(zipPath).replace('.zip', '');
     //  解压缩后的文件夹路径
-    const afterFilePath = path.join(global.rootPath, `pluginPackages\\${folderName}`);
+    const afterFilePath = path.join(global.rootPath, 'pluginPackages', folderName);
     //  解压缩后的文件夹内的插件配置路径
-    const jsonPath = `${afterFilePath}\\${folderName}\\plugin.json`;
+    const jsonPath = path.join(afterFilePath, folderName, 'plugin.json');
 
     try {
       // 解压缩

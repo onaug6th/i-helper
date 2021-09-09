@@ -6,6 +6,7 @@ import * as pluginUtils from '@/main/utils/plugin';
 import { publishURL } from '@/main/constants/url';
 import FormData from 'form-data';
 import fs from 'fs';
+import path from 'path';
 import { dialog } from 'electron';
 import pluginService from '../plugin/plugin.service';
 import windowService from '../window/window.service';
@@ -129,7 +130,7 @@ class DevService {
     //  需要打包的文件夹
     const folderPath = plugin.folderPath;
     //  打包后的路径
-    const afterFolderPath = `${global.downloadPath}\\${plugin.id}`;
+    const afterFolderPath = path.join(global.downloadPath, plugin.id);
     const user = userService.getUser();
 
     const buildConfig: any = {
@@ -262,7 +263,7 @@ class DevService {
     //  需要打包的文件夹路径
     const folderPath = plugin.folderPath;
     //  打包后的路径
-    const afterFolderPath = `${global.rootPath}\\publishZips\\${id}`;
+    const afterFolderPath = path.join(global.rootPath, 'publishZips', id);
 
     const user = userService.getUser();
 

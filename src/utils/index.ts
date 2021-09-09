@@ -107,7 +107,7 @@ function safeGet(target: unknown, path: string, defaultValue: unknown = ''): any
  * @returns
  */
 function getLastPath(path: string): string {
-  const pathArr = path.split('\\');
+  const pathArr = global.isMac ? path.split('/') : path.split('\\');
   return pathArr[pathArr.length - 1];
 }
 

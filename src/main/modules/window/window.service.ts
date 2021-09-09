@@ -135,7 +135,9 @@ class WindowService {
 
     const logo = plugin.logoPath;
     const fileExtra = utils.getFileExtra(logo);
-    if (fileExtra !== 'gif') {
+
+    //  @Todo: 尚未处理macOS上的图标逻辑
+    if (global.isWindows && fileExtra !== 'gif') {
       win.setIcon(logo);
     }
 

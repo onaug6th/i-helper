@@ -62,7 +62,7 @@ function updatePublishPluginJson(to: string, data: any) {
   }
 
   return new Promise(resolve => {
-    const afterJsonPath = `${to}\\plugin.json`;
+    const afterJsonPath = path.join(to, 'plugin.json');
     fs.readFile(afterJsonPath, 'utf8', function(err, text) {
       let result = JSON.parse(text);
       result = {

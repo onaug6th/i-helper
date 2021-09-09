@@ -51,7 +51,7 @@ class StoreService {
    */
   async download(id: string) {
     const plugin = this.getPlugin(id);
-    const pluginZipsPath = `${global.rootPath}\\pluginZips`;
+    const pluginZipsPath = path.join(global.rootPath, 'pluginZips');
     //  安全的创建文件夹
     await fsUtils.safeCreatedir(pluginZipsPath);
 

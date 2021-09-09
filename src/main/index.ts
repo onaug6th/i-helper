@@ -47,9 +47,7 @@ export default function launchApp(): void {
 
   app.on('window-all-closed', e => {
     if (global.forceQuit) {
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
+      app.quit();
     } else {
       e.preventDefault();
     }
@@ -92,7 +90,7 @@ export default function launchApp(): void {
   });
 
   if (global.isDev) {
-    if (process.platform === 'win32') {
+    if (global.isWindows) {
       process.on('message', data => {
         if (data === 'graceful-exit') {
           app.quit();

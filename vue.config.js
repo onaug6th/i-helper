@@ -30,6 +30,31 @@ module.exports = {
         appId: 'com.onaug6th.app',
         copyright: 'onaug6th',
         compression: 'store',
+
+        //  macOS打包配置
+        dmg: {
+          contents: [
+            {
+              x: 410,
+              y: 150,
+              type: 'link',
+              path: '/Applications'
+            },
+            {
+              x: 130,
+              y: 150,
+              type: 'file'
+            }
+          ]
+        },
+        mac: {
+          icon: './public/icon.icns',
+          extendInfo: {
+            LSUIElement: 1
+          }
+        },
+        //  macOS
+
         win: {
           target: ['nsis', 'zip'],
           //  win下的程序图标

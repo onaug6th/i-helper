@@ -22,6 +22,10 @@ declare global {
       forceQuit: boolean;
       //  应用图标地址
       appLogoPath: string;
+      //  是苹果系统
+      isMac: boolean;
+      //  是windows系统
+      isWindows: boolean;
     }
   }
 }
@@ -29,6 +33,9 @@ declare global {
 global.isDev = process.env.NODE_ENV !== 'production';
 global.rootPath = global.isDev ? __dirname : app.getPath('userData');
 global.downloadPath = app.getPath('downloads');
+
+global.isMac = process.platform == 'darwin';
+global.isWindows = process.platform == 'win32';
 
 const trayPath = {
   dev: path.join(process.cwd(), 'public', 'favicon.ico'),
