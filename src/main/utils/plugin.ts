@@ -1,5 +1,6 @@
 import fs from 'fs';
 import merge from 'lodash/merge';
+import path from 'path';
 
 /**
  * 插件默认配置
@@ -75,6 +76,19 @@ function try2GetReadme(
 }
 
 /**
+ * 在不同平台下，设置不同的路径值
+ * @param pathStr
+ * @returns
+ */
+function checkPathStr(pathStr: string) {
+  if (global.isMac) {
+    return pathStr.replace(/\\/g, '/');
+  } else if (global.isWindows) {
+    return pathStr.replace(/\//g, '\\');
+  }
+}
+
+/**
  * 补全对象的属性路径
  * @param obj
  * @param folderPath 文件目录路径
@@ -84,12 +98,12 @@ function pathCompletion(obj: PluginDevConfig | Plugin, folderPath: string): void
 
   //  入口文件，如不为 http 协议开头，补全文件夹目录加入口文件地址
   if (!main.startsWith('http')) {
-    obj.main = `${folderPath}${main}`;
+    obj.main = path.join(folderPath, checkPathStr(main));
   }
 
   //  预加载js文件
   if (preload) {
-    obj.preload = `${folderPath}${preload}`;
+    obj.preload = path.join(folderPath, checkPathStr(preload));
   }
 }
 
@@ -113,7 +127,7 @@ async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; 
   //  图标
   const logo = file.logo;
   //  插件图标路径
-  file.logoPath = `${folderPath}${logo}`;
+  file.logoPath = path.join(folderPath, logo);
   //  补充协议
   file.logo = `atom:///${file.logoPath}`;
 
