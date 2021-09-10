@@ -74,9 +74,9 @@ class UpdateService {
    */
   updateDownload() {
     return new Promise((resolve, reject) => {
-      const savePath = path.join(global.downloadPath, this.updateInfo.downloadFile);
+      const savePath = path.join(global.downloadPath, this.updateInfo.packageName);
 
-      getInstallPackage(this.updateInfo.exeUrl)
+      getInstallPackage(this.updateInfo.packageUrl)
         .on('progress', state => {
           this.sendWebContents({
             transferred: state.size.transferred,
@@ -111,10 +111,24 @@ class UpdateService {
     name: string;
     version: string;
     localVersion: string;
-    exeUrl: string;
+    packageUrl: string;
   }> {
     //  获取最新版本信息
     const latestVersion = await getLatestVersionInfo();
+
+    let packageName: string;
+    let packageUrl: string;
+
+    latestVersion.assets.some(asset => {
+      const { name, browser_download_url } = asset;
+      const extName = global.isWindows ? 'ext' : 'dmg';
+
+      if (name && name.includes(extName)) {
+        packageName = name;
+        packageUrl = browser_download_url;
+        return true;
+      }
+    });
 
     const result = {
       canUpdate: compareVersion(this.version, latestVersion.tag_name),
@@ -123,8 +137,8 @@ class UpdateService {
       version: latestVersion.tag_name,
       localVersion: this.version,
       more: 'https://github.com/onaug6th/i-helper/releases',
-      downloadFile: latestVersion.assets[0].name,
-      exeUrl: latestVersion.assets[0].browser_download_url
+      packageName,
+      packageUrl
     };
 
     this.updateInfo = result;
