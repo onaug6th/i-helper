@@ -7,7 +7,6 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
     interface Global {
-      windowService: any;
       //  文件读取基础路径
       rootPath: string;
       //  是否开发模式
@@ -22,6 +21,8 @@ declare global {
       forceQuit: boolean;
       //  应用图标地址
       appLogoPath: string;
+      //  托盘图标地址
+      appTrayPath: string;
       //  是苹果系统
       isMac: boolean;
       //  是windows系统
@@ -31,17 +32,31 @@ declare global {
 }
 
 global.isDev = process.env.NODE_ENV !== 'production';
+
 global.rootPath = global.isDev ? __dirname : app.getPath('userData');
 global.downloadPath = app.getPath('downloads');
 
 global.isMac = process.platform == 'darwin';
 global.isWindows = process.platform == 'win32';
 
-const trayPath = {
-  dev: path.join(process.cwd(), 'public', 'favicon.ico'),
-  prod: path.join(__dirname, 'favicon.ico')
-};
+let appTrayPath: string;
+let appLogoPath: string;
 
-global.appLogoPath = global.isDev ? trayPath.dev : trayPath.prod;
+if (global.isWindows) {
+  appTrayPath = global.isDev ? path.join(process.cwd(), 'public', 'favicon.ico') : path.join(__dirname, 'favicon.ico');
+
+  appLogoPath = global.isDev ? path.join(process.cwd(), 'public', 'favicon.ico') : path.join(__dirname, 'favicon.ico');
+} else {
+  appTrayPath = global.isDev
+    ? path.join(process.cwd(), 'public', 'tray-darwin.png')
+    : path.join(__dirname, 'tray-darwin.png');
+
+  appLogoPath = global.isDev
+    ? path.join(process.cwd(), 'public', 'app-darwin.png')
+    : path.join(__dirname, 'app-darwin.png');
+}
+
+global.appTrayPath = appTrayPath;
+global.appLogoPath = appLogoPath;
 
 export {};

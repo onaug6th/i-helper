@@ -171,8 +171,15 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
     });
     //  设置视图自适应尺寸
     viewItem.setAutoResize({ width: true, height: true });
-    //  加载页面资源
-    viewItem.webContents.loadURL(url);
+
+    //  加载页面地址
+    if (url.startsWith('http') || url.startsWith('file')) {
+      viewItem.webContents.loadURL(url);
+    }
+    //  加载文件
+    else {
+      viewItem.webContents.loadFile(url);
+    }
 
     if (isDev) {
       viewItem.webContents.openDevTools();

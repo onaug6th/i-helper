@@ -20,7 +20,8 @@ class TrayService {
    * 应用初始化时执行
    */
   appOnReady() {
-    tray = new Tray(global.appLogoPath);
+    tray = new Tray(global.appTrayPath);
+
     const contextMenu = Menu.buildFromTemplate(menus);
     tray.setContextMenu(contextMenu);
     tray.setToolTip('i-helper');

@@ -44,7 +44,6 @@ class WindowService {
   mainWindow: BrowserWindow;
 
   constructor() {
-    global.windowService = this;
     global.pluginWinItems = this.pluginWinItems;
     global.viewWins = this.viewWins;
   }
