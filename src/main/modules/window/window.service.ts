@@ -1,20 +1,3 @@
-/**
- * 新建插件窗体：
- * 通过 pluginWinItems 来判断插件是否已经打开。
- *
- * 寻找窗体：
- * 通过windows1.id寻找
- *
- * 删除窗体：
- * 通过windows1.id删除
- *
- * 寻找view所属的插件id：
- * 通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体
- *
- * 新增插件的子窗体：
- * 通过views标记的（id：插件id）来寻找所属插件信息。同时在windows1中寻找到插件的主窗体
- * 新增插件窗体后。将插件窗体的 fatherId 指向 插件主窗体ID
- */
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import { browserWindowOptions, winURL } from '@/main/constants/config/browserWindow';
 import pluginService from '../plugin/plugin.service';
@@ -58,7 +41,7 @@ class WindowService {
 
     win.loadURL(url);
 
-    // if (global.isDev) {
+    // if (global.isDevMode) {
     //   win.webContents.openDevTools();
     // }
 
@@ -248,6 +231,25 @@ class WindowService {
     }
     //  移除内存中的窗体对象
     this.deleteWindow(windowId);
+  }
+
+  /**
+   * 关闭插件的全部子窗体
+   * @param pluginWinId
+   */
+  closePluginAllChildWindow(pluginWinId: number) {
+    const pluginWinItems = this.pluginWinItems;
+
+    for (const winId in pluginWinItems) {
+      const pluginWinItem = pluginWinItems[winId];
+      //  如插件窗体的fatherId为本次关闭窗体ID
+      const isHisFatherWin = pluginWinItem.fatherId === pluginWinId;
+
+      if (isHisFatherWin) {
+        //  在插件窗体关闭后，会进入该窗体的 'close' 回调，进行回收视图
+        this.closeWindow(pluginWinItem.id);
+      }
+    }
   }
 
   /**

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { ipcRenderer } = require('electron');
 
-if (global.isDev) {
+if (global.isDevMode) {
   console.info('apisdk ready');
 }
 

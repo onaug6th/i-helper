@@ -10,7 +10,7 @@ declare global {
       //  文件读取基础路径
       rootPath: string;
       //  是否开发模式
-      isDev: boolean;
+      isDevMode: boolean;
       //  窗体/插件信息映射
       pluginWinItems: any;
       //  视图窗体ID映射
@@ -31,9 +31,9 @@ declare global {
   }
 }
 
-global.isDev = process.env.NODE_ENV !== 'production';
+global.isDevMode = process.env.NODE_ENV !== 'production';
 
-global.rootPath = global.isDev ? __dirname : app.getPath('userData');
+global.rootPath = global.isDevMode ? __dirname : app.getPath('userData');
 global.downloadPath = app.getPath('downloads');
 
 global.isMac = process.platform == 'darwin';
@@ -43,15 +43,19 @@ let appTrayPath: string;
 let appLogoPath: string;
 
 if (global.isWindows) {
-  appTrayPath = global.isDev ? path.join(process.cwd(), 'public', 'favicon.ico') : path.join(__dirname, 'favicon.ico');
+  appTrayPath = global.isDevMode
+    ? path.join(process.cwd(), 'public', 'favicon.ico')
+    : path.join(__dirname, 'favicon.ico');
 
-  appLogoPath = global.isDev ? path.join(process.cwd(), 'public', 'favicon.ico') : path.join(__dirname, 'favicon.ico');
+  appLogoPath = global.isDevMode
+    ? path.join(process.cwd(), 'public', 'favicon.ico')
+    : path.join(__dirname, 'favicon.ico');
 } else {
-  appTrayPath = global.isDev
+  appTrayPath = global.isDevMode
     ? path.join(process.cwd(), 'public', 'tray-darwin.png')
     : path.join(__dirname, 'tray-darwin.png');
 
-  appLogoPath = global.isDev
+  appLogoPath = global.isDevMode
     ? path.join(process.cwd(), 'public', 'app-darwin.png')
     : path.join(__dirname, 'app-darwin.png');
 }

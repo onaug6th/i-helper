@@ -1,5 +1,5 @@
 import path from 'path';
-const apisdk = global.isDev ? path.join(process.cwd(), 'public', 'apisdk.js') : path.join(__dirname, 'apisdk.js');
+const apisdk = global.isDevMode ? path.join(process.cwd(), 'public', 'apisdk.js') : path.join(__dirname, 'apisdk.js');
 
 const scrollbarCSS = `
 ::-webkit-scrollbar-button {

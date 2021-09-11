@@ -12,7 +12,7 @@ interface PluginWinItem {
   url: string;
   //  窗体加载的视图地址
   viewUrl: string;
-  //  是否开发者模式
+  //  是否开发者模式的插件
   isDev?: boolean;
   //  窗体的父窗体id
   fatherId?: number | null;
@@ -60,7 +60,7 @@ interface PluginPermissions {
   clipboard: boolean;
 }
 
-interface HeaderConfig {
+interface PluginHeader {
   show?: boolean;
   title?: boolean;
   btns?: Array<string>;
@@ -111,7 +111,9 @@ interface Plugin {
   /**
    * 头部栏配置
    */
-  header?: HeaderConfig;
+  header?: PluginHeader;
+  //  主窗体关闭时，是否回收所有子窗体
+  closeGCChilds?: boolean;
   /**
    * 窗体配置
    */

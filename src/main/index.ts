@@ -72,11 +72,17 @@ export default function launchApp(): void {
   });
 
   app.on('ready', async () => {
-    // if (global.isDev && !process.env.IS_TEST) {
+    // if (global.isDevMode && !process.env.IS_TEST) {
     //   const path =
     //     'C:/Users/onaug6th/AppData/Local/Google/Chrome/User Data/Default/Extensions/ljjemllljcmogpfapbkkighbhhppjdbg/6.0.0.8_0';
-    //   //  加载vue开发者工具
-    //   await session.defaultSession.loadExtension(path);
+
+    //   try {
+    //     //  加载vue开发者工具
+    //     await session.defaultSession.loadExtension(path);
+    //   } catch (error) {
+    //     //  如果出错，需要将上面的地址换成本机谷歌开发者插件安装的目录地址
+    //     console.info(error);
+    //   }
     // }
 
     protocol.registerFileProtocol('atom', (request, callback) => {
@@ -89,7 +95,7 @@ export default function launchApp(): void {
     modules.init(app);
   });
 
-  if (global.isDev) {
+  if (global.isDevMode) {
     if (global.isWindows) {
       process.on('message', data => {
         if (data === 'graceful-exit') {

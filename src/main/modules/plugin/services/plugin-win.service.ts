@@ -69,23 +69,15 @@ function openPluginWindow(
     //  从视图窗体映射中移除
     delete windowService.viewWins[viewId];
 
-    //  不存在fatherId，说明是主窗体，将全部子窗体关闭
+    //  不存在fatherId，说明是主窗体
     if (!fatherId) {
-      const pluginWinItems = windowService.pluginWinItems;
-
-      for (const winId in pluginWinItems) {
-        const pluginWinItem = pluginWinItems[winId];
-        //  如插件窗体的fatherId为本次关闭窗体ID
-        const isHisFatherWin = pluginWinItem.fatherId === pluginWinId;
-
-        if (isHisFatherWin) {
-          //  在插件窗体关闭后，会进入该窗体的 'close' 回调，进行回收视图
-          windowService.closeWindow(pluginWinItem.id);
-        }
+      //  如设置了关闭后关闭全部子窗体，将全部子窗体关闭
+      if (plugin.closeGCChilds) {
+        windowService.closePluginAllChildWindow(pluginWinId);
       }
     }
 
-    if (global.isDev) {
+    if (viewItem.webContents.isDevToolsOpened()) {
       viewItem.webContents.closeDevTools();
     }
 
@@ -185,7 +177,6 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
       viewItem.webContents.openDevTools();
     }
 
-    //  监听生命周期，打开开发者控制台
     viewItem.webContents.on('dom-ready', () => {
       if (plugin.useScrollbarCSS) {
         //  注入滚动条样式
