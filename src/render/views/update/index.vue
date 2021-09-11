@@ -9,12 +9,12 @@
     <div v-if="state.isDownload" class="update-download">
       <div v-if="state.downloadStatus.percent === 100">
         <div class="download-title">
-          下载完成
+          下载完成，正在启动安装程序
         </div>
       </div>
       <template v-else>
         <div class="download-title">
-          正在下载...
+          正在下载，请稍等...
         </div>
         <div class="download-progress">
           <div class="progress-track">
@@ -58,8 +58,11 @@ export default defineComponent({
     const state: any = reactive({
       isDownload: false,
       downloadStatus: {
+        //  进度百分比
         percent: 0,
+        //  已下载大小
         transferred: 0,
+        //  文件总大小
         total: 0
       },
       updateInfo: {}

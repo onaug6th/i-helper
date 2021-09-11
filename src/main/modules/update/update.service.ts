@@ -50,7 +50,7 @@ class UpdateService {
   }
 
   /**
-   * 关闭更新弹窗
+   * 查看版本信息
    */
   openMore() {
     shell.openExternal(this.updateInfo.more);
@@ -121,7 +121,7 @@ class UpdateService {
 
     latestVersion.assets.some(asset => {
       const { name, browser_download_url } = asset;
-      const extName = global.isWindows ? 'ext' : 'dmg';
+      const extName = global.isWindows ? 'exe' : 'pkg';
 
       if (name && name.includes(extName)) {
         packageName = name;
