@@ -6,10 +6,12 @@ if (global.isDevMode) {
 }
 
 const app = {
-  getUser: () => ipcRenderer.sendSync('plugin-app', 'userInfo'),
-  getWinInfo: () => ipcRenderer.sendSync('plugin-app', 'winInfo'),
+  getUser: () => ipcRenderer.sendSync('plugin-app', 'getUser'),
+  getWinInfo: () => ipcRenderer.sendSync('plugin-app', 'getWinInfo'),
+  getPluginWinsInfo: () => ipcRenderer.sendSync('plugin-app', 'getPluginWinsInfo'),
+
   createBrowserWindow: (url, options) => ipcRenderer.sendSync('plugin-app', 'createBrowserWindow', url, options),
-  send: (id, event, ...data) => ipcRenderer.send('plugin-app', 'communication', id, event, ...data),
+  send: (id, event, ...data) => id && ipcRenderer.send('plugin-app', 'communication', id, event, ...data),
   setTitle: title => ipcRenderer.sendSync('plugin-app', 'setTitle', title),
   close: () => ipcRenderer.sendSync('plugin-app', 'close'),
   setAlwaysOnTop: alwaysOnTop => ipcRenderer.sendSync('plugin-app', 'setAlwaysOnTop', alwaysOnTop),

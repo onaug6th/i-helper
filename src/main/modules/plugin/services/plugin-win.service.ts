@@ -54,7 +54,14 @@ function openPluginWindow(
   const mount = initResult.mount;
 
   //  创建插件窗体
-  const pluginWindow = windowService.createPluginWin(plugin, viewItem.webContents.id, viewUrl, option, isDev, fatherId);
+  const pluginWindow = windowService.createPluginWin(
+    plugin,
+    viewItem.webContents.id,
+    initResult.viewUrl,
+    option,
+    isDev,
+    fatherId
+  );
 
   //  视图挂载到插件窗体中
   mount(pluginWindow);
@@ -103,15 +110,21 @@ function openPluginWindow(
  * @param isDev
  * @returns
  */
-function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { viewItem: BrowserView; mount: any } {
+function initBrowserView(
+  plugin: Plugin,
+  viewUrl: string,
+  isDev: boolean
+): { viewItem: BrowserView; mount: any; viewUrl: string } {
   //  创建插件会话
   const sessionItem = session.fromPartition(plugin.name);
   //  设置会话预加载文件
   sessionItem.setPreloads([apisdk]);
   //  读取配置的对象
-  const readObj: PluginDevConfig | Plugin = isDev ? plugin.dev || plugin : plugin;
-  //  优先使用传入的视图地址
-  const url = viewUrl || readObj.main;
+  const readConfig: PluginDevConfig | Plugin = isDev ? plugin.dev || plugin : plugin;
+  //  如没有指定视图地址，默认使用配置中设置的插件地址
+  if (!viewUrl) {
+    viewUrl = readConfig.main;
+  }
 
   const webPreferences: WebPreferences = {
     //  启用NodeJS集成。
@@ -123,7 +136,7 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
 
   //  如插件存在预加载文件
   if (plugin.preload) {
-    webPreferences.preload = readObj.preload;
+    webPreferences.preload = readConfig.preload;
   }
 
   //  实例化 BrowserView
@@ -165,12 +178,12 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
     viewItem.setAutoResize({ width: true, height: true });
 
     //  加载页面地址
-    if (url.startsWith('http') || url.startsWith('file')) {
-      viewItem.webContents.loadURL(url);
+    if (viewUrl.startsWith('http') || viewUrl.startsWith('file')) {
+      viewItem.webContents.loadURL(viewUrl);
     }
     //  加载文件
     else {
-      viewItem.webContents.loadFile(url);
+      viewItem.webContents.loadFile(viewUrl);
     }
 
     if (isDev) {
@@ -185,7 +198,7 @@ function initBrowserView(plugin: Plugin, viewUrl: string, isDev: boolean): { vie
     });
   }
 
-  return { viewItem, mount };
+  return { viewItem, mount, viewUrl };
 }
 
 /**

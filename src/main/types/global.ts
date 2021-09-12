@@ -7,6 +7,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
     interface Global {
+      windowService: any;
       //  文件读取基础路径
       rootPath: string;
       //  是否开发模式

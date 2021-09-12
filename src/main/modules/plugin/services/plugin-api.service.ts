@@ -6,7 +6,7 @@ const appApi = {
   /**
    * 获取用户信息
    */
-  userInfo: () => {
+  getUser: () => {
     const user = userService.getUser();
 
     return user;
@@ -17,7 +17,7 @@ const appApi = {
    * @param pluginWinItem
    * @returns
    */
-  winInfo: (pluginWinItem: PluginWinItem) => {
+  getWinInfo: (pluginWinItem: PluginWinItem) => {
     const { pluginId, viewId, fatherViewId, isDev } = pluginWinItem;
 
     return {
@@ -26,6 +26,24 @@ const appApi = {
       fatherViewId,
       isDev
     };
+  },
+
+  /**
+   * 获取此插件打开的所有窗体
+   * @param pluginWinItem
+   * @returns
+   */
+  getPluginWinsInfo: (pluginWinItem: PluginWinItem) => {
+    const { pluginId } = pluginWinItem;
+
+    return windowService.getPluginWinItemByPluginId(pluginId).map(pluginWinItem => {
+      return {
+        pluginId,
+        fatherViewId: pluginWinItem.fatherViewId,
+        viewUrl: pluginWinItem.viewUrl,
+        viewId: pluginWinItem.viewId
+      };
+    });
   },
 
   /**
