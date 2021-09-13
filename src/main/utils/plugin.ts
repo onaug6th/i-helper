@@ -28,11 +28,7 @@ function validPluginJSON(jsonPath: string | Plugin): string | undefined {
   const name = file.name;
   let result: string;
 
-  if (main) {
-    if (!/\.html$/i.test(main)) {
-      result = '入口文件不是HTML文件（main）';
-    }
-  } else {
+  if (!main) {
     result = '没有指定入口文件（main）';
   }
 
@@ -149,7 +145,7 @@ async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; 
   file.readmePath = readmeInfo.path;
   file.readmeContent = readmeInfo.content;
 
-  return { file: merge(DEFAULT_PLUGIN_CONFIG, file) };
+  return { file: merge({}, DEFAULT_PLUGIN_CONFIG, file) };
 }
 
 export { getPluginInfoByFile };

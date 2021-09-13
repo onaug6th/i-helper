@@ -224,7 +224,7 @@ function pluginStart(
 
   //  通过插件内打开的窗体，因为部分配置可能写在传入配置中，所以需要将传入的配置与插件配置进行合并。
   if (fatherId) {
-    merge(plugin, options.pluginOptions);
+    merge({}, plugin, options.pluginOptions);
   }
 
   //  打开插件窗体
