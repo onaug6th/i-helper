@@ -2,9 +2,12 @@
   <div>
     <h1 class="plugin-title">
       开发者模式
+      <el-button type="primary" class="plugin-title_btn" size="mini" title="查看开发者文档" @click="openDocs">
+        开发者文档
+      </el-button>
     </h1>
 
-    <Plugin-list type="dev" :pluginList="state.pluginList" @reload="reload" @remove="delPlugin" @publish="publish" />
+    <Plugin-list type="dev" :pluginList="state.pluginList" @reload="reload" @remove="delPlugin" @publish="reload" />
   </div>
 </template>
 
@@ -25,13 +28,14 @@ export default defineComponent({
       pluginList: []
     });
 
-    const findPluginIndex = ({ id }) => state.pluginList.findIndex(plugin => plugin.id === id);
+    const findPluginIndex = ({ id }: { id: string }) =>
+      state.pluginList.findIndex((plugin: Plugin) => plugin.id === id);
 
     /**
      * 重新加载插件
      * @param plugin
      */
-    function reload(plugin) {
+    function reload(plugin: Plugin) {
       const index = findPluginIndex(plugin);
       state.pluginList[index] = plugin;
     }
@@ -40,11 +44,19 @@ export default defineComponent({
      * 删除插件
      * @param index
      */
-    function delPlugin(plugin) {
+    function delPlugin(plugin: Plugin) {
       const index = findPluginIndex(plugin);
       state.pluginList.splice(index, 1);
       state.openDrawer = false;
     }
+
+    /**
+     * 打开文档
+     */
+    function openDocs() {
+      proxy.$ipcClient('dev-open-docs');
+    }
+
     /**
      * 获取应用列表
      */
@@ -69,9 +81,9 @@ export default defineComponent({
     return {
       state,
 
+      openDocs,
       reload,
-      delPlugin,
-      publish: reload
+      delPlugin
     };
   }
 });

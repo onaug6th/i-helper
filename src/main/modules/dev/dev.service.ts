@@ -3,11 +3,11 @@ import devPluginDB from '@/main/dataBase/devPlugin.db';
 import * as utils from '@/main/utils';
 import * as fsUtils from '@/main/utils/fs';
 import * as pluginUtils from '@/main/utils/plugin';
-import { publishURL } from '@/main/constants/url';
+import { docsPluginURL, publishURL } from '@/main/constants/url';
 import FormData from 'form-data';
 import fs from 'fs';
 import path from 'path';
-import { dialog } from 'electron';
+import { dialog, shell } from 'electron';
 import pluginService from '../plugin/plugin.service';
 import windowService from '../window/window.service';
 import userService from '../user/user.service';
@@ -356,6 +356,13 @@ class DevService {
     const viewItem = windowService.viewWins[viewId].viewItem;
 
     viewItem.webContents.toggleDevTools();
+  }
+
+  /**
+   * 查看版本信息
+   */
+  openDocs() {
+    shell.openExternal(docsPluginURL);
   }
 }
 

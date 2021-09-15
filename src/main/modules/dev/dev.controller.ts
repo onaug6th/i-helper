@@ -50,3 +50,8 @@ ipcMain.handle('dev-plugin-updateJsonPath', (event, id) => {
 ipcMain.handle('dev-plugin-devTools', (event, windowId) => {
   return devService.toggleDevTools(windowId);
 });
+
+//  打开开发者文档站点
+ipcMain.handle('dev-open-docs', () => {
+  return devService.openDocs();
+});

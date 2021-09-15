@@ -1,4 +1,4 @@
-import { baseURL, pluginURL } from '../../constants/url';
+import { baseURL, pluginURL, releasesURL } from '../../constants/url';
 import httpClient from '../httpClient';
 import request from 'request';
 import progress from 'request-progress';
@@ -35,8 +35,8 @@ function getPlugin(id: string): Promise<StorePlugin> {
  * 获取最新应用版本信息
  * @returns
  */
-function getLatestVersionInfo(): Promise<any> {
-  return httpClient.get('https://gitee.com/api/v5/repos/onaug6th/i-helper/releases/latest');
+function getReleases(): Promise<Array<any>> {
+  return httpClient.get(releasesURL);
 }
 
 /**
@@ -50,4 +50,4 @@ function getInstallPackage(url: string): any {
   });
 }
 
-export { getPluginList, downloadPlugin, getPlugin, getLatestVersionInfo, getInstallPackage };
+export { getPluginList, downloadPlugin, getPlugin, getReleases, getInstallPackage };

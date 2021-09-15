@@ -4,12 +4,17 @@
       我的插件
     </h1>
 
-    <Plugin-list type="installed" :pluginList="state.pluginList" />
+    <Plugin-list type="installed" :pluginList="state.pluginList">
+      <template #empty>
+        <div class="empty">暂无插件，去<a @click="goStore">下载安装</a></div>
+      </template>
+    </Plugin-list>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, reactive, getCurrentInstance } from 'vue';
+import { useRouter } from 'vue-router';
 import PluginList from '@/render/components/pluginList/index.vue';
 
 export default defineComponent({
@@ -19,6 +24,7 @@ export default defineComponent({
   },
   setup() {
     const { proxy }: any = getCurrentInstance();
+    const router = useRouter();
     //  插件列表
     let state = reactive({
       //  插件列表
@@ -31,6 +37,15 @@ export default defineComponent({
     async function getPluginList() {
       const result = await proxy.$ipcClient('plugin-list');
       state.pluginList = reactive(result);
+    }
+
+    /**
+     * 跳转商店
+     */
+    function goStore() {
+      router.push({
+        path: '/store'
+      });
     }
 
     /**
@@ -49,7 +64,8 @@ export default defineComponent({
     });
 
     return {
-      state
+      state,
+      goStore
     };
   }
 });

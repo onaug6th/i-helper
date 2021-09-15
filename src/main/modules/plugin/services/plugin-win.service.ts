@@ -114,7 +114,11 @@ function initBrowserView(
   plugin: Plugin,
   viewUrl: string,
   isDev: boolean
-): { viewItem: BrowserView; mount: any; viewUrl: string } {
+): {
+  viewItem: BrowserView;
+  viewUrl: string;
+  mount: (pluginWindow: Electron.BrowserWindow) => void;
+} {
   //  创建插件会话
   const sessionItem = session.fromPartition(plugin.name);
   //  设置会话预加载文件
@@ -135,7 +139,7 @@ function initBrowserView(
   };
 
   //  如插件存在预加载文件
-  if (plugin.preload) {
+  if (readConfig.preload) {
     webPreferences.preload = readConfig.preload;
   }
 
@@ -148,7 +152,7 @@ function initBrowserView(
    * 视图挂载
    * @param pluginWindow
    */
-  function mount(pluginWindow) {
+  function mount(pluginWindow: Electron.BrowserWindow) {
     //  获取插件窗体的大小
     const { width: pluginWidth, height: pluginHeight } = pluginWindow.getBounds();
     //  BrowserView挂载到插件窗口中
@@ -198,7 +202,7 @@ function initBrowserView(
     });
   }
 
-  return { viewItem, mount, viewUrl };
+  return { viewItem, viewUrl, mount };
 }
 
 /**

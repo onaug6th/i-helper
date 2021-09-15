@@ -42,11 +42,15 @@
         </el-button>
       </div>
     </div>
-    <el-empty
-      v-if="!pluginList.length"
-      description="暂无插件"
-      title="将插件压缩包/配置文件拖入应用即可添加插件"
-    ></el-empty>
+    <el-empty v-if="!pluginList.length" title="将插件压缩包/配置文件拖入应用即可添加插件">
+      <template #description>
+        <slot name="empty">
+          <div class="empty">
+            暂无插件
+          </div>
+        </slot>
+      </template>
+    </el-empty>
   </div>
 
   <Plugin-drawer v-model:visible="state.openDrawer" v-bind="$attrs" :type="type" :plugin="currentPlugin" />

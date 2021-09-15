@@ -2,12 +2,12 @@ import { ipcMain } from 'electron';
 import updateService from './update.service';
 
 //  检查最新版本
-ipcMain.handle('check-latest-version', () => {
+ipcMain.handle('update-check-release', () => {
   return updateService.checkLatestVersion();
 });
 
 //  获取更新信息
-ipcMain.handle('get-update-info', () => {
+ipcMain.handle('update-get-release', () => {
   return updateService.updateInfo;
 });
 
@@ -24,4 +24,9 @@ ipcMain.handle('update-win-close', () => {
 //  打开更新信息页
 ipcMain.handle('update-open-more', () => {
   updateService.openMore();
+});
+
+//  打开iHelper官网
+ipcMain.handle('update-open-homePage', () => {
+  updateService.openHomePage();
 });

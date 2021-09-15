@@ -94,7 +94,7 @@ export default defineComponent({
       }
     }
 
-    proxy.$ipcClient('get-update-info').then(updateInfo => {
+    proxy.$ipcClient('update-get-release').then(updateInfo => {
       state.updateInfo = updateInfo;
     });
 

@@ -1,10 +1,11 @@
-import { getInstallPackage, getLatestVersionInfo } from '@/main/api/plugin';
+import { getInstallPackage, getReleases } from '@/main/api/plugin';
 import { browserWindowOptions } from '@/main/constants/config/browserWindow';
 import { byteConvert, compareVersion } from '@/utils';
 import fs from 'fs';
 import path from 'path';
 import { app, BrowserWindow, shell } from 'electron';
 import windowService from '../window/window.service';
+import { docsURL, releasePageURL } from '@/main/constants/url';
 
 class UpdateService {
   /**
@@ -54,6 +55,13 @@ class UpdateService {
    */
   openMore() {
     shell.openExternal(this.updateInfo.more);
+  }
+
+  /**
+   * 访问官网
+   */
+  openHomePage() {
+    shell.openExternal(docsURL);
   }
 
   /**
@@ -107,38 +115,50 @@ class UpdateService {
    */
   async checkLatestVersion(): Promise<{
     canUpdate: boolean;
-    body: Array<string>;
+    body: string;
     name: string;
     version: string;
     localVersion: string;
     packageUrl: string;
   }> {
     //  获取最新版本信息
-    const latestVersion = await getLatestVersionInfo();
+    const latestVersion = await getReleases();
 
-    let packageName: string;
-    let packageUrl: string;
+    const extName = global.isWindows ? 'exe' : 'pkg';
+    const releaseInfo = {
+      packageName: '',
+      packageUrl: '',
+      tag_name: '',
+      body: ''
+    };
 
-    latestVersion.assets.some(asset => {
-      const { name, browser_download_url } = asset;
-      const extName = global.isWindows ? 'exe' : 'pkg';
+    for (let i = latestVersion.length; i--; i > 0) {
+      const release = latestVersion[i];
+      const matched = release.assets.some(asset => {
+        const { name, browser_download_url } = asset;
 
-      if (name && name.includes(extName)) {
-        packageName = name;
-        packageUrl = browser_download_url;
-        return true;
+        if (name && name.includes(extName)) {
+          releaseInfo.packageName = name;
+          releaseInfo.packageUrl = browser_download_url;
+          releaseInfo.tag_name = release.tag_name;
+          releaseInfo.body = release.body;
+          return true;
+        }
+      });
+      if (matched) {
+        break;
       }
-    });
+    }
 
     const result = {
-      canUpdate: compareVersion(this.version, latestVersion.tag_name),
-      body: latestVersion.body,
-      name: latestVersion.name,
-      version: latestVersion.tag_name,
+      canUpdate: compareVersion(this.version, releaseInfo.tag_name),
+      body: releaseInfo.body,
+      name: releaseInfo.packageName,
+      version: releaseInfo.tag_name,
       localVersion: this.version,
-      more: 'https://github.com/onaug6th/i-helper/releases',
-      packageName,
-      packageUrl
+      more: releasePageURL,
+      packageName: releaseInfo.packageName,
+      packageUrl: releaseInfo.packageUrl
     };
 
     this.updateInfo = result;

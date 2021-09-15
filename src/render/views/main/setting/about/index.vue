@@ -4,6 +4,10 @@
       <el-form-item label="版本信息">
         <el-button size="small" title="检查更新" @click="checkLatestVersion">{{ state.version }}</el-button>
       </el-form-item>
+
+      <el-form-item label="iHelper官网">
+        <el-button size="small" @click="openHomePage">查看官网</el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -28,7 +32,7 @@ export default defineComponent({
      * @param type
      */
     async function checkLatestVersion() {
-      const { canUpdate } = await proxy.$ipcClientLoading('check-latest-version');
+      const { canUpdate } = await proxy.$ipcClientLoading('update-check-release');
 
       if (!canUpdate) {
         proxy.$notify({
@@ -38,8 +42,13 @@ export default defineComponent({
       }
     }
 
+    function openHomePage() {
+      proxy.$ipcClientLoading('update-open-homePage');
+    }
+
     return {
       checkLatestVersion,
+      openHomePage,
       state
     };
   }
