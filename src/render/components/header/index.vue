@@ -55,13 +55,13 @@ export default defineComponent({
     const { proxy }: any = getCurrentInstance();
 
     const store = useStore();
-    const { currentWindow, windowId, mainWindowId, setting } = store.getters;
+    const { currentWindow, windowId, mainWindowId } = store.getters;
 
     const state = reactive({
       //  是否主面板
       isMainWindow: windowId === mainWindowId,
       //  是否置顶
-      isAlwaysOnTop: setting.isAlwaysOnTop,
+      isAlwaysOnTop: false,
       //  是否最大化
       isFullScreen: false,
       //  默认按钮
@@ -92,14 +92,7 @@ export default defineComponent({
       const afterValue = !state.isAlwaysOnTop;
       state.isAlwaysOnTop = afterValue;
 
-      if (state.isMainWindow) {
-        //  主界面置顶
-        proxy.$ipcClient('browser-main-window-onTop', afterValue);
-        //  更新vuex中的设置
-        store.dispatch('app/setSetting');
-      } else {
-        currentWindow.setAlwaysOnTop(afterValue);
-      }
+      currentWindow.setAlwaysOnTop(afterValue);
     }
 
     /**
@@ -131,7 +124,7 @@ export default defineComponent({
         await beforeClose();
       }
       if (windowId) {
-        const eventName = state.isMainWindow ? 'browser-window-hide' : 'browser-window-close';
+        const eventName = state.isMainWindow ? 'window-hide' : 'window-close';
         proxy.$ipcClient(eventName, windowId);
       }
     }

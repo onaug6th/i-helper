@@ -3,7 +3,7 @@ import windowService from '@/main/modules/window/window.service';
 import appStorageService from '@/main/modules/appStorage/appStorage.service';
 import pluginService from '@/main/modules/plugin/plugin.service';
 
-const isPluginType = (keyType: string) => keyType.includes('-');
+const keyTypeisPlugin = (keyType: string) => keyType.includes('-');
 class ShortcutKeyService {
   storageName = 'shortcutKey';
 
@@ -35,9 +35,10 @@ class ShortcutKeyService {
     this.shortcutKey = appStorageService.getData(this.storageName);
 
     for (const keyType in this.shortcutKey) {
-      const isPlugin = isPluginType(keyType);
+      const isPlugin = keyTypeisPlugin(keyType);
       let fn = this.shortcutCallback[keyType];
 
+      //  插件快捷键
       if (isPlugin) {
         const pluginWinItem = pluginService.getPlugin(keyType);
         if (pluginWinItem) {
@@ -66,7 +67,7 @@ class ShortcutKeyService {
    * 插件快捷键打开
    * @param pluginId
    */
-  pluginOpenCallback(pluginId: string): any {
+  pluginOpenCallback(pluginId: string) {
     const plugin = pluginService.getPlugin(pluginId);
 
     //  没有此插件，注销

@@ -6,8 +6,7 @@ class SettingService {
 
   //  默认设置
   defaultData = {
-    openAtLogin: false,
-    isAlwaysOnTop: false
+    openAtLogin: false
   };
 
   /**
