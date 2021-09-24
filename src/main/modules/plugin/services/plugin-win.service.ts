@@ -88,6 +88,9 @@ function openPluginWindow(
       viewItem.webContents.closeDevTools();
     }
 
+    //  回收BrowserView
+    viewItem.webContents['destroy']();
+
     //  手动gc
     viewItem = null;
     pluginWinId = null;
