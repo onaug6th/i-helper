@@ -206,6 +206,7 @@ export default defineComponent({
       });
       proxy.$eventBus.emit('dev-updateList');
       closeShade();
+      menuTo('/dev');
     }
 
     /**
@@ -219,6 +220,7 @@ export default defineComponent({
       });
       proxy.$eventBus.emit('installed-update');
       closeShade();
+      menuTo('/installed');
     }
 
     return {

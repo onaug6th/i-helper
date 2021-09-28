@@ -26,7 +26,7 @@
               删除
             </el-button>
 
-            <i v-if="isInstalled" class="iconfont icon-set" title="插件设置" @click="toggleSetting"></i>
+            <i v-if="showSetting" class="iconfont icon-set" title="插件设置" @click="toggleSetting"></i>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@ export default defineComponent({
       state.showSetting = !state.showSetting;
     }
 
-    const { showUpdate, showOpen, showDelete, isInReview } = useButton(
+    const { showUpdate, showOpen, showDelete, showSetting, isInReview } = useButton(
       {
         isStore: isStore.value,
         isDev: isDev.value,
@@ -227,6 +227,7 @@ export default defineComponent({
       isDev,
       isInstalled,
       isStore,
+      showSetting,
       visibleModel,
 
       showUpdate,
