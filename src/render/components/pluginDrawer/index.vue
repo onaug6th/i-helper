@@ -93,6 +93,7 @@
                   文件夹中查看
                 </el-button>
               </div>
+              <div v-if="showReviewContent" class="reject">审核不通过原因：“{{ plugin.reviewContent }}”，请重试</div>
             </div>
           </template>
           <!-- 开发模式下独有信息 -->
@@ -193,7 +194,7 @@ export default defineComponent({
       state.showSetting = !state.showSetting;
     }
 
-    const { showUpdate, showOpen, showDelete, showSetting, isInReview } = useButton(
+    const { showUpdate, showOpen, showDelete, showSetting, isInReview, showReviewContent } = useButton(
       {
         isStore: isStore.value,
         isDev: isDev.value,
@@ -234,6 +235,7 @@ export default defineComponent({
       showOpen,
       showDelete,
       isInReview,
+      showReviewContent,
 
       updatePlugin,
       pluginStart,

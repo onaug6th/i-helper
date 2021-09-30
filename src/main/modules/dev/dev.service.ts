@@ -46,11 +46,13 @@ class DevService {
 
         //  更新内存中插件信息
         plugin.reviewStatus = review.status;
+        plugin.reviewContent = review.content;
 
         //  更新数据库中的插件信息
         this.updatePluginInDb(plugin.id, {
           ...plugin,
-          reviewStatus: review.status
+          reviewStatus: review.status,
+          reviewContent: review.content
         });
       }
     }
@@ -306,7 +308,7 @@ class DevService {
 
     //  正在审核
     plugin.reviewStatus = ReviewStatus.pending;
-
+    //  更新插件在数据库/内存中的数据
     await this.updatePluginInDbOrMemory(id, plugin);
 
     //  因为发布了插件，需要刷新插件的安装信息

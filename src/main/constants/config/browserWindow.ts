@@ -1,5 +1,5 @@
 //  通用窗体配置
-const commonOptions = {
+const commonOptions: Electron.BrowserWindowConstructorOptions = {
   frame: false,
   width: 750,
   height: 600,

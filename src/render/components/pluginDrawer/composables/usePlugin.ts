@@ -101,16 +101,19 @@ export default function usePlugin({
    * 发布确认
    */
   async function publishConfirm() {
-    const result = await proxy.$ipcClient('plugin-detail-server', plugin.value.id);
     if (!userId.value) {
       await proxy.$alert('请先登录账号', '提醒');
       return (state.showRegister = true);
     }
-    if (result.authorId !== userId.value) {
-      return proxy.$alert('这个插件的作者不是当前账号哦', '提醒');
-    }
-    if (result && !utils.compareVersion(result.version, plugin.value.version)) {
-      return proxy.$alert('发布的版本小于商店中已发布的版本，请将版本号升级后再试', '提醒');
+    const result = await proxy.$ipcClient('plugin-detail-server', plugin.value.id);
+    if (result) {
+      if (result.authorId !== userId.value) {
+        return proxy.$alert('这个插件的作者不是当前账号哦', '提醒');
+      }
+
+      if (!utils.compareVersion(result.version, plugin.value.version)) {
+        return proxy.$alert('发布的版本小于商店中已发布的版本，请将版本号升级后再试', '提醒');
+      }
     }
     state.showDialog = true;
   }

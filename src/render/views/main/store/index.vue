@@ -52,6 +52,8 @@ export default defineComponent({
           type: 'success',
           message: '刷新成功'
         });
+
+        proxy.$eventBus.emit('dev-updateList');
       }
 
       state.pluginList = reactive(

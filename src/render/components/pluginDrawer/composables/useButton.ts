@@ -30,6 +30,10 @@ export default function useButton(
     return plugin.value.reviewStatus === ReviewStatus.pending;
   });
 
+  const showReviewContent = computed(() => {
+    return plugin.value.reviewStatus === ReviewStatus.fail;
+  });
+
   const showSetting = computed(() => {
     return isInstalled || isStoreAndDownload.value;
   });
@@ -39,6 +43,7 @@ export default function useButton(
     showOpen,
     showDelete,
     showSetting,
-    isInReview
+    isInReview,
+    showReviewContent
   };
 }

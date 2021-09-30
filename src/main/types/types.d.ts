@@ -152,6 +152,10 @@ interface Plugin {
    * 审核状态
    */
   reviewStatus?: number;
+  /**
+   * 审核内容
+   */
+  reviewContent?: string;
 }
 
 interface StorePlugin {
