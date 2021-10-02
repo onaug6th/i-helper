@@ -1,7 +1,9 @@
 import { ComputedRef } from '@vue/reactivity';
 import * as utils from '@/render/utils';
+import { computed } from '@vue/runtime-core';
 
 export default function usePlugin({
+  isStore,
   plugin,
   proxy,
   visibleModel,
@@ -10,6 +12,7 @@ export default function usePlugin({
   userId,
   state
 }: {
+  isStore: ComputedRef<boolean>;
   plugin: ComputedRef<any>;
   proxy: any;
   visibleModel: any;
@@ -18,6 +21,24 @@ export default function usePlugin({
   emit: any;
   state: any;
 }): any {
+  const versionText = computed(() => {
+    const [version, latestVersion] = isStore.value
+      ? [plugin.value.localVersion, plugin.value.version]
+      : [plugin.value.version, plugin.value.latestVersion];
+
+    if (version && latestVersion && plugin.value.canUpdate) {
+      return `本地版本：${version}，最新版本：${latestVersion}`;
+    } else {
+      return isStore.value ? latestVersion : version;
+    }
+  });
+  /**
+   * 下载插件
+   */
+  function downloadPlugin() {
+    emit('download');
+  }
+
   /**
    * 更新插件
    */
@@ -159,6 +180,9 @@ export default function usePlugin({
   }
 
   return {
+    versionText,
+
+    downloadPlugin,
     updatePlugin,
     pluginStart,
     reload,

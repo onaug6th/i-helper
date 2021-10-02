@@ -1,14 +1,12 @@
 .plugin-list_item {
   display: flex;
   align-items: center;
-  padding: 10px;
+  height: 75px;
   cursor: pointer;
   transition: all 0.5s ease;
 
   &:hover {
-    box-shadow:
-                        8px 14px 38px rgba(39,44,49,.06),
-                        1px 3px 8px rgba(39,44,49,.03);
+    box-shadow: 8px 14px 38px rgba(39, 44, 49, 0.06), 1px 3px 8px rgba(39, 44, 49, 0.03);
     transition: all 0.4s ease;
     transform: scale(1.02);
   }
@@ -16,6 +14,11 @@
   &-left {
     width: 80px;
     text-align: center;
+    position: relative;
+
+    .red-point {
+      top: -4px;
+    }
 
     img {
       border-radius: 50%;

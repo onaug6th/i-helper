@@ -21,7 +21,12 @@ body {
   outline: none;
 }
 
-.flex-item {
-  display: flex;
-  align-items: center;
+.red-point {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background-color: #f03535;
+  border-radius: 50%;
+  right: 5px;
+  top: 5px;
 }

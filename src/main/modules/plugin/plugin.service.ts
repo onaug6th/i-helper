@@ -94,7 +94,10 @@ class PluginService {
         const canUpdate = utils.compareVersion(installed.version, storePlugin.version);
 
         installed.canUpdate = canUpdate;
+        installed.latestVersion = storePlugin.version;
+
         storePlugin.canUpdate = canUpdate;
+        storePlugin.localVersion = installed.version;
       } else {
         storePlugin.isDownload = false;
       }

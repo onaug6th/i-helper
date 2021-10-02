@@ -2,8 +2,8 @@ import { ipcMain } from 'electron';
 import updateService from './update.service';
 
 //  检查最新版本
-ipcMain.handle('update-check-release', () => {
-  return updateService.checkLatestVersion();
+ipcMain.handle('update-check-release', (event, openWin: boolean) => {
+  return updateService.checkLatestVersion(openWin);
 });
 
 //  获取更新信息

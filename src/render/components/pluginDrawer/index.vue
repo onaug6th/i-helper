@@ -9,7 +9,7 @@
           <div class="base-info__name">
             {{ plugin.name }}
             <span class="base-info__version" title="版本号">
-              {{ plugin.version }}
+              {{ versionText }}
             </span>
           </div>
           <div class="base-info__desc">{{ plugin.desc }}</div>
@@ -26,6 +26,17 @@
               删除
             </el-button>
 
+            <el-button
+              v-if="showDownload"
+              type="primary"
+              icon="el-icon-download"
+              circle
+              size="mini"
+              title="下载插件"
+              @click="downloadPlugin"
+            >
+            </el-button>
+
             <i v-if="showSetting" class="iconfont icon-set" title="插件设置" @click="toggleSetting"></i>
           </div>
         </div>
@@ -33,7 +44,7 @@
       <!-- 插件基本信息 -->
 
       <div class="main">
-        <Plugin-setting v-if="state.showSetting" :plugin="plugin" />
+        <Plugin-setting v-if="state.showSetting" :plugin="plugin" :key="plugin.id" />
 
         <template v-else>
           <!-- 开发模式下独有信息 -->
@@ -132,7 +143,7 @@
 </template>
 
 <script lang="ts">
-import { getCurrentInstance, defineComponent, computed, reactive } from 'vue';
+import { getCurrentInstance, defineComponent, computed, watch, reactive } from 'vue';
 import { useStore } from 'vuex';
 import useButton from './composables/useButton';
 import usePlugin from './composables/usePlugin';
@@ -154,7 +165,7 @@ export default defineComponent({
     },
     plugin: Object
   },
-  emits: ['update:visible', 'reload', 'remove', 'publish'],
+  emits: ['update:visible', 'reload', 'remove', 'publish', 'download'],
   setup(props, { emit }) {
     const store = useStore();
     const { proxy }: any = getCurrentInstance();
@@ -190,11 +201,15 @@ export default defineComponent({
       return props.type === 'installed';
     });
 
+    watch([plugin], () => {
+      state.showSetting = false;
+    });
+
     function toggleSetting() {
       state.showSetting = !state.showSetting;
     }
 
-    const { showUpdate, showOpen, showDelete, showSetting, isInReview, showReviewContent } = useButton(
+    const { showUpdate, showOpen, showDelete, showSetting, showDownload, isInReview, showReviewContent } = useButton(
       {
         isStore: isStore.value,
         isDev: isDev.value,
@@ -204,6 +219,8 @@ export default defineComponent({
     );
 
     const {
+      versionText,
+      downloadPlugin,
       updatePlugin,
       pluginStart,
       reload,
@@ -214,6 +231,8 @@ export default defineComponent({
       showInFolder,
       updateJsonPath
     } = usePlugin({
+      isStore,
+
       plugin,
       proxy,
       visibleModel,
@@ -234,9 +253,12 @@ export default defineComponent({
       showUpdate,
       showOpen,
       showDelete,
+      showDownload,
       isInReview,
       showReviewContent,
 
+      versionText,
+      downloadPlugin,
       updatePlugin,
       pluginStart,
       reload,

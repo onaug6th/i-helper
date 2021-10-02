@@ -80,6 +80,7 @@ export default defineComponent({
       //  展示操作遮罩层
       showShade: false,
       shadeText: '',
+
       //  当前文件
       currentFile: {}
     });
@@ -132,7 +133,7 @@ export default defineComponent({
     /**
      * 文件放下
      */
-    function drop(event) {
+    function drop(event: DragEvent) {
       state.showShade = true;
 
       //  拖拽进来的文件
@@ -158,6 +159,8 @@ export default defineComponent({
                 file: files[0]
               };
               state.shadeText = '是一个插件配置文件';
+            } else {
+              state.showShade = false;
             }
             break;
           }
@@ -169,6 +172,9 @@ export default defineComponent({
             };
             state.shadeText = '可能是一个插件';
             break;
+          }
+          default: {
+            state.showShade = false;
           }
         }
       }
@@ -222,7 +228,6 @@ export default defineComponent({
       closeShade();
       menuTo('/installed');
     }
-
     return {
       menuList,
       state,

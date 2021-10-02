@@ -113,7 +113,9 @@ class UpdateService {
    * 检查是否存在更新版本号
    * @returns
    */
-  async checkLatestVersion(): Promise<{
+  async checkLatestVersion(
+    openWin = true
+  ): Promise<{
     canUpdate: boolean;
     body: string;
     name: string;
@@ -163,7 +165,7 @@ class UpdateService {
 
     this.updateInfo = result;
 
-    if (result.canUpdate) {
+    if (result.canUpdate && openWin) {
       this.updateWinOpen();
     }
 

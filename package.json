@@ -1,6 +1,6 @@
 {
   "name": "i-helper",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "private": true,
   "author": "onaug6th",
   "description": "A desktop assistant",
@@ -9,7 +9,7 @@
     "serve": "npm run electron:serve",
     "build": "npm run electron:build",
     "electron:serve": "vue-cli-service electron:serve",
-    "electron:build": "node src/script/clean && vue-cli-service electron:build",
+    "electron:build": "vue-cli-service electron:build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

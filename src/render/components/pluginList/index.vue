@@ -7,6 +7,7 @@
       @click="choosePlugin(plugin.id)"
     >
       <div class="plugin-list_item-left">
+        <div v-if="plugin.canUpdate" class="red-point" title="存在可用更新"></div>
         <img :src="plugin.logo" />
       </div>
 
@@ -53,7 +54,13 @@
     </el-empty>
   </div>
 
-  <Plugin-drawer v-model:visible="state.openDrawer" v-bind="$attrs" :type="type" :plugin="currentPlugin" />
+  <Plugin-drawer
+    v-model:visible="state.openDrawer"
+    v-bind="$attrs"
+    :type="type"
+    :plugin="currentPlugin"
+    @download="download(currentPlugin)"
+  />
 </template>
 
 <script lang="ts">

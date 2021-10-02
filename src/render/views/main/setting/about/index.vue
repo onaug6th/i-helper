@@ -15,6 +15,7 @@
 <script lang="ts">
 import { useStore } from 'vuex';
 import { defineComponent, getCurrentInstance, reactive } from 'vue';
+import * as utils from '@/render/utils/index';
 
 export default defineComponent({
   name: 'about',
@@ -32,7 +33,7 @@ export default defineComponent({
      * @param type
      */
     async function checkLatestVersion() {
-      const { canUpdate } = await proxy.$ipcClientLoading('update-check-release');
+      const canUpdate = await utils.checkLatestVersion(proxy);
 
       if (!canUpdate) {
         proxy.$notify({
@@ -45,7 +46,6 @@ export default defineComponent({
     function openHomePage() {
       proxy.$ipcClientLoading('update-open-homePage');
     }
-
     return {
       checkLatestVersion,
       openHomePage,

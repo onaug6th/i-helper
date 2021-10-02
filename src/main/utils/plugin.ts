@@ -24,7 +24,7 @@ function validPluginJSON(jsonPath: string | Plugin): string | undefined {
     file = jsonPath;
   }
 
-  const { main, name, logo } = file;
+  const { main, name, logo, version } = file;
   let result: string;
 
   if (!main) {
@@ -37,6 +37,10 @@ function validPluginJSON(jsonPath: string | Plugin): string | undefined {
 
   if (!logo) {
     result = '没有指定插件头像（logo）';
+  }
+
+  if (!version) {
+    result = '没有指定版本号（version）';
   }
 
   return result;

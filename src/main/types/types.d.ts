@@ -145,6 +145,11 @@ interface Plugin {
   readmeContent?: string;
 
   /**
+   * 最新版本号
+   */
+  latestVersion?: string;
+
+  /**
    * 是否允许更新
    */
   canUpdate?: boolean;
@@ -167,6 +172,10 @@ interface StorePlugin {
    * 版本号
    */
   version: string;
+  /**
+   * 本地安装版本号
+   */
+  localVersion?: string;
   /**
    * 名称
    */

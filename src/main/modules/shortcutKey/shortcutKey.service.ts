@@ -108,6 +108,11 @@ class ShortcutKeyService {
    * @param keyValue 按键值
    */
   shortcutKeyUpdate(keyType: string, keyValue: string): boolean {
+    const hasSame = Object.values(this.shortcutKey).some(value => value && value === keyValue);
+    if (hasSame) {
+      return false;
+    }
+
     if (this.shortcutKey[keyType]) {
       //  注销之前的快捷键
       globalShortcut.unregister(this.shortcutKey[keyType]);
