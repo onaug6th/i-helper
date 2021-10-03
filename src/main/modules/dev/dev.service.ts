@@ -44,16 +44,22 @@ class DevService {
       if (plugin.reviewStatus === ReviewStatus.pending) {
         const review = await api.lastestReview(plugin.id);
 
-        //  更新内存中插件信息
-        plugin.reviewStatus = review.status;
-        plugin.reviewContent = review.content;
+        if (review) {
+          //  更新内存中插件信息
+          plugin.reviewStatus = review.status;
+          plugin.reviewContent = review.content;
 
-        //  更新数据库中的插件信息
-        this.updatePluginInDb(plugin.id, {
-          ...plugin,
-          reviewStatus: review.status,
-          reviewContent: review.content
-        });
+          //  更新数据库中的插件信息
+          this.updatePluginInDb(plugin.id, {
+            ...plugin,
+            reviewStatus: review.status,
+            reviewContent: review.content
+          });
+        } else {
+          //  更新内存中插件信息
+          plugin.reviewStatus = ReviewStatus.success;
+          plugin.reviewContent = '';
+        }
       }
     }
   }
