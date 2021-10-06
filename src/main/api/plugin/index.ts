@@ -50,4 +50,13 @@ function getInstallPackage(url: string): any {
   });
 }
 
-export { getPluginList, downloadPlugin, getPlugin, getReleases, getInstallPackage };
+/**
+ * 更新插件下载量
+ * @param id
+ * @returns
+ */
+function downloadIncrease(id: string): Promise<any> {
+  return httpClient.put(`${pluginURL}/downloads/${id}`);
+}
+
+export { getPluginList, downloadPlugin, getPlugin, getReleases, getInstallPackage, downloadIncrease };

@@ -109,27 +109,47 @@
           </template>
           <!-- 开发模式下独有信息 -->
 
-          <!-- 列表信息 -->
-          <div v-else class="drawer-row info-list">
-            <div class="info-list__item">
-              <div class="info-list__item-top">
-                开发者
+          <template v-else>
+            <!-- 列表信息 -->
+            <div class="drawer-row info-list">
+              <div class="info-list__item">
+                <div class="info-list__item-top">
+                  开发者
+                </div>
+                <div class="info-list__item-mid">
+                  {{ plugin.authorName }}
+                </div>
               </div>
-              <div class="info-list__item-mid">
-                {{ plugin.authorName }}
-              </div>
-            </div>
 
-            <div class="info-list__item">
-              <div class="info-list__item-top">
-                大小
+              <div v-if="isStore" class="info-list__item">
+                <div class="info-list__item-top">
+                  下载次数
+                </div>
+                <div class="info-list__item-mid">
+                  {{ plugin.downloads }}
+                </div>
               </div>
-              <div class="info-list__item-mid">
-                {{ plugin.sizeFormat }}
+
+              <!-- <div class="info-list__item">
+                <div class="info-list__item-top">
+                  评分
+                </div>
+                <div class="info-list__item-mid">
+                  {{ plugin.rate || '暂无评分' }}
+                </div>
+              </div> -->
+
+              <div class="info-list__item">
+                <div class="info-list__item-top">
+                  大小
+                </div>
+                <div class="info-list__item-mid">
+                  {{ plugin.sizeFormat }}
+                </div>
               </div>
             </div>
-          </div>
-          <!-- 列表信息 -->
+            <!-- 列表信息 -->
+          </template>
 
           <v-md-preview :text="plugin.readmeContent"></v-md-preview>
         </template>

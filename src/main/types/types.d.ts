@@ -148,6 +148,10 @@ interface Plugin {
    * 最新版本号
    */
   latestVersion?: string;
+  /**
+   * 下载次数
+   */
+  downloads?: number;
 
   /**
    * 是否允许更新
@@ -217,4 +221,8 @@ interface StorePlugin {
    * 是否已下载
    */
   isDownload?: boolean;
+  /**
+   * 下载次数
+   */
+  downloads?: number;
 }

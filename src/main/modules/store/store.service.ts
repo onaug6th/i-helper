@@ -65,6 +65,7 @@ class StoreService {
         writer.on('finish', async () => {
           try {
             await pluginService.installPlugin(zipPath);
+            await api.downloadIncrease(id);
           } catch (error) {
             throw new Error(error);
           }
