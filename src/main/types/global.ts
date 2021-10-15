@@ -7,15 +7,17 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
     interface Global {
+      //  窗体服务
       windowService: any;
-      //  文件读取基础路径
-      rootPath: string;
-      //  是否开发模式
-      isDevMode: boolean;
       //  窗体/插件信息映射
       pluginWinItems: any;
       //  视图窗体ID映射
       viewWins: any;
+
+      //  文件读取基础路径
+      rootPath: string;
+      //  是否开发模式
+      isDevMode: boolean;
       //  下载文件夹路径
       downloadPath: string;
       //  强制退出

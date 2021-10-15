@@ -11,7 +11,7 @@ function compareVersion(v1: string, v2: string): boolean {
   return lt(v1, v2);
 }
 
-type FunctionalControl = (this: any, fn: any, delay?: number) => (...args: any) => void;
+type FunctionalControl = (this: unknown, fn: () => unknown, delay?: number) => (...args: Array<unknown>) => void;
 type DebounceEvent = FunctionalControl;
 type ThrottleEvent = FunctionalControl;
 
@@ -23,7 +23,7 @@ type ThrottleEvent = FunctionalControl;
  */
 const debounce: DebounceEvent = function(fn, delay = 1000) {
   let timer: NodeJS.Timeout | null = null;
-  return (...args: any) => {
+  return (...args: Array<unknown>) => {
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       fn.apply(this, args);
@@ -39,7 +39,7 @@ const debounce: DebounceEvent = function(fn, delay = 1000) {
  */
 const throttle: ThrottleEvent = function(fn, delay = 500) {
   let flag = true;
-  return (...args: any) => {
+  return (...args: Array<unknown>) => {
     if (!flag) return;
     flag = false;
     setTimeout(() => {

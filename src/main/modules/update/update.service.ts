@@ -68,7 +68,7 @@ class UpdateService {
    * 往更新窗体发送消息
    * @param param0
    */
-  sendWebContents({ transferred, total, speed, percent }: any) {
+  sendWebContents({ transferred, total, speed, percent }: { [propName: string]: number }) {
     this.updateWinow.webContents.send('update-download-progress', {
       transferred: byteConvert(transferred),
       total: byteConvert(total),

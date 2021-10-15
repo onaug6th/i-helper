@@ -12,7 +12,7 @@ declare type Nullable<T> = T | null;
  */
 interface DBClipboard {
   type: string;
-  value: any;
+  value: string;
   star: boolean;
   readonly createdAt: Date;
   readonly uid: string;

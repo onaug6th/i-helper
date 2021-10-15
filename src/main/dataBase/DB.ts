@@ -48,7 +48,7 @@ class DB<T = any> {
    * @param param0
    * @returns
    */
-  paging(query: { pageNum: number; pageSize: number; desc: boolean }): any {
+  paging(query: { pageNum: number; pageSize: number; desc: boolean }): Promise<any> {
     const { pageNum = 1, pageSize = 10, desc = true } = query || {};
 
     return new Promise(resolve => {
@@ -71,7 +71,7 @@ class DB<T = any> {
    * @param doc
    * @returns
    */
-  insert(doc: unknown): any {
+  insert(doc: unknown): Promise<any> {
     return new Promise((resolve: (value: any) => void) => {
       this.$db.insert(doc, (error: Error | null, document: any) => {
         if (!error) {
@@ -87,7 +87,7 @@ class DB<T = any> {
    * @param sort
    * @returns
    */
-  find(query: QueryDB<T> = {}, desc = true): any {
+  find(query: QueryDB<T> = {}, desc = true): Promise<any> {
     return new Promise(resolve => {
       this.$db
         .find(query)
@@ -104,7 +104,7 @@ class DB<T = any> {
    * @param query
    * @returns
    */
-  findOne(query: QueryDB<T> = {}): any {
+  findOne(query: QueryDB<T> = {}): Promise<any> {
     return new Promise((resolve: (value: T) => void) => {
       this.$db.findOne(query, (error: Error | null, document) => {
         if (!error) {
@@ -121,7 +121,7 @@ class DB<T = any> {
    * @param options
    * @returns
    */
-  remove(query: QueryDB<T>, options: Nedb.RemoveOptions = {}): any {
+  remove(query: QueryDB<T>, options: Nedb.RemoveOptions = {}): Promise<any> {
     return new Promise((resolve: (value: number) => void) => {
       this.$db.remove(query, options, (error: Error | null, n: number) => {
         if (!error) {
@@ -139,7 +139,7 @@ class DB<T = any> {
    * @param options
    * @returns
    */
-  update(query: unknown, updateQuery: unknown, options: Nedb.UpdateOptions = {}): any {
+  update(query: unknown, updateQuery: unknown, options: Nedb.UpdateOptions = {}): Promise<any> {
     return new Promise((resolve: (value: any) => void) => {
       this.$db.update(
         query,

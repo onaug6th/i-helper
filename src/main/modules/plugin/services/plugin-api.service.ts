@@ -53,7 +53,11 @@ const appApi = {
    * @param option
    * @returns
    */
-  createBrowserWindow: (pluginWinItem: PluginWinItem, viewUrl: string, options: any = {}): number => {
+  createBrowserWindow: (
+    pluginWinItem: PluginWinItem,
+    viewUrl: string,
+    options: Electron.BrowserWindowConstructorOptions & { newWin: boolean } = { newWin: false }
+  ): number => {
     const { pluginId, isDev, id } = pluginWinItem;
 
     //  无配置新开实例，会将之前同样地址的window打开并返回
@@ -83,7 +87,7 @@ const appApi = {
    * @param event
    * @param data
    */
-  communication: (pluginWinItem: PluginWinItem, id: number, event: string, ...data: any): void => {
+  communication: (pluginWinItem: PluginWinItem, id: number, event: string, ...data: Array<any>): void => {
     const viewWinItem = windowService.viewWins[id];
     const argsStr = data.map(arg => JSON.stringify(arg)).join(',');
     if (viewWinItem) {
