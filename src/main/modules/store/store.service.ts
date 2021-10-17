@@ -18,7 +18,7 @@ class StoreService {
    * @returns
    */
   async getPluginList(): Promise<void> {
-    this.pluginList = (await api.getPluginList()) as Array<StorePlugin>;
+    this.pluginList = await api.getPluginList();
 
     /**
      * 设置插件ID/插件信息的映射对象

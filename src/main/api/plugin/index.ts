@@ -3,12 +3,36 @@ import httpClient from '../httpClient';
 import request from 'request';
 import progress from 'request-progress';
 
+import axios, { AxiosRequestConfig, Method } from 'axios';
+import { ResponseData, PluginList, Http, HttpMethod } from './type';
+
+const axiosInstance = axios.create({
+  baseURL
+});
+
+const httpInstance: Http = {};
+
+const httpCoreFn: HttpMethod = async <T>(url: string, options?: AxiosRequestConfig): Promise<T> => {
+  const result = await axiosInstance({
+    url,
+    ...options
+  });
+
+  const resultData: ResponseData<T> = result.data;
+
+  return resultData.data;
+};
+
+['get', 'post', 'delete', 'update'].forEach((method: Method) => {
+  httpInstance[method] = <T>(url: string, options?: AxiosRequestConfig) => httpCoreFn<T>(url, options);
+});
+
 /**
  * 获取商店的插件列表
  * @returns
  */
-function getPluginList(): Promise<Array<StorePlugin>> {
-  return httpClient.get(`${baseURL}/plugin/list`);
+function getPluginList(): Promise<PluginList> {
+  return httpInstance.get<PluginList>(`${pluginURL}/list`);
 }
 
 /**
