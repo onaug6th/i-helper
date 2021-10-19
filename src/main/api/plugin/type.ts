@@ -7,6 +7,7 @@ export interface Http {
   post?: HttpMethod;
   delete?: HttpMethod;
   update?: HttpMethod;
+  put?: HttpMethod;
 }
 
 // 请求接口数据
@@ -36,6 +37,7 @@ export interface ResponseData<T = any> {
   statusCode: number;
 }
 
+//  插件列表
 export type PluginList = Array<{
   authorId: string;
   authorName: string;
@@ -53,4 +55,40 @@ export type PluginList = Array<{
   size: number;
   sizeFormat: string;
   version: string;
+}>;
+
+//  版本号列表
+export type Releases = Array<{
+  id: number;
+  tag_name: string;
+  target_commitish: string;
+  prerelease: boolean;
+  name: string;
+  body: string;
+  author: {
+    id: number;
+    login: string;
+    name: string;
+    avatar_url: string;
+    url: string;
+    html_url: string;
+    remark: string;
+    followers_url: string;
+    following_url: string;
+    gists_url: string;
+    starred_url: string;
+    subscriptions_url: string;
+    organizations_url: string;
+    repos_url: string;
+    events_url: string;
+    received_events_url: string;
+    type: string;
+  };
+  created_at: string;
+  assets: [
+    {
+      browser_download_url: string;
+      name?: string;
+    }
+  ];
 }>;

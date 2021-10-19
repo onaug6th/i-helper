@@ -4,7 +4,8 @@ import request from 'request';
 import progress from 'request-progress';
 
 import axios, { AxiosRequestConfig, Method } from 'axios';
-import { ResponseData, PluginList, Http, HttpMethod } from './type';
+import { ResponseData, PluginList, Http, HttpMethod, Releases } from './type';
+import { Readable } from 'stream';
 
 const axiosInstance = axios.create({
   baseURL
@@ -40,7 +41,7 @@ function getPluginList(): Promise<PluginList> {
  * @param url
  * @returns
  */
-function downloadPlugin(url: string): Promise<any> {
+function downloadPlugin(url: string): Promise<Readable> {
   return httpClient.get(url, {
     responseType: 'stream'
   });
@@ -51,7 +52,7 @@ function downloadPlugin(url: string): Promise<any> {
  * @param id
  * @returns
  */
-function getPlugin(id: string): Promise<StorePlugin> {
+function getPlugin(id: string): Promise<Plugin> {
   return httpClient.get(`${pluginURL}/${id}`);
 }
 
@@ -59,7 +60,7 @@ function getPlugin(id: string): Promise<StorePlugin> {
  * 获取最新应用版本信息
  * @returns
  */
-function getReleases(): Promise<Array<any>> {
+function getReleases(): Promise<Releases> {
   return httpClient.get(releasesURL);
 }
 
@@ -79,7 +80,7 @@ function getInstallPackage(url: string): any {
  * @param id
  * @returns
  */
-function downloadIncrease(id: string): Promise<any> {
+function downloadIncrease(id: string): Promise<void> {
   return httpClient.put(`${pluginURL}/downloads/${id}`);
 }
 
