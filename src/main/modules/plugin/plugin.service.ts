@@ -28,7 +28,7 @@ import devService from '../dev/dev.service';
 
 class PluginService {
   //  插件列表
-  pluginList: Array<Plugin> = [];
+  pluginList: Array<TPlugin> = [];
 
   //  剪贴板观察者
   clipboardObserver = null;
@@ -52,7 +52,7 @@ class PluginService {
    * 从服务器中获取插件信息
    * @param id
    */
-  async getPluginFromServer(id: string): Promise<StorePlugin> {
+  async getPluginFromServer(id: string) {
     return await api.getPlugin(id);
   }
 
@@ -109,7 +109,7 @@ class PluginService {
    * @param id
    * @returns
    */
-  getPlugin(id: string): Plugin {
+  getPlugin(id: string): TPlugin {
     return this.pluginList.find(app => app.id === id);
   }
 

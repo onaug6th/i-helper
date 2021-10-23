@@ -73,7 +73,7 @@ export default defineComponent({
   },
   props: {
     pluginList: {
-      type: Array as PropType<Array<Plugin | StorePlugin>>,
+      type: Array as PropType<Array<TPlugin | StorePlugin>>,
       required: true
     },
     type: String
@@ -109,7 +109,7 @@ export default defineComponent({
      * 打开插件
      * @param plugin
      */
-    function pluginStart(plugin: Plugin) {
+    function pluginStart(plugin: TPlugin) {
       proxy.$ipcClient('plugin-start', plugin.id);
     }
 
@@ -117,7 +117,7 @@ export default defineComponent({
      * 下载插件
      * @param plugin
      */
-    async function download(plugin: Plugin) {
+    async function download(plugin: TPlugin) {
       await proxy.$ipcClientLoading('store-download', plugin.id);
 
       //  通知我的插件面板更新列表

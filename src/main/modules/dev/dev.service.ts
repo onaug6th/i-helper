@@ -21,13 +21,13 @@ enum ReviewStatus {
 }
 
 class DevService {
-  pluginList: Array<Plugin> = [];
+  pluginList: Array<TPlugin> = [];
 
   /**
    * 在应用启动后执行的回调
    */
   async appOnReady() {
-    const pluginList: Array<Plugin> = await devPluginDB.find();
+    const pluginList: Array<TPlugin> = await devPluginDB.find();
     this.pluginList = pluginList;
   }
 
@@ -77,7 +77,7 @@ class DevService {
    * @param jsonPath
    * @returns
    */
-  async addPlugin(jsonPath: string): Promise<Plugin> {
+  async addPlugin(jsonPath: string): Promise<TPlugin> {
     const { error, file } = await pluginUtils.getPluginInfoByFile(jsonPath);
 
     if (error) {
@@ -124,7 +124,7 @@ class DevService {
    * @param id
    * @returns
    */
-  getPlugin(id: string): Plugin {
+  getPlugin(id: string): TPlugin {
     return this.pluginList.find(plugin => plugin.id === id);
   }
 
@@ -195,7 +195,7 @@ class DevService {
    * @param data
    * @returns
    */
-  updatePluginInDb(id: string, data: Plugin) {
+  updatePluginInDb(id: string, data: TPlugin) {
     return devPluginDB.update(
       {
         id
@@ -209,7 +209,7 @@ class DevService {
    * @param id
    * @param data
    */
-  async updatePluginInDbOrMemory(id: string, data: Plugin) {
+  async updatePluginInDbOrMemory(id: string, data: TPlugin) {
     await this.updatePluginInDb(id, data);
 
     for (let i = 0; i < this.pluginList.length; i++) {

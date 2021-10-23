@@ -16,8 +16,8 @@ const DEFAULT_PLUGIN_CONFIG = {
 /**
  * 校验json文件是否合法
  */
-function validPluginJSON(jsonPath: string | Plugin): string | undefined {
-  let file: Plugin;
+function validPluginJSON(jsonPath: string | TPlugin): string | undefined {
+  let file: TPlugin;
   if (typeof jsonPath === 'string') {
     file = getJSONFileData(jsonPath);
   } else {
@@ -51,7 +51,7 @@ function validPluginJSON(jsonPath: string | Plugin): string | undefined {
  * @param jsonPath
  * @returns
  */
-function getJSONFileData(jsonPath: string): Plugin {
+function getJSONFileData(jsonPath: string): TPlugin {
   const text = fs.readFileSync(jsonPath, 'utf8');
   return JSON.parse(text);
 }
@@ -97,7 +97,7 @@ function checkPathStr(pathStr: string) {
  * @param obj
  * @param folderPath 文件目录路径
  */
-function pathCompletion(obj: PluginDevConfig | Plugin, folderPath: string): void {
+function pathCompletion(obj: PluginDevConfig | TPlugin, folderPath: string): void {
   const { main, preload } = obj;
 
   //  入口文件，如不为 http 协议开头，补全文件夹目录加入口文件地址
@@ -116,7 +116,7 @@ function pathCompletion(obj: PluginDevConfig | Plugin, folderPath: string): void
  * @param jsonPath
  * @returns
  */
-async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; file?: Plugin }> {
+async function getPluginInfoByFile(jsonPath: string): Promise<{ error?: string; file?: TPlugin }> {
   const file = getJSONFileData(jsonPath);
   const error = validPluginJSON(file);
 

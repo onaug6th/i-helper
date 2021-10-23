@@ -27,7 +27,7 @@ interface OpenPluginWindow {
  * @param viewUrl 视图地址
  */
 function openPluginWindow(
-  plugin: Plugin,
+  plugin: TPlugin,
   option: BrowserWindowConstructorOptions,
   isDev = false,
   fatherId = null,
@@ -114,7 +114,7 @@ function openPluginWindow(
  * @returns
  */
 function initBrowserView(
-  plugin: Plugin,
+  plugin: TPlugin,
   viewUrl: string,
   isDev: boolean
 ): {
@@ -127,7 +127,7 @@ function initBrowserView(
   //  设置会话预加载文件
   sessionItem.setPreloads([apisdk]);
   //  读取配置的对象
-  const readConfig: PluginDevConfig | Plugin = isDev ? plugin.dev || plugin : plugin;
+  const readConfig: PluginDevConfig | TPlugin = isDev ? plugin.dev || plugin : plugin;
   //  如没有指定视图地址，默认使用配置中设置的插件地址
   if (!viewUrl) {
     viewUrl = readConfig.main;
