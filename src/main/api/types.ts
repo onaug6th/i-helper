@@ -7,6 +7,7 @@ export interface Http {
   post?: HttpMethod;
   delete?: HttpMethod;
   update?: HttpMethod;
+  put?: HttpMethod;
 }
 
 // 请求接口数据
@@ -35,22 +36,3 @@ export interface ResponseData<T = any> {
    */
   statusCode: number;
 }
-
-export type PluginList = Array<{
-  authorId: string;
-  authorName: string;
-  createTime: string;
-  desc: string;
-  downloads: number;
-  fileUrl: string;
-  id: string;
-  logo: string;
-  name: string;
-  rate: number;
-  rateTimes: number;
-  rateTotal: number;
-  readmeContent: string;
-  size: number;
-  sizeFormat: string;
-  version: string;
-}>;

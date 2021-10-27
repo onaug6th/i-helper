@@ -89,7 +89,7 @@ class WindowService {
    * @returns
    */
   createPluginWin(
-    plugin: Plugin,
+    plugin: TPlugin,
     viewId: number,
     viewUrl: string,
     option: BrowserWindowConstructorOptions,

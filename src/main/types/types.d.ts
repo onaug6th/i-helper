@@ -66,7 +66,7 @@ interface PluginHeader {
   btns?: Array<string>;
 }
 
-interface Plugin {
+interface TPlugin {
   /**
    * ID
    */

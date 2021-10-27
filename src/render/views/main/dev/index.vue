@@ -29,13 +29,13 @@ export default defineComponent({
     });
 
     const findPluginIndex = ({ id }: { id: string }) =>
-      state.pluginList.findIndex((plugin: Plugin) => plugin.id === id);
+      state.pluginList.findIndex((plugin: TPlugin) => plugin.id === id);
 
     /**
      * 重新加载插件
      * @param plugin
      */
-    function reload(plugin: Plugin) {
+    function reload(plugin: TPlugin) {
       const index = findPluginIndex(plugin);
       state.pluginList[index] = plugin;
     }
@@ -44,7 +44,7 @@ export default defineComponent({
      * 删除插件
      * @param index
      */
-    function delPlugin(plugin: Plugin) {
+    function delPlugin(plugin: TPlugin) {
       const index = findPluginIndex(plugin);
       state.pluginList.splice(index, 1);
       state.openDrawer = false;

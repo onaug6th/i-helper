@@ -1,33 +1,24 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, Method } from 'axios';
 import { baseURL } from '@/main/constants/url';
-import { safeGet } from '@/render/utils';
+import { safeGet } from '@/main/utils';
+import { ResponseData, Http, HttpMethod } from './types';
 
 axios.defaults.baseURL = baseURL;
 
-const httpClient: any = async function(url: string, options: AxiosRequestConfig): Promise<any> {
-  return axios({
-    url,
-    ...options
-  });
-};
-
-['get', 'delete', 'head', 'post', 'put', 'patch', 'purge', 'link', 'unlink'].forEach(method => {
-  httpClient[method] = function(url, options) {
-    return httpClient(url, { ...options, method });
-  };
+const axiosInstance = axios.create({
+  baseURL
 });
 
-axios.interceptors.request.use(config => {
+axiosInstance.interceptors.request.use(config => {
   return config;
 });
 
-axios.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   response => {
     const url = response.config.url;
     if (url.includes('ihelper.instarry') || url.includes('localhost')) {
-      const {
-        data: { success, msg, data }
-      } = response;
+      const responseData: ResponseData = response.data;
+      const { success, msg, data } = responseData;
 
       if (!success) {
         throw new Error(msg);
@@ -46,5 +37,20 @@ axios.interceptors.response.use(
     }
   }
 );
+
+const httpClient: Http = {};
+
+const httpCoreFn: HttpMethod = async <T>(url: string, options?: AxiosRequestConfig): Promise<T> => {
+  const result = await axiosInstance({
+    url,
+    ...options
+  });
+
+  return (result as unknown) as T;
+};
+
+['get', 'post', 'delete', 'update', 'put'].forEach((method: Method) => {
+  httpClient[method] = <T>(url: string, options?: AxiosRequestConfig) => httpCoreFn<T>(url, options);
+});
 
 export default httpClient;

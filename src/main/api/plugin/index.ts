@@ -1,38 +1,16 @@
-import { baseURL, pluginURL, releasesURL } from '../../constants/url';
+import { pluginURL, releasesURL } from '../../constants/url';
 import httpClient from '../httpClient';
 import request from 'request';
 import progress from 'request-progress';
-
-import axios, { AxiosRequestConfig, Method } from 'axios';
-import { ResponseData, PluginList, Http, HttpMethod } from './type';
-
-const axiosInstance = axios.create({
-  baseURL
-});
-
-const httpInstance: Http = {};
-
-const httpCoreFn: HttpMethod = async <T>(url: string, options?: AxiosRequestConfig): Promise<T> => {
-  const result = await axiosInstance({
-    url,
-    ...options
-  });
-
-  const resultData: ResponseData<T> = result.data;
-
-  return resultData.data;
-};
-
-['get', 'post', 'delete', 'update'].forEach((method: Method) => {
-  httpInstance[method] = <T>(url: string, options?: AxiosRequestConfig) => httpCoreFn<T>(url, options);
-});
+import { PluginList, Releases } from './types';
+import { Readable } from 'stream';
 
 /**
  * 获取商店的插件列表
  * @returns
  */
 function getPluginList(): Promise<PluginList> {
-  return httpInstance.get<PluginList>(`${pluginURL}/list`);
+  return httpClient.get<PluginList>(`${pluginURL}/list`);
 }
 
 /**
@@ -40,7 +18,7 @@ function getPluginList(): Promise<PluginList> {
  * @param url
  * @returns
  */
-function downloadPlugin(url: string): Promise<any> {
+function downloadPlugin(url: string): Promise<Readable> {
   return httpClient.get(url, {
     responseType: 'stream'
   });
@@ -51,7 +29,7 @@ function downloadPlugin(url: string): Promise<any> {
  * @param id
  * @returns
  */
-function getPlugin(id: string): Promise<StorePlugin> {
+function getPlugin(id: string): Promise<TPlugin> {
   return httpClient.get(`${pluginURL}/${id}`);
 }
 
@@ -59,7 +37,7 @@ function getPlugin(id: string): Promise<StorePlugin> {
  * 获取最新应用版本信息
  * @returns
  */
-function getReleases(): Promise<Array<any>> {
+function getReleases(): Promise<Releases> {
   return httpClient.get(releasesURL);
 }
 
@@ -79,7 +57,7 @@ function getInstallPackage(url: string): any {
  * @param id
  * @returns
  */
-function downloadIncrease(id: string): Promise<any> {
+function downloadIncrease(id: string): Promise<void> {
   return httpClient.put(`${pluginURL}/downloads/${id}`);
 }
 
