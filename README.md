@@ -7,6 +7,7 @@
 ##  文档/下载地址
 * [iHelper 官网](https://onaug6th.github.io/i-helper-docs/)
 * [iHelper github](https://github.com/onaug6th/i-helper/releases)
+* [iHelper 官方插件仓库](https://github.com/onaug6th/i-helper-plugin)
 * [iHelper gitee（国内较快）](https://gitee.com/onaug6th/i-helper/releases)
 
 ## 功能清单
