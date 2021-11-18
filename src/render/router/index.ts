@@ -60,6 +60,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/update',
     name: 'update',
     component: () => import('../views/update/index.vue')
+  },
+
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('../views/search/index.vue')
   }
 ];
 
