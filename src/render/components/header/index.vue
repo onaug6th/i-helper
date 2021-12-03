@@ -7,7 +7,7 @@
     </div>
     <div class="header-center"></div>
     <div class="header-right">
-      <button v-if="isDev" class="icon" title="开发者工具" @click="toggleDevTools">
+      <button v-if="isDev || hasBtn('dev')" class="icon" title="开发者工具" @click="toggleDevTools">
         <i class="iconfont icon-code"></i>
       </button>
 
