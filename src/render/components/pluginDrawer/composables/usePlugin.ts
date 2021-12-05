@@ -12,24 +12,24 @@ export default function usePlugin({
   userId,
   state
 }: {
-  isStore: ComputedRef<boolean>;
+  isStore: boolean;
   plugin: ComputedRef<any>;
   proxy: any;
   visibleModel: any;
-  isDev: ComputedRef<boolean>;
+  isDev: boolean;
   userId: ComputedRef<string>;
   emit: any;
   state: any;
 }): any {
   const versionText = computed(() => {
-    const [version, latestVersion] = isStore.value
+    const [version, latestVersion] = isStore
       ? [plugin.value.localVersion, plugin.value.version]
       : [plugin.value.version, plugin.value.latestVersion];
 
     if (version && latestVersion && plugin.value.canUpdate) {
       return `本地版本：${version}，最新版本：${latestVersion}`;
     } else {
-      return isStore.value ? latestVersion : version;
+      return isStore ? latestVersion : version;
     }
   });
   /**
@@ -56,7 +56,7 @@ export default function usePlugin({
    * 打开插件
    */
   function pluginStart() {
-    proxy.$ipcClient('plugin-start', plugin.value.id, isDev.value);
+    proxy.$ipcClient('plugin-start', plugin.value.id, isDev);
     visibleModel.value = false;
   }
 
@@ -100,7 +100,7 @@ export default function usePlugin({
    * 删除插件
    */
   async function delPlugin() {
-    const event = isDev.value ? 'dev-plugin-del' : 'plugin-del';
+    const event = isDev ? 'dev-plugin-del' : 'plugin-del';
     await proxy.$ipcClient(event, plugin.value.id);
     visibleModel.value = false;
 
@@ -113,7 +113,7 @@ export default function usePlugin({
     });
 
     //  更新商店面板
-    if (isDev.value) {
+    if (isDev) {
       emit('remove', plugin);
     }
   }

@@ -183,7 +183,10 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
-    plugin: Object
+    plugin: Object,
+    isInstalled: Boolean,
+    isStore: Boolean,
+    isDev: Boolean
   },
   emits: ['update:visible', 'reload', 'remove', 'publish', 'download'],
   setup(props, { emit }) {
@@ -209,18 +212,6 @@ export default defineComponent({
 
     const userId = computed(() => store.getters.userId);
 
-    const isStore = computed(() => {
-      return props.type === 'store';
-    });
-
-    const isDev = computed(() => {
-      return props.type === 'dev';
-    });
-
-    const isInstalled = computed(() => {
-      return props.type === 'installed';
-    });
-
     watch([plugin], () => {
       state.showSetting = false;
     });
@@ -231,9 +222,9 @@ export default defineComponent({
 
     const { showUpdate, showOpen, showDelete, showSetting, showDownload, isInReview, showReviewContent } = useButton(
       {
-        isStore: isStore.value,
-        isDev: isDev.value,
-        isInstalled: isInstalled.value
+        isStore: props.isStore,
+        isDev: props.isDev,
+        isInstalled: props.isInstalled
       },
       plugin
     );
@@ -251,12 +242,12 @@ export default defineComponent({
       showInFolder,
       updateJsonPath
     } = usePlugin({
-      isStore,
+      isStore: props.isStore,
+      isDev: props.isDev,
 
       plugin,
       proxy,
       visibleModel,
-      isDev,
       state,
       userId,
       emit
@@ -264,9 +255,6 @@ export default defineComponent({
 
     return {
       state,
-      isDev,
-      isInstalled,
-      isStore,
       showSetting,
       visibleModel,
 

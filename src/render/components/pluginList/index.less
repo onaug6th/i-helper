@@ -1,6 +1,12 @@
+.plugin-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .plugin-list_item {
   display: flex;
   align-items: center;
+  width: 49%;
   height: 75px;
   cursor: pointer;
   transition: all 0.5s ease;
@@ -9,6 +15,10 @@
     box-shadow: 8px 14px 38px rgba(39, 44, 49, 0.06), 1px 3px 8px rgba(39, 44, 49, 0.03);
     transition: all 0.4s ease;
     transform: scale(1.02);
+
+    .plugin-list_item-setting {
+      display: inline-block;
+    }
   }
 
   &-left {
@@ -48,6 +58,10 @@
   &-right {
     width: 98px;
     text-align: center;
+
+    .plugin-list_item-setting {
+      display: none;
+    }
   }
 }
 
