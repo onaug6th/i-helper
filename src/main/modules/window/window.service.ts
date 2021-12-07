@@ -26,6 +26,9 @@ class WindowService {
   //  主面板实例
   mainWindow: BrowserWindow;
 
+  //  搜索框窗体实例
+  searchWindow: BrowserWindow;
+
   constructor() {
     global.windowService = this;
     global.pluginWinItems = this.pluginWinItems;
@@ -77,6 +80,18 @@ class WindowService {
     this.mainWindow = this.createBrowserWindow({ option, url });
     this.mainWindow.setIcon(global.appLogoPath);
     return this.mainWindow;
+  }
+
+  /**
+   * 创建搜索窗体
+   * @returns
+   */
+  createSearchWin(): BrowserWindow {
+    const url = this.getWebUrl('search');
+    const option = browserWindowOptions.search;
+
+    this.searchWindow = this.createBrowserWindow({ option, url });
+    return this.searchWindow;
   }
 
   /**
@@ -204,6 +219,19 @@ class WindowService {
    */
   deleteWindow(id: number): void {
     delete this.pluginWinItems[id];
+  }
+
+  /**
+   * 切换显示主面板
+   * @param windowId
+   */
+  toggleMainWindow(): void {
+    const mainWindow = this.mainWindow;
+    if (mainWindow.isVisible()) {
+      mainWindow.hide();
+    } else {
+      mainWindow.show();
+    }
   }
 
   /**

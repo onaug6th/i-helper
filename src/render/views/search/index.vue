@@ -1,5 +1,10 @@
 <template>
-  <div class="search"></div>
+  <div class="search">
+    <el-input v-model="state.searchKey" placeholder="搜索内容" />
+    <div class="search-logo" @click="openMain">
+      <img src="@/../public/icon.png" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -11,7 +16,7 @@ export default defineComponent({
     const { proxy }: any = getCurrentInstance();
 
     const state: any = reactive({
-      isDownload: false
+      searchKey: ''
     });
 
     /**
@@ -21,7 +26,14 @@ export default defineComponent({
       proxy.$ipcClient('search-win-close');
     }
 
-    return { state, close };
+    /**
+     * 打开主面板
+     */
+    function openMain() {
+      proxy.$ipcClient('window-main-toggle');
+    }
+
+    return { state, openMain, close };
   }
 });
 </script>
