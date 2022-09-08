@@ -24,6 +24,11 @@ const browserWindowOptions = {
     ...commonOptions,
     width: 320,
     height: 410
+  },
+  search: {
+    ...commonOptions,
+    width: 800,
+    height: 60
   }
 };
 

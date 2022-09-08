@@ -34,6 +34,7 @@ export default function launchApp(): void {
     win = windowService.createMainWin();
 
     win.on('close', e => {
+      //  未指定强制退出，都一律隐藏
       if (!global.forceQuit) {
         e.preventDefault();
         win.hide();

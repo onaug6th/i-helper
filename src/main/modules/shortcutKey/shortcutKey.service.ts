@@ -12,18 +12,29 @@ class ShortcutKeyService {
   //  默认设置
   defaultData = {
     [this.storageName]: {
-      open: 'Ctrl+Space'
+      open: 'Ctrl+Space',
+      search: 'Alt+x'
     }
   };
 
   //  快捷键回调
   shortcutCallback = {
+    //  打开主面板回调
     open: () => {
-      const mainWindow = windowService.mainWindow;
-      if (mainWindow.isVisible()) {
-        mainWindow.hide();
+      windowService.toggleMainWindow();
+    },
+    //  打开搜索面板回调
+    search: () => {
+      if (windowService.searchWindow) {
+        const searchWindow = windowService.searchWindow;
+
+        if (searchWindow.isVisible()) {
+          searchWindow.hide();
+        } else {
+          searchWindow.show();
+        }
       } else {
-        mainWindow.show();
+        windowService.createSearchWin();
       }
     }
   };

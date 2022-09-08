@@ -4,7 +4,7 @@
       v-for="(plugin, pluginIndex) in state.pluginList"
       class="plugin-list_item"
       :key="pluginIndex"
-      @click="choosePlugin(plugin.id)"
+      @click="clickPlugin(plugin)"
     >
       <div class="plugin-list_item-left">
         <div v-if="plugin.canUpdate" class="red-point" title="存在可用更新"></div>
@@ -22,13 +22,14 @@
 
       <div class="plugin-list_item-right">
         <el-button
-          v-if="type === 'installed' || plugin.isDownload"
+          v-if="isInstalled"
+          class="plugin-list_item-setting"
+          icon="el-icon-setting"
           type="primary"
           size="mini"
-          title="启动插件"
-          @click.stop="pluginStart(plugin)"
+          title="插件详情"
+          @click.stop="choosePlugin(plugin.id)"
         >
-          启动
         </el-button>
 
         <el-button
@@ -59,6 +60,9 @@
     v-bind="$attrs"
     :type="type"
     :plugin="currentPlugin"
+    :isInstalled="isInstalled"
+    :isStore="isStore"
+    :isDev="isDev"
     @download="download(currentPlugin)"
   />
 </template>
@@ -95,6 +99,30 @@ export default defineComponent({
     const currentPlugin: ComputedRef<any> = computed(() => {
       return state.pluginList.find(plugin => plugin.id === state.currentPluginId) || {};
     });
+
+    const isStore = computed(() => {
+      return props.type === 'store';
+    });
+
+    const isDev = computed(() => {
+      return props.type === 'dev';
+    });
+
+    const isInstalled = computed(() => {
+      return props.type === 'installed';
+    });
+
+    /**
+     * 点击插件
+     * @param plugin
+     */
+    function clickPlugin(plugin: TPlugin) {
+      if (isStore.value || isDev.value) {
+        choosePlugin(plugin.id);
+      } else {
+        pluginStart(plugin);
+      }
+    }
 
     /**
      * 打开插件
@@ -133,7 +161,14 @@ export default defineComponent({
 
     return {
       state,
+
+      isStore,
+      isDev,
+      isInstalled,
+
       currentPlugin,
+
+      clickPlugin,
       pluginStart,
 
       choosePlugin,

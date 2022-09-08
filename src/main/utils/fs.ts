@@ -5,7 +5,7 @@ import compressing from 'compressing';
 
 /**
  * 获取文件大小
- * @param filePath
+ * @param filePath 文件路径
  * @returns
  */
 function getFileSize(filePath: string): Promise<number> {
