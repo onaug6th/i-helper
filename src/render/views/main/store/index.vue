@@ -57,7 +57,7 @@ export default defineComponent({
       }
 
       state.pluginList = reactive(
-        result.map(plugin => {
+        result.map((plugin: TPlugin) => {
           plugin.logo = `http://${plugin.logo}`;
           return plugin;
         })

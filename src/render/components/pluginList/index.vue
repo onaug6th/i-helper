@@ -44,7 +44,7 @@
         </el-button>
       </div>
     </div>
-    <el-empty v-if="!pluginList.length" title="将插件压缩包/配置文件拖入应用即可添加插件">
+    <el-empty style="flex: 1" v-if="!pluginList.length" title="将插件压缩包/配置文件拖入应用即可添加插件">
       <template #description>
         <slot name="empty">
           <div class="empty">

@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="发布插件" v-model="visibleModel" width="50%">
-    <div class="content">请输入插件的简单介绍，方便我们快速审核通过</div>
+    <div class="content">请输入插件的简单介绍，并在github issue中通知一下作者审核通过。。</div>
     <el-input v-model="desc" type="textarea" autocomplete="off" :rows="4"></el-input>
     <template #footer>
       <span class="dialog-footer">

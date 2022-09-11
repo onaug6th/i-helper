@@ -4,11 +4,18 @@
 
 ![iHelper](https://onaug6th.github.io/i-helper-docs/assets/img/1.b6ff8fcc.png)
 
-##  文档/下载地址
+## 功能预览
+
+![1.gif](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3772cf66e1e946e29520fe39aa9f7f86~tplv-k3u1fbpfcp-watermark.image?)
+
+![2.gif](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f6e014cb4d4449c39dca99bf941cf6c5~tplv-k3u1fbpfcp-watermark.image?)
+
+##  文档/安装包下载地址/配套后端项目
 * [iHelper 官网](https://onaug6th.github.io/i-helper-docs/)
 * [iHelper github](https://github.com/onaug6th/i-helper/releases)
 * [iHelper 官方插件仓库](https://github.com/onaug6th/i-helper-plugin)
 * [iHelper gitee（国内较快）](https://gitee.com/onaug6th/i-helper/releases)
+* [iHelper 后端](https://github.com/onaug6th/i-helper-backEnd)
 
 ## 功能清单
 - 插件创建，插件启动
@@ -23,6 +30,10 @@
 - 应用更新
 - 应用常规功能
 
+## 插件发布
+
+如果需要发布个人插件到商店，请在github提issue通知一下我。😀
+
 ##  启动
 ```
 yarn run serve
@@ -32,6 +43,10 @@ yarn run serve
 ```
 yarn run build
 ```
+
+## 常见问题
+
+如遇项目启动应用白屏，是因为渲染进程启动早于主进程导致。可停止项目再重启即可
 
 ## License
 
