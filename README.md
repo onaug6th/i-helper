@@ -6,9 +6,11 @@
 
 ## 功能预览
 
-![1.gif](./readmeImages/1.gif)
+插件使用
+![1.gif](https://ihelper-1253668581.cos.ap-nanjing.myqcloud.com/assets%2F1.gif)
 
-![2.gif](./readmeImages/2.gif)
+插件开发
+![2.gif](https://ihelper-1253668581.cos.ap-nanjing.myqcloud.com/assets%2F2.gif)
 
 ##  文档/安装包下载地址/配套后端项目
 * [iHelper 官网](https://onaug6th.github.io/i-helper-docs/)
